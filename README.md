@@ -8,3 +8,9 @@ cp -r i3/ ~/.config/
 ```
 
 
+### mco (Music player) 
+
+```
+mkdir -p ~/.moc
+cp -r moc/* ~/.moc/
+```
