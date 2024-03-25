@@ -14,3 +14,9 @@ cp -r i3/ ~/.config/
 mkdir -p ~/.moc
 cp -r moc/* ~/.moc/
 ```
+
+### ranger
+
+```
+cp -r ranger/ ~.congif/
+```
