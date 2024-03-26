@@ -69,7 +69,7 @@
 #
 # Example:    MusicDir = "/home/joe/music"
 #
-MusicDir = ~/Music/Spotify/
+MusicDir = /home/aadish/Music/Spotify/
 
 # Start in the music directory by default?  If set to 'no', start
 # in the current directory by default.  A single directory on
@@ -101,7 +101,7 @@ Sort = FileName
 
 # Set playback toggles.
 #Repeat = no
-#Shuffle = no
+Shuffle = yes
 #AutoNext = yes
 
 # Default FormatString:
@@ -190,7 +190,7 @@ ShowFormat = yes
 # Show file time in menu?  Possible values: 'yes', 'no' and 'IfAvailable'
 # (meaning show the time only when it is already known, which often works
 # faster).
-#ShowTime = IfAvailable
+ShowTime = yes
 
 # Show time played as a percentage in the time progress bar.
 #ShowTimePercent = no
