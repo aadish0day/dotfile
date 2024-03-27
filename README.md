@@ -18,5 +18,5 @@ cp -r moc/* ~/.moc/
 ### ranger
 
 ```
-cp -r ranger/ ~.congif/
+cp -r ranger/ ~/.config/
 ```
