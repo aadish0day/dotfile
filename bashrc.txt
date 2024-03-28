@@ -1,0 +1,29 @@
+#
+# ~/.bashrc
+#
+
+# If not running interactively, don't do anything
+[[ $- != *i* ]] && return
+
+alias ls='ls --color=auto'
+alias grep='grep --color=auto'
+alias rd='rm -fr'
+alias music='mocp'
+alias yt='yt-dlp -f "bestvideo[height<=1080]+bestaudio/best[height<=1080]" --embed-metadata -o "%(playlist)s/%(title)s.%(ext)s"'
+alias ll='ls -l'
+alias la='ls -A'
+alias l='ls -CF'
+alias reload='source ~/.bashrc'
+
+
+
+# Use fzf to change directories
+cdf() {
+  local dir
+  dir=$(find ${1:-.} -path '*/\.*' -prune -o -type d -print 2> /dev/null | fzf +m) && cd "$dir"
+}
+
+
+eval "$(starship init bash)"
+PS1='[\u@\h \W]\$ '
+
