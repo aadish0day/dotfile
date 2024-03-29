@@ -9,7 +9,9 @@ alias ls='ls --color=auto'
 alias grep='grep --color=auto'
 alias rd='rm -fr'
 alias music='mocp'
-alias yt='yt-dlp -f "bestvideo[height<=1080]+bestaudio/best[height<=1080]" --embed-metadata -o "%(playlist)s/%(title)s.%(ext)s"'
+alias ytvideo='yt-dlp -f "bestvideo[height<=1080]+bestaudio/best[height<=1080]" --embed-metadata --concurrent-fragments 30 -o "%(playlist)s/%(title)s.%(ext)s"'
+alias ytshort='yt-dlp -f "bestvideo[height<=1080]+bestaudio/best[height<=1080]" --embed-metadata --concurrent-fragments 30 --recode-video mp4 -o "%(playlist)s/%(title)s.%(ext)s"'
+
 alias ll='ls -l'
 alias la='ls -A'
 alias l='ls -CF'
@@ -21,6 +23,9 @@ alias reload='source ~/.bashrc'
 cdf() {
   local dir
   dir=$(find ${1:-.} -path '*/\.*' -prune -o -type d -print 2> /dev/null | fzf +m) && cd "$dir"
+}
+conv4wp() {
+    ffmpeg -i "$1" -c:v libx264 -profile:v baseline -level 3.0 -pix_fmt yuv420p "$2"
 }
 
 
