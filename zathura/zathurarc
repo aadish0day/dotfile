@@ -1,0 +1,7 @@
+set smooth-scroll true
+set auto-reload true
+picom --backend glx --vsync
+
+map i recolor
+map p print
+
