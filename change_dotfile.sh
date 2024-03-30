@@ -1,4 +1,5 @@
 
+cp bring_dotfile.sh ~/
 
 mv ~/.config/i3 ~/.config/i3.bak
 cp -r i3/ ~/.config/
@@ -10,3 +11,4 @@ cp -r ranger/ ~/.config/
 
 cp -r neofetch/ ~/.config/
 
+cp -r zathura/ ~/.config/
