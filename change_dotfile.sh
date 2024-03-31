@@ -3,28 +3,28 @@
 # Define the base directory for GitHub dotfiles
 GITHUB_DOTFILES_DIR=~/Documents/GitHub/dotfile
 
-# List of config directories to backup
-declare -A config_directories=(
-    [i3]=".config/i3"
-    [moc]=".moc"
-    [neofetch]=".config/neofetch"
-    [ranger]=".config/ranger"
-    [zathura]=".config/zathura"
-)
+# Ensure the base directory exists
+mkdir -p "$GITHUB_DOTFILES_DIR"
 
-# Loop through the config directories and perform operations
-for key in "${!config_directories[@]}"; do
-    src_dir="${HOME}/${config_directories[$key]}"
-    dest_dir="${GITHUB_DOTFILES_DIR}/${key}"
+# Backup i3 configuration
+rm -fr "$GITHUB_DOTFILES_DIR/i3"
+cp -r ~/.config/i3 "$GITHUB_DOTFILES_DIR/i3"
 
-    # Remove the destination directory if it exists
-    rm -fr "${dest_dir}"
+# Backup moc configuration
+rm -fr "$GITHUB_DOTFILES_DIR/moc"
+cp -r ~/.moc "$GITHUB_DOTFILES_DIR/moc"
 
-    # Copy the source directory to the destination
-    cp -r "${src_dir}" "${dest_dir}"
+# Backup neofetch configuration
+rm -fr "$GITHUB_DOTFILES_DIR/neofetch"
+cp -r ~/.config/neofetch "$GITHUB_DOTFILES_DIR/neofetch"
 
-    echo "Backed up ${config_directories[$key]} to ${dest_dir}"
-done
+# Backup ranger configuration
+rm -fr "$GITHUB_DOTFILES_DIR/ranger"
+cp -r ~/.config/ranger "$GITHUB_DOTFILES_DIR/ranger"
+
+# Backup zathura configuration
+rm -fr "$GITHUB_DOTFILES_DIR/zathura"
+cp -r ~/.config/zathura "$GITHUB_DOTFILES_DIR/zathura"
 
 echo "Backup completed."
 
