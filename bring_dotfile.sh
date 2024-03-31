@@ -14,7 +14,7 @@ fi
 
 # Copy dotfiles to their respective locations
 cp -r "$DOTFILES_DIR/i3/" ~/.config/
-cp -r "$DOTFILES_DIR/moc/" ~/.moc/
+cp -r "$DOTFILES_DIR/moc/" ~/.moc/*
 cp -r "$DOTFILES_DIR/ranger/" ~/.config/
 cp -r "$DOTFILES_DIR/neofetch/" ~/.config/
 cp -r "$DOTFILES_DIR/zathura/" ~/.config/
