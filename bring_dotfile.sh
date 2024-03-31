@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# Move the script to the home directory
 cp bring_dotfile.sh ~/
 
 # Define base directories for dotfiles and .config
