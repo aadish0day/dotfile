@@ -1,16 +1,30 @@
+#!/bin/bash
 
-rm -fr ~/Documents/GitHub/dotfile/i3/
-cp -r ~/.config/i3/ ~/Documents/GitHub/dotfile/
+# Define the base directory for GitHub dotfiles
+GITHUB_DOTFILES_DIR=~/Documents/GitHub/dotfile
 
-rm -fr ~/Documents/GitHub/dotfile/moc/
-cp -r ~/.moc/ ~/Documents/GitHub/dotfile/moc/
+# List of config directories to backup
+declare -A config_directories=(
+    [i3]=".config/i3"
+    [moc]=".moc"
+    [neofetch]=".config/neofetch"
+    [ranger]=".config/ranger"
+    [zathura]=".config/zathura"
+)
 
-rm -fr ~/Documents/GitHub/dotfile/neofetch/
-cp -r ~/.config/neofetch/ ~/Documents/GitHub/dotfile/
+# Loop through the config directories and perform operations
+for key in "${!config_directories[@]}"; do
+    src_dir="${HOME}/${config_directories[$key]}"
+    dest_dir="${GITHUB_DOTFILES_DIR}/${key}"
 
-rm -fr ~/Documents/GitHub/dotfile/ranger/
-cp -r ~/.config/ranger/ ~/Documents/GitHub/dotfile/
+    # Remove the destination directory if it exists
+    rm -fr "${dest_dir}"
 
-rm -fr ~/Documents/GitHub/dotfile/zathura/
-cp -r ~/.config/zathura/ ~/Documents/GitHub/dotfile/
+    # Copy the source directory to the destination
+    cp -r "${src_dir}" "${dest_dir}"
+
+    echo "Backed up ${config_directories[$key]} to ${dest_dir}"
+done
+
+echo "Backup completed."
 
