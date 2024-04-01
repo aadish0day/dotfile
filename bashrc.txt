@@ -32,3 +32,6 @@ conv4wp() {
 eval "$(starship init bash)"
 PS1='[\u@\h \W]\$ '
 
+# Created by `pipx` on 2024-03-29 18:16:58
+export PATH="$PATH:/home/aadish/.local/bin"
+

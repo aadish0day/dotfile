@@ -20,3 +20,10 @@ cp -r moc/* ~/.moc/
 ```
 cp -r ranger/ ~/.config/
 ```
+
+### ly
+
+```
+rm -fr /etc/ly/
+cp -r ly/ /etc/ 
+```
