@@ -7,12 +7,18 @@ mv ~/.config/i3 ~/.config/i3.bak
 cp -r i3/ ~/.config/
 ```
 
-
 ### moc (Music player) 
 
 ```
 mkdir -p ~/.moc
 cp -r moc/* ~/.moc/
+```
+
+### neofetch
+
+```
+rm -fr ~/.config/neofetch/ 
+cp -r neofetch/ ~/.config/neofetch/
 ```
 
 ### ranger
@@ -21,9 +27,9 @@ cp -r moc/* ~/.moc/
 cp -r ranger/ ~/.config/
 ```
 
-### ly
+### zathura
 
 ```
-rm -fr /etc/ly/
-cp -r ly/ /etc/ 
+cp -r zathura/ ~/.config/
 ```
+
