@@ -33,3 +33,10 @@ cp -r ranger/ ~/.config/
 cp -r zathura/ ~/.config/
 ```
 
+### tmux
+
+```
+git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+cp tmux.conf ~/.tmux.conf
+```
+
