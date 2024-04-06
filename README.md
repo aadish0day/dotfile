@@ -32,7 +32,7 @@ Create a systemd service to prevent suspension:
     sudo systemctl enable disable-suspend.service
     sudo systemctl start disable-suspend.service
     ```
-    ```
+``
 
 
 ## Managing Power Management with `systemd-logind`
@@ -59,7 +59,7 @@ Prevent automatic suspension:
     ```sh
     sudo systemctl restart systemd-logind.service
     ```
-    ```
+``
 
 ## i3 
 
