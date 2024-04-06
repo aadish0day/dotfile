@@ -4,7 +4,6 @@
 
 Create a systemd service to prevent suspension:
 
-sh```
 1. Create a systemd service file:
 
     ```
@@ -32,8 +31,6 @@ sh```
     sudo systemctl enable disable-suspend.service
     sudo systemctl start disable-suspend.service
     ```
-
-```
 
 ## Managing Power Management with `systemd-logind`
 
