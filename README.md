@@ -1,7 +1,5 @@
 # dotfile
 
-# Prevent Screen Blanking and System Suspension on Arch Linux with i3
-
 ## Disable Screen Blanking in Xorg
 
 To prevent the screen from turning off due to inactivity:
@@ -74,47 +72,47 @@ Prevent automatic suspension:
     sudo systemctl restart systemd-logind.service
     ```
 
-### i3 
+## i3 
 
 ```
 mv ~/.config/i3 ~/.config/i3.bak
 cp -r i3/ ~/.config/
 ```
 
-### moc (Music player) 
+## moc (Music player) 
 
 ```
 mkdir -p ~/.moc
 cp -r moc/* ~/.moc/
 ```
 
-### neofetch
+## neofetch
 
 ```
 rm -fr ~/.config/neofetch/ 
 cp -r neofetch/ ~/.config/neofetch/
 ```
 
-### ranger
+## ranger
 
 ```
 cp -r ranger/ ~/.config/
 ```
 
-### zathura
+## zathura
 
 ```
 cp -r zathura/ ~/.config/
 ```
 
-### tmux
+## tmux
 
 ```
 git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 cp tmux.conf ~/.tmux.conf
 ```
 
-### theme for qbittorrent
+## theme for qbittorrent
 
 ```
 cp theme/ ~/.theme
