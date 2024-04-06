@@ -1,11 +1,10 @@
 # dotfile
 
-# Prevent Screen Blanking and System Suspension on Arch Linux with i3
-
 ## SystemD Configuration to Prevent Suspension
 
 Create a systemd service to prevent suspension:
 
+sh```
 1. Create a systemd service file:
 
     ```
@@ -33,6 +32,8 @@ Create a systemd service to prevent suspension:
     sudo systemctl enable disable-suspend.service
     sudo systemctl start disable-suspend.service
     ```
+
+```
 
 ## Managing Power Management with `systemd-logind`
 
