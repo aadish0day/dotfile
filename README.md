@@ -1,5 +1,11 @@
 # dotfile
 
+## SystemD Configuration to Prevent Suspension
+
+```
+sudo ./disable-suspension.sh
+```
+
 ## i3 
 
 ```
@@ -40,7 +46,7 @@ git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 cp tmux.conf ~/.tmux.conf
 ```
 
-### theme for qbittorrent
+## theme for qbittorrent
 
 ```
 cp theme/ ~/.theme
