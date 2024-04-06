@@ -2,7 +2,6 @@
 
 ## SystemD Configuration to Prevent Suspension
 
-```sh
 Create a systemd service to prevent suspension:
 
 1. Create a systemd service file:
@@ -32,14 +31,11 @@ Create a systemd service to prevent suspension:
     sudo systemctl enable disable-suspend.service
     sudo systemctl start disable-suspend.service
     ```
-``
-
 
 ## Managing Power Management with `systemd-logind`
 
 Prevent automatic suspension:
 
-```sh
 1. Edit `/etc/systemd/logind.conf`:
 
     ```sh
@@ -59,7 +55,7 @@ Prevent automatic suspension:
     ```sh
     sudo systemctl restart systemd-logind.service
     ```
-``
+
 
 ## i3 
 
