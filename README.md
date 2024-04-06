@@ -1,12 +1,30 @@
 # dotfile
 
+# Prevent Screen Blanking and System Suspension on Arch Linux with i3
+
+## Disable Screen Blanking in Xorg
+
+To prevent the screen from turning off due to inactivity:
+
+1. Edit your `.xinitrc` file:
+
+    ```sh
+    nvim ~/.xinitrc
+    ```
+
+2. Add the following lines before the line that starts i3:
+
+    ```sh
+    xset s off -dpms
+    ```
+
 ## SystemD Configuration to Prevent Suspension
 
 Create a systemd service to prevent suspension:
 
 1. Create a systemd service file:
 
-    ```
+    ```sh
     sudo nvim /etc/systemd/system/disable-suspend.service
     ```
 
@@ -27,7 +45,7 @@ Create a systemd service to prevent suspension:
 
 3. Enable and start the service:
 
-    ```
+    ```sh
     sudo systemctl enable disable-suspend.service
     sudo systemctl start disable-suspend.service
     ```
@@ -38,13 +56,13 @@ Prevent automatic suspension:
 
 1. Edit `/etc/systemd/logind.conf`:
 
-    ```
+    ```sh
     sudo nvim /etc/systemd/logind.conf
     ```
 
 2. Modify or add the following lines:
 
-    ```
+    ```sh
     HandleSuspendKey=ignore
     HandleLidSwitch=ignore
     HandleHibernateKey=ignore
@@ -52,12 +70,9 @@ Prevent automatic suspension:
 
 3. Restart the `systemd-logind` service:
 
-    ```
+    ```sh
     sudo systemctl restart systemd-logind.service
     ```
-
-
-</details>
 
 ### i3 
 
