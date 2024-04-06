@@ -1,21 +1,5 @@
 # dotfile
 
-## Disable Screen Blanking in Xorg
-
-To prevent the screen from turning off due to inactivity:
-
-1. Edit your `.xinitrc` file:
-
-    ```sh
-    nvim ~/.xinitrc
-    ```
-
-2. Add the following lines before the line that starts i3:
-
-    ```sh
-    xset s off -dpms
-    ```
-
 ## SystemD Configuration to Prevent Suspension
 
 Create a systemd service to prevent suspension:
