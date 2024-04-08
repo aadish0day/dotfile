@@ -51,3 +51,13 @@ cp tmux.conf ~/.tmux.conf
 ```
 cp -r theme/ ~/.theme
 ```
+
+## tmux 
+
+```
+cp -r tmux/ ~/.config/
+```
+
+
+
+
