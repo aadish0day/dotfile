@@ -49,5 +49,5 @@ cp tmux.conf ~/.tmux.conf
 ## theme for qbittorrent
 
 ```
-cp theme/ ~/.theme
+cp -r theme/ ~/.theme
 ```
