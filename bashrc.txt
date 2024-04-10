@@ -5,17 +5,17 @@
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
+alias reload='source ~/.bashrc'
 alias ls='ls --color=auto'
+alias ll='ls -l'
+alias la='ls -A'
+alias l='ls -CF'
 alias grep='grep --color=auto'
 alias rd='rm -fr'
 alias music='mocp'
 alias ytvideo='yt-dlp -f "bestvideo[height<=1080]+bestaudio/best[height<=1080]" --embed-metadata --concurrent-fragments 30 -o "%(playlist)s/%(title)s.%(ext)s"'
 alias ytshort='yt-dlp -f "bestvideo[height<=1080]+bestaudio/best[height<=1080]" --embed-metadata --concurrent-fragments 30 --recode-video mp4 -o "%(playlist)s/%(title)s.%(ext)s"'
 
-alias ll='ls -l'
-alias la='ls -A'
-alias l='ls -CF'
-alias reload='source ~/.bashrc'
 
 
 
@@ -24,14 +24,30 @@ cdf() {
   local dir
   dir=$(find ${1:-.} -path '*/\.*' -prune -o -type d -print 2> /dev/null | fzf +m) && cd "$dir"
 }
+
 conv4wp() {
     ffmpeg -i "$1" -c:v libx264 -profile:v baseline -level 3.0 -pix_fmt yuv420p "$2"
+}
+
+cdc() {
+  local dir
+  # Use find and fzf to select a directory
+  dir=$(find ${1:-.} -path '*/\.*' -prune -o -type d -print 2> /dev/null | fzf +m) && \
+  if [ -n "$dir" ]; then # Proceed only if $dir is not empty
+    # Change directory
+    cd "$dir" || return # return in case cd fails
+    # Start a new tmux session or attach to an existing one
+    # You can customize the tmux command as per your requirements
+    if ! tmux attach-session -t mysession; then
+      tmux new-session -s mysession
+    fi
+  fi
 }
 
 
 eval "$(starship init bash)"
 PS1='[\u@\h \W]\$ '
 
-# Created by `pipx` on 2024-03-29 18:16:58
-export PATH="$PATH:/home/aadish/.local/bin"
+export LANG=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
 

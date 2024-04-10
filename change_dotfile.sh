@@ -1,12 +1,40 @@
+#!/bin/bash
 
-mv ~/.config/i3 ~/.config/i3.bak
-cp -r i3/ ~/.config/
+# Ensure the script exits if any command fails
+set -e
 
-cp -r moc/ ~/.moc
+# Copy bring_dotfile.sh 
+cp -r bring_dotfile.sh ~/
 
+# Copy i3 configuration
+echo "Updating i3 configuration..."
+cp -r i3/ ~/.config/i3
+
+# Ensure .moc directory exists and copy MOC configuration
+echo "Updating MOC configuration..."
+mkdir -p ~/.moc
+cp -r moc/* ~/.moc/
+
+# Remove existing Neofetch configuration and copy the new one
+echo "Updating Neofetch configuration..."
+rm -rf ~/.config/neofetch/
 cp -r neofetch/ ~/.config/
 
-cp -r ranger/ ~/.config/
+# Copy Ranger configuration
+echo "Updating Ranger configuration..."
+cp -r ranger/ ~/.config/ranger
 
+# Copy Zathura configuration
+echo "Updating Zathura configuration..."
+cp -r zathura/ ~/.config/zathura
 
+# Copy theme
+echo "Updating system theme..."
+cp -r theme/ ~/.theme
+
+# Copy Tmux configuration
+echo "Updating Tmux configuration..."
+cp -r tmux/ ~/.config/tmux
+
+echo "Dotfile update complete!"
 
