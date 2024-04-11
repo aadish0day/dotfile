@@ -36,5 +36,9 @@ cp -r theme/ ~/.theme
 echo "Updating Tmux configuration..."
 cp -r tmux/ ~/.config/tmux
 
+# Copy Picom configuration
+echo "Updating Picom  configuration..."
+cp -r picom/ ~/.config/
+
 echo "Dotfile update complete!"
 

@@ -51,6 +51,11 @@ cp -r theme/ ~/.theme
 cp -r tmux/ ~/.config/
 ```
 
+## picom 
+
+```
+cp -r picom/ ~/.config/
+```
 
 
 
