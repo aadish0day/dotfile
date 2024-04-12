@@ -8,7 +8,7 @@ cp -r bring_dotfile.sh ~/
 
 # Copy i3 configuration
 echo "Updating i3 configuration..."
-cp -r i3/ ~/.config/i3
+cp -r i3/ ~/.config/
 
 # Ensure .moc directory exists and copy MOC configuration
 echo "Updating MOC configuration..."
@@ -22,11 +22,11 @@ cp -r neofetch/ ~/.config/
 
 # Copy Ranger configuration
 echo "Updating Ranger configuration..."
-cp -r ranger/ ~/.config/ranger
+cp -r ranger/ ~/.config/
 
 # Copy Zathura configuration
 echo "Updating Zathura configuration..."
-cp -r zathura/ ~/.config/zathura
+cp -r zathura/ ~/.config/
 
 # Copy theme
 echo "Updating system theme..."
@@ -34,7 +34,7 @@ cp -r theme/ ~/.theme
 
 # Copy Tmux configuration
 echo "Updating Tmux configuration..."
-cp -r tmux/ ~/.config/tmux
+cp -r tmux/ ~/.config/
 
 # Copy Picom configuration
 echo "Updating Picom  configuration..."
