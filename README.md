@@ -57,5 +57,9 @@ cp -r tmux/ ~/.config/
 cp -r picom/ ~/.config/
 ```
 
+## rofi 
 
+```
+cp -r rofi/ ~/.config/
+```
 
