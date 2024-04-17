@@ -40,9 +40,10 @@ cp -r tmux/ ~/.config/
 echo "Updating Picom  configuration..."
 cp -r picom/ ~/.config/
 
-# Copy Rofi configuration
-echo "Updating rofi configuration..."
-cp -r rofi/ ~/.config/
+# Copy Xfce4 configuration
+echo "Updating xfce4 configuration..."
+rm -fr ~/.config/xfce4/
+cp -f xfce4/ ~/.config/
 
 echo "Dotfile update complete!"
 
