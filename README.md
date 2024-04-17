@@ -57,9 +57,11 @@ cp -r tmux/ ~/.config/
 cp -r picom/ ~/.config/
 ```
 
-## rofi 
+## xfce 
 
 ```
-cp -r rofi/ ~/.config/
+rm -fr ~/.config/xfce4/
+cp -f xfce4/ ~/.config/
 ```
+
 
