@@ -4,7 +4,7 @@
 set -e
 
 # Copy bring_dotfile.sh 
-cp -r bring_dotfile.sh ~/
+cp -r ./bring_dotfile.sh ~/
 
 # Copy i3 configuration
 echo "Updating i3 configuration..."
