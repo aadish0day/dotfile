@@ -8,6 +8,7 @@ cp -r ./bring_dotfile.sh ~/
 
 # Copy i3 configuration
 echo "Updating i3 configuration..."
+rm -fr ~/.config/i3/
 cp -r i3/ ~/.config/
 
 # Ensure .moc directory exists and copy MOC configuration
@@ -37,13 +38,20 @@ echo "Updating Tmux configuration..."
 cp -r tmux/ ~/.config/
 
 # Copy Picom configuration
-echo "Updating Picom  configuration..."
+echo "Updating Picom configuration..."
 cp -r picom/ ~/.config/
 
-# Copy Xfce4 configuration
-echo "Updating xfce4 configuration..."
-rm -fr ~/.config/xfce4/
-cp -f xfce4/ ~/.config/
+# Ask for permission to update Xfce4 configuration
+echo "Do you want to update the xfce4 configuration? (y/n)"
+read answer
+if [ "$answer" = "y" ]; then
+    echo "Updating xfce4 configuration..."
+    rm -fr ~/.config/xfce4/
+    cp -r xfce4/ ~/.config/
+    echo "Xfce4 configuration updated."
+else
+    echo "Xfce4 configuration update skipped."
+fi
 
 echo "Dotfile update complete!"
 
