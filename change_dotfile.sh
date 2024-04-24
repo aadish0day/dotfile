@@ -6,6 +6,11 @@ set -e
 # Copy bring_dotfile.sh 
 cp -r ./bring_dotfile.sh ~/
 
+# Copy the bashrc file
+echo "Updating bashrc configuration..."
+cp -r ./bashrc ~/.bashrc
+source ~/.bashrc
+
 # Copy i3 configuration
 echo "Updating i3 configuration..."
 rm -fr ~/.config/i3/
