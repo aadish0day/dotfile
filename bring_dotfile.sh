@@ -1,3 +1,8 @@
+
+echo "Backup Bash configuration..."
+rm -fr ~/Documents/GitHub/dotfile/bashrc
+cp -r ~/.bashrc ~/Documents/GitHub/dotfile/bashrc
+
 echo "Backup i3 configuration..."
 rm -fr ~/Documents/GitHub/dotfile/i3/
 cp -r ~/.config/i3/ ~/Documents/GitHub/dotfile/
@@ -33,4 +38,9 @@ cp -r ~/.config/xfce4/ ~/Documents/GitHub/dotfile/
 echo "Backup Zathura configuration..."
 rm -fr ~/Documents/GitHub/dotfile/zathura/
 cp -r ~/.config/zathura/ ~/Documents/GitHub/dotfile/
+
+echo "Backup Kitty configuration..."
+rm -fr ~/Documents/GitHub/dotfile/zathura/
+cp -r ~/.config/kitty/ ~/Documents/GitHub/dotfile/
+
 

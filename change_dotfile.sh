@@ -16,6 +16,11 @@ echo "Updating i3 configuration..."
 rm -fr ~/.config/i3/
 cp -r i3/ ~/.config/
 
+# Copy kitty configuration
+echo "Updating kitty configuration..."
+rm -fr ~/.config/kitty/
+cp -r kitty/ ~/.config/
+
 # Ensure .moc directory exists and copy MOC configuration
 echo "Updating MOC configuration..."
 mkdir -p ~/.moc
