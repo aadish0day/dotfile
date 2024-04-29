@@ -167,7 +167,7 @@ bindsym $mod+r mode "resize"
 # keybindings for different actions: #
 ######################################
 
-# start a terminal
+# start a Terminal
 bindsym $mod+Return exec --no-startup-id kitty
 
 # kill focused window
@@ -285,7 +285,7 @@ bindsym XF86AudioPrev exec --no-startup-id playerctl previous
 # Redirect sound to headphones
 bindsym $mod+p exec --no-startup-id /usr/local/bin/switch-audio-port
 
-## App shortcuts
+# App shortcuts
 bindsym $mod+w exec --no-startup-id thorium-browser
 bindsym $mod+n exec --no-startup-id thunar
 bindsym $mod+m exec --no-startup-id github-desktop
@@ -321,13 +321,13 @@ set $ws10 "10"
 #workspace $ws5 output HDMI-0
 
 # bind program to workspace and focus to them on startup:
-assign [class="Xfce4-terminal"] $ws1
+assign [class="kitty"] $ws1
 assign [class="(?i)thorium-browser"] $ws2
 assign [class="Thunar"] $ws3
 assign [class="GitHubDesktop"] $ws4
 
 # automatic set focus new window if it opens on another workspace than the current:
-for_window [class=Xfce4-terminal] focus
+for_window [class=kitty] focus
 for_window [class=(?i)thorium-browser] focus
 for_window [class=Thunar] focus
 for_window [class=GitHubDesktop] focus
