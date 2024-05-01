@@ -23,8 +23,7 @@ cp -r kitty/ ~/.config/
 
 # Ensure .moc directory exists and copy MOC configuration
 echo "Updating MOC configuration..."
-mkdir -p ~/.moc
-cp -r moc/* ~/.moc/
+cp -r moc/ ~/.moc/
 
 # Remove existing Neofetch configuration and copy the new one
 echo "Updating Neofetch configuration..."
