@@ -1,46 +1,72 @@
+#!/bin/bash
+
+echo "Setting up paths..."
+backup_dir=~/Documents/GitHub/dotfile
 
 echo "Backup Bash configuration..."
-rm -fr ~/Documents/GitHub/dotfile/bashrc
-cp -r ~/.bashrc ~/Documents/GitHub/dotfile/bashrc
+bashrc_src=~/.bashrc
+bashrc_dest=$backup_dir/bashrc
+rm -rf $bashrc_dest
+cp -r $bashrc_src $bashrc_dest
 
 echo "Backup i3 configuration..."
-rm -fr ~/Documents/GitHub/dotfile/i3/
-cp -r ~/.config/i3/ ~/Documents/GitHub/dotfile/
+i3_src=~/.config/i3
+i3_dest=$backup_dir/i3
+rm -rf $i3_dest
+cp -r $i3_src $i3_dest
 
 echo "Backup MOC configuration..."
-rm -fr ~/Documents/GitHub/dotfile/moc/
-cp -r ~/.moc/ ~/Documents/GitHub/dotfile/moc/
+moc_src=~/.moc
+moc_dest=$backup_dir/moc
+rm -rf $moc_dest
+cp -r $moc_src $moc_dest
 
 echo "Backup Neofetch configuration..."
-rm -fr ~/Documents/GitHub/dotfile/neofetch/
-cp -r ~/.config/neofetch/ ~/Documents/GitHub/dotfile/neofetch/
+neofetch_src=~/.config/neofetch
+neofetch_dest=$backup_dir/neofetch
+rm -rf $neofetch_dest
+cp -r $neofetch_src $neofetch_dest
 
 echo "Backup Picom configuration..."
-rm -fr ~/Documents/GitHub/dotfile/picom/
-cp -r ~/.config/picom/ ~/Documents/GitHub/dotfile/
+picom_src=~/.config/picom
+picom_dest=$backup_dir/picom
+rm -rf $picom_dest
+cp -r $picom_src $picom_dest
 
 echo "Backup Ranger configuration..."
-rm -fr ~/Documents/GitHub/dotfile/ranger/
-cp -r ~/.config/ranger/ ~/Documents/GitHub/dotfile/
+ranger_src=~/.config/ranger
+ranger_dest=$backup_dir/ranger
+rm -rf $ranger_dest
+cp -r $ranger_src $ranger_dest
 
 echo "Backup Theme configuration..."
-rm -fr ~/Documents/GitHub/dotfile/theme/
-cp -r ~/.theme/ ~/Documents/GitHub/dotfile/theme/
+theme_src=~/.theme
+theme_dest=$backup_dir/theme
+rm -rf $theme_dest
+cp -r $theme_src $theme_dest
 
 echo "Backup Tmux configuration..."
-rm -fr ~/Documents/GitHub/dotfile/tmux/
-cp -r ~/.config/tmux/ ~/Documents/GitHub/dotfile/
+tmux_src=~/.config/tmux
+tmux_dest=$backup_dir/tmux
+rm -rf $tmux_dest
+cp -r $tmux_src $tmux_dest
 
 echo "Backup XFCE4 configuration..."
-rm -fr ~/Documents/GitHub/dotfile/xfce4/
-cp -r ~/.config/xfce4/ ~/Documents/GitHub/dotfile/
+xfce4_src=~/.config/xfce4
+xfce4_dest=$backup_dir/xfce4
+rm -rf $xfce4_dest
+cp -r $xfce4_src $xfce4_dest
 
 echo "Backup Zathura configuration..."
-rm -fr ~/Documents/GitHub/dotfile/zathura/
-cp -r ~/.config/zathura/ ~/Documents/GitHub/dotfile/
+zathura_src=~/.config/zathura
+zathura_dest=$backup_dir/zathura
+rm -rf $zathura_dest
+cp -r $zathura_src $zathura_dest
 
 echo "Backup Kitty configuration..."
-rm -fr ~/Documents/GitHub/dotfile/zathura/
-cp -r ~/.config/kitty/ ~/Documents/GitHub/dotfile/
+kitty_src=~/.config/kitty
+kitty_dest=$backup_dir/kitty
+rm -rf $kitty_dest
+cp -r $kitty_src $kitty_dest
 
-
+echo "All configurations have been backed up successfully!"

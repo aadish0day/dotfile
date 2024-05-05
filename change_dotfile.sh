@@ -3,7 +3,7 @@
 # Ensure the script exits if any command fails
 set -e
 
-# Copy bring_dotfile.sh 
+# Copy bring_dotfile.sh
 cp -r ./bring_dotfile.sh ~/
 
 # Copy the bashrc file
@@ -54,13 +54,12 @@ cp -r picom/ ~/.config/
 echo "Do you want to update the xfce4 configuration? (y/n)"
 read answer
 if [ "$answer" = "y" ]; then
-    echo "Updating xfce4 configuration..."
-    rm -fr ~/.config/xfce4/
-    cp -r xfce4/ ~/.config/
-    echo "Xfce4 configuration updated."
+	echo "Updating xfce4 configuration..."
+	rm -fr ~/.config/xfce4/
+	cp -r xfce4/ ~/.config/
+	echo "Xfce4 configuration updated."
 else
-    echo "Xfce4 configuration update skipped."
+	echo "Xfce4 configuration update skipped."
 fi
 
 echo "Dotfile update complete!"
-

@@ -2,12 +2,12 @@
 
 # Ensure the script is run as root
 if [ "$(id -u)" -ne 0 ]; then
-    echo "This script must be run as root" 1>&2
-    exit 1
+	echo "This script must be run as root" 1>&2
+	exit 1
 fi
 
 # Create and enable systemd service to prevent suspension
-cat <<EOF > /etc/systemd/system/disable-suspend.service
+cat <<EOF >/etc/systemd/system/disable-suspend.service
 [Unit]
 Description=Prevent suspend
 Before=sleep.target
@@ -36,4 +36,3 @@ sed -i '/^#HandleHibernateKey=hibernate$/c\HandleHibernateKey=ignore' /etc/syste
 systemctl restart systemd-logind.service
 
 echo "System suspension has been successfully disabled."
-

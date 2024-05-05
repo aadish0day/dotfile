@@ -33,6 +33,7 @@ alias l='ls -CF'
 alias grep='grep --color=auto'
 alias rd='rm -fr'
 alias music='mocp'
+alias tmux="TERM=xterm-256color tmux"
 alias ytvideo='yt-dlp -f "bestvideo[height<=1080]+bestaudio/best[height<=1080]" --embed-metadata --concurrent-fragments 30 -o "%(playlist)s/%(title)s.%(ext)s"'
 alias ytshort='yt-dlp -f "bestvideo[height<=1080]+bestaudio/best[height<=1080]" --embed-metadata --concurrent-fragments 16 --recode-video mp4 -o "%(playlist)s/%(title)s.%(ext)s"'
 
@@ -67,9 +68,5 @@ cdc() {
 
 eval "$(starship init bash)"
 
-export LANG=en_US.UTF-8
-export LC_ALL=en_US.UTF-8
-
 
 export TERM=xterm-256color
-alias tmux="TERM=xterm-256color tmux"
