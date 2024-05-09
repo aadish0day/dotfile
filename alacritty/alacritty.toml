@@ -1,0 +1,39 @@
+[colors.bright]
+black = "#555753"
+blue = "#739fcf"
+cyan = "#34e2e2"
+green = "#8ae234"
+magenta = "#ad7fa8"
+red = "#ef2929"
+white = "#eeeeec"
+yellow = "#fce94f"
+
+[colors.normal]
+black = "#808080"
+blue = "#739fcf"
+cyan = "#34e2e2"
+green = "#8ae234"
+magenta = "#75507b"
+red = "#ef2929"
+white = "#d3d7cf"
+yellow = "#fce94f"
+
+[colors.primary]
+background = "#000000"
+foreground = "#e3e3ea"
+
+[colors.selection]
+background = "#ff7f7f"
+text = "#FFFFFF"
+
+[window]
+opacity = 0.65
+
+[font]
+normal = { family = "Source Code Pro", style = "Bold" }
+bold = { family = "Source Code Pro", style = "Bold" }
+italic = { family = "Source Code Pro", style = "Italic" }
+bold_italic = { family = "Source Code Pro", style = "Bold Italic" }
+size = 9.0  # You can adjust the size according to your preference
+
+

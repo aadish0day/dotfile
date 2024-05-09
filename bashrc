@@ -25,6 +25,23 @@ fi
 stty susp undef
 stty -ixon
 
+set -o vi
+
+# Function to change prompt according to vi mode
+function set_vi_mode_prompt {
+  case $1 in
+    insert)
+      PS1='\[\033[01;32m\]\u@\h:\w\$ \[\033[00m\] '
+      ;;
+    command)
+      PS1='\[\033[01;31m\](Vi mode) \u@\h:\w\$ \[\033[00m\] '
+      ;;
+  esac
+}
+
+# Set default mode to command when the shell starts
+set_vi_mode_prompt command
+
 alias reload='source ~/.bashrc'
 alias ls='ls --color=auto'
 alias ll='ls -l'
@@ -36,9 +53,18 @@ alias music='mocp'
 alias tmux="TERM=xterm-256color tmux"
 alias ytvideo='yt-dlp -f "bestvideo[height<=1080]+bestaudio/best[height<=1080]" --embed-metadata --concurrent-fragments 30 -o "%(playlist)s/%(title)s.%(ext)s"'
 alias ytshort='yt-dlp -f "bestvideo[height<=1080]+bestaudio/best[height<=1080]" --embed-metadata --concurrent-fragments 16 --recode-video mp4 -o "%(playlist)s/%(title)s.%(ext)s"'
+alias ytmusic='yt-dlp -x --audio-format mp3 --audio-quality 0 -o "%(playlist)s/%(title)s.%(ext)s"'
 
 alias extractgz='tar -xzvf'
-alias cat='cat -n'
+
+
+
+fzf_reverse_i_search() {
+   local selected_command=$(history | fzf --tac --sync -e +s --tac | sed 's/ *[0-9]* *//')
+   READLINE_LINE=$selected_command
+   READLINE_POINT=${#READLINE_LINE}
+}
+bind -x '"\C-r": fzf_reverse_i_search'
 
 
 # Use fzf to change directories
@@ -46,6 +72,7 @@ cdf() {
   local dir
   dir=$(find ${1:-.} -path '*/\.*' -prune -o -type d -print 2> /dev/null | fzf +m) && cd "$dir"
 }
+bind -x '"\C-f": cdf'
 
 conv4wp() {
     ffmpeg -i "$1" -c:v libx264 -profile:v baseline -level 3.0 -pix_fmt yuv420p "$2"
@@ -67,7 +94,9 @@ cdc() {
 }
 
 
+export TERM=xterm-256color
+export EDITOR='nvim'
+
 eval "$(starship init bash)"
 
 
-export TERM=xterm-256color

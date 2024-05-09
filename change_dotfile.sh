@@ -50,6 +50,10 @@ cp -r tmux/ ~/.config/
 echo "Updating Picom configuration..."
 cp -r picom/ ~/.config/
 
+# Copy Picom configuration
+echo "Updating alacritty cconfiguration..."
+cp -r alacritty/ ~/.config/
+
 # Ask for permission to update Xfce4 configuration
 echo "Do you want to update the xfce4 configuration? (y/n)"
 read answer

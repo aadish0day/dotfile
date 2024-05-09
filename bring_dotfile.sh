@@ -69,4 +69,11 @@ kitty_dest=$backup_dir/kitty
 rm -rf $kitty_dest
 cp -r $kitty_src $kitty_dest
 
+echo "Backup Alacritty configuration..."
+kitty_src=~/.config/alacritty/
+kitty_dest=$backup_dir/alacritty
+rm -rf $kitty_dest
+cp -r $kitty_src $kitty_dest
+
 echo "All configurations have been backed up successfully!"
+
