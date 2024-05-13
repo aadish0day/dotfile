@@ -23,11 +23,6 @@ if [[ -r /usr/share/bash-completion/bash_completion ]]; then
   . /usr/share/bash-completion/bash_completion
 fi
 
-# Check if xbindkeys is running and start if not
-if ! pgrep -x "xbindkeys" > /dev/null; then
-    xbindkeys
-fi
-
 
 stty susp undef
 stty -ixon
