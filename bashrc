@@ -22,25 +22,22 @@ esac
 if [[ -r /usr/share/bash-completion/bash_completion ]]; then
   . /usr/share/bash-completion/bash_completion
 fi
+
+# Check if xbindkeys is running and start if not
+if ! pgrep -x "xbindkeys" > /dev/null; then
+    xbindkeys
+fi
+
+
 stty susp undef
 stty -ixon
 
-set -o vi
+# set -o vi
+# 
+# set show-mode-in-prompt on
+# set vi-ins-mode-string \1\e[6 q\2
+# set vi-cmd-mode-string \1\e[2 q\2
 
-# Function to change prompt according to vi mode
-function set_vi_mode_prompt {
-  case $1 in
-    insert)
-      PS1='\[\033[01;32m\]\u@\h:\w\$ \[\033[00m\] '
-      ;;
-    command)
-      PS1='\[\033[01;31m\](Vi mode) \u@\h:\w\$ \[\033[00m\] '
-      ;;
-  esac
-}
-
-# Set default mode to command when the shell starts
-set_vi_mode_prompt command
 
 alias reload='source ~/.bashrc'
 alias ls='ls --color=auto'

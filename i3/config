@@ -294,6 +294,12 @@ bindsym Print exec --no-startup-id exec flameshot gui
 # Power Profiles menu switcher (rofi)
 bindsym $mod+Shift+p exec --no-startup-id ~/.config/i3/scripts/power-profiles
 
+bindsym Control+Mod1+n exec /usr/bin/mocp --next
+bindsym Control+Mod1+b exec /usr/bin/mocp --previous
+bindsym Control+Mod1+p exec mocp --toggle-pause
+
+
+
 ##########################################
 # configuration for workspace behaviour: #
 ##########################################
