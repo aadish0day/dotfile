@@ -88,6 +88,7 @@ cdc() {
 
 export TERM=xterm-256color
 export EDITOR='nvim'
+export BAT_THEME=Dracula
 
 eval "$(starship init bash)"
 
