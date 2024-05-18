@@ -32,7 +32,6 @@ stty -ixon
 # set vi-ins-mode-string \1\e[6 q\2
 # set vi-cmd-mode-string \1\e[2 q\2
 
-alias reload='source ~/.bashrc'
 alias ls='ls --color=auto'
 alias ll='ls -l'
 alias la='ls -A'
