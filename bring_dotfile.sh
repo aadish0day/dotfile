@@ -9,7 +9,6 @@ declare -A paths=(
     [~/.zshrc]="$backup_dir/zshrc"
     [~/.config/i3]="$backup_dir/i3"
     [~/.moc]="$backup_dir/moc"
-    [~/.config/neofetch]="$backup_dir/neofetch"
     [~/.config/picom]="$backup_dir/picom"
     [~/.config/ranger]="$backup_dir/ranger"
     [~/.theme]="$backup_dir/theme"
@@ -18,6 +17,7 @@ declare -A paths=(
     [~/.config/zathura]="$backup_dir/zathura"
     [~/.config/kitty]="$backup_dir/kitty"
     [~/.config/alacritty]="$backup_dir/alacritty"
+    [~/.config/fastfetch]="$backup_dir/fastfetch"
 )
 
 # Loop through the associative array
