@@ -29,10 +29,10 @@ cp -r kitty/ ~/.config/
 echo "Updating MOC configuration..."
 cp -r moc/ ~/.moc/
 
-# Remove existing Neofetch configuration and copy the new one
-echo "Updating Neofetch configuration..."
-rm -rf ~/.config/neofetch/
-cp -r neofetch/ ~/.config/
+# Remove existing fastfetch configuration and copy the new one
+echo "Updating fastfetch configuration..."
+rm -rf ~/.config/fastfetch/
+cp -r fastfetch/ ~/.config/
 
 # Copy Ranger configuration
 echo "Updating Ranger configuration..."
