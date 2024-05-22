@@ -5,3 +5,7 @@ picom --backend glx --vsync
 map i recolor
 map p print
 
+set browser "xdg-open"
+
+set selection-clipboard clipboard
+
