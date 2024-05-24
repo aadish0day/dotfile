@@ -3,70 +3,42 @@
 # Ensure the script exits if any command fails
 set -e
 
-# Copy bring_dotfile.sh
-cp -r ./bring_dotfile.sh ~/
+# Function to update configuration directories
+update_config() {
+	local src=$1
+	local dest=$2
+	echo "Updating $src configuration..."
+	rm -fr "$dest"
+	cp -r "$src/" "$dest"
+}
 
-# Copy the bashrc file
-echo "Updating bashrc configuration..."
+# Copy essential dotfiles
+cp -r ./bring_dotfile.sh ~/
 cp -r ./bashrc ~/.bashrc
 source ~/.bashrc
-
-echo "Updating bashrc configuration..."
 cp -r ./zshrc ~/.zshrc
+cp -r ./theme/ ~/.theme
 
-# Copy i3 configuration
-echo "Updating i3 configuration..."
-rm -fr ~/.config/i3/
-cp -r i3/ ~/.config/
+# Update configurations for various applications
+update_config ./i3 ~/.config/i3
+update_config ./kitty ~/.config/kitty
+update_config ./moc ~/.moc
+update_config ./fastfetch ~/.config/fastfetch
+update_config ./ranger ~/.config/ranger
+update_config ./zathura ~/.config/zathura
+update_config ./tmux ~/.config/tmux
+update_config ./picom ~/.config/picom
+update_config ./alacritty ~/.config/alacritty
 
-# Copy kitty configuration
-echo "Updating kitty configuration..."
-rm -fr ~/.config/kitty/
-cp -r kitty/ ~/.config/
-
-# Ensure .moc directory exists and copy MOC configuration
-echo "Updating MOC configuration..."
-cp -r moc/ ~/.moc/
-
-# Remove existing fastfetch configuration and copy the new one
-echo "Updating fastfetch configuration..."
-rm -rf ~/.config/fastfetch/
-cp -r fastfetch/ ~/.config/
-
-# Copy Ranger configuration
-echo "Updating Ranger configuration..."
-cp -r ranger/ ~/.config/
-
-# Copy Zathura configuration
-echo "Updating Zathura configuration..."
-cp -r zathura/ ~/.config/
-
-# Copy theme
-echo "Updating system theme..."
-cp -r theme/ ~/.theme
-
-# Copy Tmux configuration
-echo "Updating Tmux configuration..."
-cp -r tmux/ ~/.config/
-
-# Copy Picom configuration
-echo "Updating Picom configuration..."
-cp -r picom/ ~/.config/
-
-# Copy Picom configuration
-echo "Updating alacritty cconfiguration..."
-cp -r alacritty/ ~/.config/
-
-# Ask for permission to update Xfce4 configuration
+# Conditional update for Xfce4 configuration
 echo "Do you want to update the xfce4 configuration? (y/n)"
 read answer
 if [ "$answer" = "y" ]; then
-	echo "Updating xfce4 configuration..."
-	rm -fr ~/.config/xfce4/
-	cp -r xfce4/ ~/.config/
+	update_config ./xfce4 ~/.config/xfce4
 	echo "Xfce4 configuration updated."
 else
 	echo "Xfce4 configuration update skipped."
 fi
 
 echo "Dotfile update complete!"
+echo "Please restart your shell or manually source the configuration files if necessary."
