@@ -13,7 +13,6 @@ source ~/.bashrc
 
 echo "Updating bashrc configuration..."
 cp -r ./zshrc ~/.zshrc
-source ~/.zshrc
 
 # Copy i3 configuration
 echo "Updating i3 configuration..."

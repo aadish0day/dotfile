@@ -21,6 +21,8 @@ autoload -Uz compinit && compinit
 
 zinit cdreplay -q
 
+# Add in snippets
+zinit snippet OMZP::vi-mode
 
 # Define aliases
 alias reload='source ~/.zshrc'
@@ -50,6 +52,10 @@ setopt hist_save_no_dups
 setopt hist_ignore_dups
 setopt hist_find_no_dups
 
+# vi mode
+bindkey -v
+KEYTIMEOUT=1
+
 
 # Completion styling
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
@@ -61,6 +67,7 @@ bindkey -e
 bindkey '^p' history-search-backward
 bindkey '^n' history-search-forward
 bindkey '^F' cdf
+bindkey '^[' vi-cmd-mode
 
 # Use fzf to change directories
 cdf() {
