@@ -79,6 +79,39 @@ cdc() {
 		fi
 }
 
+extract() {
+    if [ -z "$1" ]; then
+        echo "Usage: extract <file>"
+        return 1
+    fi
+
+    local file="$1"
+    local dest="${file%.*}"
+
+    if [ ! -f "$file" ]; then
+        echo "'$file' is not a valid file."
+        return 1
+    fi
+
+    mkdir -p "$dest"
+    case "$file" in
+        *.tar.gz|*.tgz) tar -xvzf "$file" -C "$dest" ;;
+        *.tar.bz2) tar -xvjf "$file" -C "$dest" ;;
+        *.tar.xz) tar -xvJf "$file" -C "$dest" ;;
+        *.tar) tar -xvf "$file" -C "$dest" ;;
+        *.gz) gunzip -c "$file" > "$dest/$(basename "${file%.gz}")" ;;
+        *.bz2) bunzip2 -c "$file" > "$dest/$(basename "${file%.bz2}")" ;;
+        *.xz) unxz -c "$file" > "$dest/$(basename "${file%.xz}")" ;;
+        *.zip) unzip -d "$dest" "$file" ;;
+        *.7z) 7z x "$file" -o"$dest" ;;
+        *.rar) unrar x "$file" "$dest" ;;
+        *.zst) unzstd -c "$file" > "$dest/$(basename "${file%.zst}")" ;;
+        *.lz4) unlz4 -c "$file" > "$dest/$(basename "${file%.lz4}")" ;;
+        *.lzma) unlzma -c "$file" > "$dest/$(basename "${file%.lzma}")" ;;
+        *) echo "Unsupported file format: '$file'"; return 1 ;;
+    esac
+}
+
 export TERM=xterm-256color
 export EDITOR='nvim'
 export BAT_THEME=Dracula

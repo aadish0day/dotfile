@@ -38,6 +38,7 @@ alias ytvideo='noglob yt-dlp -f "bestvideo[height<=1080]+bestaudio/best[height<=
 alias ytshort='noglob yt-dlp -f "bestvideo[height<=1080]+bestaudio/best[height<=1080]" --embed-metadata --concurrent-fragments 16 --recode-video mp4 -o "%(playlist)s/%(title)s.%(ext)s"'
 alias ytmusic='noglob yt-dlp -x --audio-format mp3 --audio-quality 0 -o "%(playlist)s/%(title)s.%(ext)s"'
 alias extractgz='tar -xzvf'
+alias lf='lf-ueberzug'
 
 # History
 HISTSIZE=5000
@@ -83,6 +84,40 @@ zle -N cdf
 conv4wp() {
     ffmpeg -i "$1" -c:v libx264 -profile:v baseline -level 3.0 -pix_fmt yuv420p "$2"
 }
+
+extract() {
+    if [ -z "$1" ]; then
+        echo "Usage: extract <file>"
+        return 1
+    fi
+
+    local file="$1"
+    local dest="${file%.*}"
+
+    if [ ! -f "$file" ]; then
+        echo "'$file' is not a valid file."
+        return 1
+    fi
+
+    mkdir -p "$dest"
+    case "$file" in
+        *.tar.gz|*.tgz) tar -xvzf "$file" -C "$dest" ;;
+        *.tar.bz2) tar -xvjf "$file" -C "$dest" ;;
+        *.tar.xz) tar -xvJf "$file" -C "$dest" ;;
+        *.tar) tar -xvf "$file" -C "$dest" ;;
+        *.gz) gunzip -c "$file" > "$dest/$(basename "${file%.gz}")" ;;
+        *.bz2) bunzip2 -c "$file" > "$dest/$(basename "${file%.bz2}")" ;;
+        *.xz) unxz -c "$file" > "$dest/$(basename "${file%.xz}")" ;;
+        *.zip) unzip -d "$dest" "$file" ;;
+        *.7z) 7z x "$file" -o"$dest" ;;
+        *.rar) unrar x "$file" "$dest" ;;
+        *.zst) unzstd -c "$file" > "$dest/$(basename "${file%.zst}")" ;;
+        *.lz4) unlz4 -c "$file" > "$dest/$(basename "${file%.lz4}")" ;;
+        *.lzma) unlzma -c "$file" > "$dest/$(basename "${file%.lzma}")" ;;
+        *) echo "Unsupported file format: '$file'"; return 1 ;;
+    esac
+}
+
 
 # Shell integration
 eval "$(fzf --zsh)"

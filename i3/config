@@ -327,15 +327,15 @@ set $ws10 "10"
 #workspace $ws5 output HDMI-0
 
 # bind program to workspace and focus to them on startup:
-assign [class="alacritty"] $ws1
+assign [class="Alacritty"] $ws1
 assign [class="(?i)thorium-browser"] $ws2
 assign [class="Thunar"] $ws3
 assign [class="GitHub Desktop"] $ws3
 
-# automatic set focus new window if it opens on another workspace than the current:
-for_window [class=alacritty] focus
-for_window [class=(?i)thorium-browser] focus
-for_window [class=Thunar] focus
+# Automatically set focus to the new window if it opens in a different workspace
+for_window [class="Alacritty"] focus
+for_window [class="(?i)thorium-browser"] focus
+for_window [class="Thunar"] focus
 for_window [class="GitHub Desktop"] focus
 
 ##############
