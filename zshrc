@@ -3,8 +3,8 @@ ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
 
 # Download Zinit, if it's not there yet
 if [ ! -d "$ZINIT_HOME" ]; then
-   mkdir -p "$(dirname $ZINIT_HOME)"
-   git clone https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME"
+    mkdir -p "$(dirname "$ZINIT_HOME")"
+    git clone https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME"
 fi
 
 # Source/Load zinit
@@ -25,6 +25,7 @@ zinit cdreplay -q
 zinit snippet OMZP::vi-mode
 
 # Define aliases
+alias mkdir='mkdir -p'
 alias reload='source ~/.zshrc'
 alias ls='ls --color=auto'
 alias ll='ls -l'
@@ -36,11 +37,11 @@ alias music='mocp'
 alias tmux='TERM=xterm-256color tmux'
 alias ytvideo='noglob yt-dlp -f "bestvideo[height<=1080]+bestaudio/best[height<=1080]" --embed-metadata --concurrent-fragments 30 -o "%(playlist)s/%(title)s.%(ext)s"'
 alias ytshort='noglob yt-dlp -f "bestvideo[height<=1080]+bestaudio/best[height<=1080]" --embed-metadata --concurrent-fragments 16 --recode-video mp4 -o "%(playlist)s/%(title)s.%(ext)s"'
-alias ytmusic='noglob yt-dlp -x --audio-format mp3 --audio-quality 0 -o "%(playlist)s/%(title)s.%(ext)s"'
+alias ytmusic='noglob yt-dlp -x --audio-format mp3 --audio-quality 0 --embed-metadata --ignore-errors --no-overwrites -o "%(playlist)s/%(title)s.%(ext)s"'
 alias extractgz='tar -xzvf'
 alias lf='lf-ueberzug'
 
-# History
+# History settings
 HISTSIZE=5000
 HISTFILE=~/.zsh_history
 SAVEHIST=$HISTSIZE
@@ -57,7 +58,6 @@ setopt hist_find_no_dups
 bindkey -v
 KEYTIMEOUT=1
 
-
 # Completion styling
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
@@ -65,6 +65,7 @@ zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls --color $realpath'
 
 # Keybindings
 bindkey -e
+bindkey '^w' autosuggest-accept
 bindkey '^p' history-search-backward
 bindkey '^n' history-search-forward
 bindkey '^F' cdf
@@ -75,7 +76,7 @@ cdf() {
     local dir
     dir=$(find "${1:-.}" -path '*/\.*' -prune -o -type d -print 2>/dev/null | fzf +m)
     if [[ -n $dir ]]; then
-        cd "$dir"
+        cd "$dir" || return # Ensure cd is successful
     fi
 }
 zle -N cdf
@@ -89,35 +90,28 @@ extract() {
     if [ -z "$1" ]; then
         echo "Usage: extract <file>"
         return 1
-    fi
-
-    local file="$1"
-    local dest="${file%.*}"
-
-    if [ ! -f "$file" ]; then
-        echo "'$file' is not a valid file."
+    elif [ ! -f "$1" ]; then
+        echo "'$1' is not a valid file."
         return 1
     fi
 
-    mkdir -p "$dest"
-    case "$file" in
-        *.tar.gz|*.tgz) tar -xvzf "$file" -C "$dest" ;;
-        *.tar.bz2) tar -xvjf "$file" -C "$dest" ;;
-        *.tar.xz) tar -xvJf "$file" -C "$dest" ;;
-        *.tar) tar -xvf "$file" -C "$dest" ;;
-        *.gz) gunzip -c "$file" > "$dest/$(basename "${file%.gz}")" ;;
-        *.bz2) bunzip2 -c "$file" > "$dest/$(basename "${file%.bz2}")" ;;
-        *.xz) unxz -c "$file" > "$dest/$(basename "${file%.xz}")" ;;
-        *.zip) unzip -d "$dest" "$file" ;;
-        *.7z) 7z x "$file" -o"$dest" ;;
-        *.rar) unrar x "$file" "$dest" ;;
-        *.zst) unzstd -c "$file" > "$dest/$(basename "${file%.zst}")" ;;
-        *.lz4) unlz4 -c "$file" > "$dest/$(basename "${file%.lz4}")" ;;
-        *.lzma) unlzma -c "$file" > "$dest/$(basename "${file%.lzma}")" ;;
-        *) echo "Unsupported file format: '$file'"; return 1 ;;
+    case "$1" in
+        *.tar.gz|*.tgz) tar -xzf "$1" ;;
+        *.tar.bz2) tar -xjf "$1" ;;
+        *.tar.xz) tar -xJf "$1" ;;
+        *.tar) tar -xf "$1" ;;
+        *.gz) gunzip "$1" ;;
+        *.bz2) bunzip2 "$1" ;;
+        *.xz) unxz "$1" ;;
+        *.zip) unzip "$1" ;;
+        *.7z) 7z x "$1" ;;
+        *.rar) unrar x "$1" ;;
+        *.zst) unzstd "$1" ;;
+        *.lz4) unlz4 "$1" ;;
+        *.lzma) unlzma "$1" ;;
+        *) echo "Unsupported file format: '$1'"; return 1 ;;
     esac
 }
-
 
 # Shell integration
 eval "$(fzf --zsh)"
@@ -126,5 +120,4 @@ eval "$(starship init zsh)"
 export TERM=xterm-256color
 export EDITOR='nvim'
 export BAT_THEME='Dracula'
-
 

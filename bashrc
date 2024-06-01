@@ -32,6 +32,7 @@ stty -ixon
 # set vi-ins-mode-string \1\e[6 q\2
 # set vi-cmd-mode-string \1\e[2 q\2
 
+alias mkdir='mkdir -p'
 alias ls='ls --color=auto'
 alias ll='ls -l'
 alias la='ls -A'
@@ -42,7 +43,7 @@ alias music='mocp'
 alias tmux="TERM=xterm-256color tmux"
 alias ytvideo='yt-dlp -f "bestvideo[height<=1080]+bestaudio/best[height<=1080]" --embed-metadata --concurrent-fragments 30 -o "%(playlist)s/%(title)s.%(ext)s"'
 alias ytshort='yt-dlp -f "bestvideo[height<=1080]+bestaudio/best[height<=1080]" --embed-metadata --concurrent-fragments 16 --recode-video mp4 -o "%(playlist)s/%(title)s.%(ext)s"'
-alias ytmusic='yt-dlp -x --audio-format mp3 --audio-quality 0 -o "%(playlist)s/%(title)s.%(ext)s"'
+alias ytmusic='yt-dlp -x --audio-format mp3 --audio-quality 0 --embed-metadata --ignore-errors --no-overwrites -o "%(playlist)s/%(title)s.%(ext)s"'
 
 alias extractgz='tar -xzvf'
 
@@ -80,36 +81,33 @@ cdc() {
 }
 
 extract() {
-    if [ -z "$1" ]; then
-        echo "Usage: extract <file>"
-        return 1
-    fi
+	if [ -z "$1" ]; then
+		echo "Usage: extract <file>"
+		return 1
+	elif [ ! -f "$1" ]; then
+		echo "'$1' is not a valid file."
+		return 1
+	fi
 
-    local file="$1"
-    local dest="${file%.*}"
-
-    if [ ! -f "$file" ]; then
-        echo "'$file' is not a valid file."
-        return 1
-    fi
-
-    mkdir -p "$dest"
-    case "$file" in
-        *.tar.gz|*.tgz) tar -xvzf "$file" -C "$dest" ;;
-        *.tar.bz2) tar -xvjf "$file" -C "$dest" ;;
-        *.tar.xz) tar -xvJf "$file" -C "$dest" ;;
-        *.tar) tar -xvf "$file" -C "$dest" ;;
-        *.gz) gunzip -c "$file" > "$dest/$(basename "${file%.gz}")" ;;
-        *.bz2) bunzip2 -c "$file" > "$dest/$(basename "${file%.bz2}")" ;;
-        *.xz) unxz -c "$file" > "$dest/$(basename "${file%.xz}")" ;;
-        *.zip) unzip -d "$dest" "$file" ;;
-        *.7z) 7z x "$file" -o"$dest" ;;
-        *.rar) unrar x "$file" "$dest" ;;
-        *.zst) unzstd -c "$file" > "$dest/$(basename "${file%.zst}")" ;;
-        *.lz4) unlz4 -c "$file" > "$dest/$(basename "${file%.lz4}")" ;;
-        *.lzma) unlzma -c "$file" > "$dest/$(basename "${file%.lzma}")" ;;
-        *) echo "Unsupported file format: '$file'"; return 1 ;;
-    esac
+	case "$1" in
+	*.tar.gz | *.tgz) tar -xzf "$1" ;;
+	*.tar.bz2) tar -xjf "$1" ;;
+	*.tar.xz) tar -xJf "$1" ;;
+	*.tar) tar -xf "$1" ;;
+	*.gz) gunzip "$1" ;;
+	*.bz2) bunzip2 "$1" ;;
+	*.xz) unxz "$1" ;;
+	*.zip) unzip "$1" ;;
+	*.7z) 7z x "$1" ;;
+	*.rar) unrar x "$1" ;;
+	*.zst) unzstd "$1" ;;
+	*.lz4) unlz4 "$1" ;;
+	*.lzma) unlzma "$1" ;;
+	*)
+		echo "Unsupported file format: '$1'"
+		return 1
+		;;
+	esac
 }
 
 export TERM=xterm-256color

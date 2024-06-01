@@ -491,7 +491,7 @@ Theme = aadish_theme
 #             and the directory menu at the bottom.  Playlist will
 #             occupy 10 lines and the directory menu the rest.
 #
-#Layout1 = directory(0,0,50%,100%):playlist(50%,0,FILL,100%)
+Layout1 = directory(0,0,100%,100%)
 #Layout2 = directory(0,0,100%,100%):playlist(0,0,100%,100%)
 #Layout3 = ""
 
@@ -503,7 +503,7 @@ Theme = aadish_theme
 # something from the playlist?  If CanStartInPlaylist is set to 'yes', the
 # interface will switch to the playlist.  When set to 'no' it will start
 # from the last directory.
-#CanStartInPlaylist = yes
+CanStartInPlaylist = no
 
 # Executing external commands (1 - 10) invoked with key commands (F1 - F10
 # by default).

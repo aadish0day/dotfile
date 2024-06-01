@@ -18,6 +18,7 @@ declare -A paths=(
     [~/.config/kitty]="$backup_dir/kitty"
     [~/.config/alacritty]="$backup_dir/alacritty"
     [~/.config/fastfetch]="$backup_dir/fastfetch"
+    [~/.config/qutebrowser"$backup_dir/qutebrowser"
 )
 
 # Loop through the associative array
@@ -29,4 +30,5 @@ for src in "${!paths[@]}"; do
 done
 
 echo "All configurations have been backed up successfully!"
+
 

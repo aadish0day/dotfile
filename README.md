@@ -64,4 +64,3 @@ rm -fr ~/.config/xfce4/
 cp -f xfce4/ ~/.config/
 ```
 
-
