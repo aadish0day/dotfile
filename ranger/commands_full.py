@@ -221,7 +221,7 @@ class cd(Command):
                 except (OSError, StopIteration):
                     continue
                 matches += [os.path.join(path, d) for d in directories
-                            if self._tab_match(token, d)]
+                    if self._tab_match(token, d)]
             if not tokens or not matches:
                 return matches
             paths = matches
@@ -245,7 +245,7 @@ class cd(Command):
         if not os.path.isabs(dest):
             paths_rel = self.fm.thisdir.path
             paths = [os.path.relpath(os.path.join(basepath, path), paths_rel)
-                     for path in paths]
+                for path in paths]
         else:
             paths_rel = ''
         return paths, paths_rel
@@ -319,7 +319,7 @@ class shell(Command):
             position_of_last_space = command.rindex(" ")
         except ValueError:
             return (start + program + ' ' for program
-                    in get_executables() if program.startswith(command))
+                in get_executables() if program.startswith(command))
         if position_of_last_space == len(command) - 1:
             selection = self.fm.thistab.get_selection()
             if len(selection) == 1:
@@ -328,8 +328,8 @@ class shell(Command):
 
         before_word, start_of_word = self.line.rsplit(' ', 1)
         return (before_word + ' ' + file.shell_escaped_basename
-                for file in self.fm.thisdir.files or []
-                if file.shell_escaped_basename.startswith(start_of_word))
+            for file in self.fm.thisdir.files or []
+            if file.shell_escaped_basename.startswith(start_of_word))
 
 
 class open_with(Command):
@@ -452,13 +452,13 @@ class set_(Command):
             return sorted(self.firstpart + setting for setting in settings)
         if not value and not name_done:
             return sorted(self.firstpart + setting for setting in settings
-                          if setting.startswith(name))
+                if setting.startswith(name))
         if not value:
             value_completers = {
                 "colorscheme":
                 # Cycle through colorschemes when name, but no value is specified
                 lambda: sorted(self.firstpart + colorscheme for colorscheme
-                               in get_all_colorschemes(self.fm)),
+                    in get_all_colorschemes(self.fm)),
 
                 "column_ratios":
                 lambda: self.firstpart + ",".join(map(str, settings[name])),
@@ -476,7 +476,7 @@ class set_(Command):
         # Tab complete colorscheme values if incomplete value is present
         if name == "colorscheme":
             return sorted(self.firstpart + colorscheme for colorscheme
-                          in get_all_colorschemes(self.fm) if colorscheme.startswith(value))
+                in get_all_colorschemes(self.fm) if colorscheme.startswith(value))
         return None
 
 
@@ -567,8 +567,8 @@ class default_linemode(Command):
 
     def tab(self, tabnum):
         return (self.arg(0) + " " + lmode
-                for lmode in self.fm.thisfile.linemode_dict.keys()
-                if lmode.startswith(self.arg(1)))
+            for lmode in self.fm.thisfile.linemode_dict.keys()
+            if lmode.startswith(self.arg(1)))
 
 
 class quit(Command):  # pylint: disable=redefined-builtin
@@ -864,7 +864,7 @@ class load_copy_buffer(Command):
                 "Cannot open %s" % (fname or self.copy_buffer_filename), bad=True)
 
         self.fm.copy_buffer = set(File(g)
-                                  for g in fobj.read().split("\n") if exists(g))
+            for g in fobj.read().split("\n") if exists(g))
         fobj.close()
         self.fm.ui.redraw_main_column()
         return None
@@ -886,7 +886,7 @@ class save_copy_buffer(Command):
             fobj = open(fname, 'w')
         except unwritable:
             return self.fm.notify("Cannot open %s" %
-                                  (fname or self.copy_buffer_filename), bad=True)
+                (fname or self.copy_buffer_filename), bad=True)
         fobj.write("\n".join(fobj.path for fobj in self.fm.copy_buffer))
         fobj.close()
         return None
@@ -995,7 +995,7 @@ class eval_(Command):
                     p(result)
         except Exception as err:  # pylint: disable=broad-except
             fm.notify("The error `%s` was caused by evaluating the "
-                      "following code: `%s`" % (err, code), bad=True)
+                "following code: `%s`" % (err, code), bad=True)
 
 
 class rename(Command):
@@ -1090,7 +1090,7 @@ class chmod(Command):
         if not mode_str:
             if self.quantifier is None:
                 self.fm.notify("Syntax: chmod <octal number> "
-                               "or specify a quantifier", bad=True)
+                    "or specify a quantifier", bad=True)
                 return
             mode_str = str(self.quantifier)
 
@@ -1143,7 +1143,7 @@ class bulkrename(Command):
                 listfile.write("\n".join(filenames))
         self.fm.execute_file([File(listpath)], app='editor')
         with (open(listpath, 'r', encoding="utf-8", errors="surrogateescape") if
-              py3 else open(listpath, 'r')) as listfile:
+            py3 else open(listpath, 'r')) as listfile:
             new_filenames = listfile.read().split("\n")
         os.unlink(listpath)
         if all(a == b for a, b in zip(filenames, new_filenames)):
@@ -1154,9 +1154,9 @@ class bulkrename(Command):
         with tempfile.NamedTemporaryFile() as cmdfile:
             script_lines = []
             script_lines.append("# This file will be executed when you close"
-                                " the editor.")
+                " the editor.")
             script_lines.append("# Please double-check everything, clear the"
-                                " file to abort.")
+                " file to abort.")
             new_dirs = []
             for old, new in zip(filenames, new_filenames):
                 if old != new:
@@ -1507,7 +1507,7 @@ class scout(Command):
         self.cancel()
 
         if self.OPEN_ON_ENTER in flags or \
-                (self.AUTO_OPEN in flags and count == 1):
+            (self.AUTO_OPEN in flags and count == 1):
             if pattern == '..':
                 self.fm.cd(pattern)
             else:
@@ -1583,7 +1583,7 @@ class scout(Command):
         # pylint: disable=no-member
         options = re.UNICODE
         if self.IGNORE_CASE in flags or self.SMART_CASE in flags and \
-                pattern.islower():
+            pattern.islower():
             options |= re.IGNORECASE
         # pylint: enable=no-member
         try:
@@ -1694,7 +1694,7 @@ class filter_stack(Command):
             rotate_by = int(self.arg(2) or self.quantifier or 1)
             self.fm.thisdir.filter_stack = (
                 self.fm.thisdir.filter_stack[-rotate_by:]
-                + self.fm.thisdir.filter_stack[:-rotate_by]
+                    + self.fm.thisdir.filter_stack[:-rotate_by]
             )
         elif subcommand == "show":
             stack = list(map(str, self.fm.thisdir.filter_stack))
@@ -1865,7 +1865,7 @@ class meta(prompt_metadata):
         if key in metadata and metadata[key]:
             return [" ".join([self.arg(0), self.arg(1), metadata[key]])]
         return [self.arg(0) + " " + k for k in sorted(metadata)
-                if k.startswith(self.arg(1))]
+            if k.startswith(self.arg(1))]
 
 
 class linemode(default_linemode):
@@ -1952,7 +1952,7 @@ class yank(Command):
 
     def get_selection_attr(self, attr):
         return [getattr(item, attr) for item in
-                self.fm.thistab.get_selection()]
+            self.fm.thistab.get_selection()]
 
     def tab(self, tabnum):
         return (
