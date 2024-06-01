@@ -2,8 +2,8 @@
 
 # Ensure the script is run as root
 if [ "$(id -u)" -ne 0 ]; then
-    echo "This script must be run as root" 1>&2
-    exit 1
+	echo "This script must be run as root" 1>&2
+	exit 1
 fi
 
 # Create and enable systemd service to prevent suspension
