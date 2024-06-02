@@ -39,7 +39,6 @@ alias ytvideo='noglob yt-dlp -f "bestvideo[height<=1080]+bestaudio/best[height<=
 alias ytshort='noglob yt-dlp -f "bestvideo[height<=1080]+bestaudio/best[height<=1080]" --embed-metadata --concurrent-fragments 16 --recode-video mp4 -o "%(playlist)s/%(title)s.%(ext)s"'
 alias ytmusic='noglob yt-dlp -x --audio-format mp3 --audio-quality 0 --embed-metadata --ignore-errors --no-overwrites -o "%(playlist)s/%(title)s.%(ext)s"'
 alias extractgz='tar -xzvf'
-alias lf='lf-ueberzug'
 
 # History settings
 HISTSIZE=5000

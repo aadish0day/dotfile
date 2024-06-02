@@ -27,7 +27,7 @@ background = "#ff7f7f"
 text = "#FFFFFF"
 
 [window]
-opacity = 0.80
+opacity = 0.75
 
 [font]
 normal = { family = "Source Code Pro", style = "Bold" }
