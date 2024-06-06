@@ -477,6 +477,9 @@ for_window [window_role="About"] floating enable
 # set border of floating window
 for_window [class="urxvt"] border pixel 1
 
+# Border width for focused window
+for_window [class=".*"] border pixel 2
+
 # set size of floating window
 #for_window [window_role="(?i)GtkFileChooserDialog"] resize set 640 480 #to set size of file choose dialog
 #for_window [class=".*"] resize set 640 480 #to change size of all floating windows 
@@ -496,7 +499,7 @@ set $urgentred		#e53935
 set $white		#ffffff
 set $black		#000000
 set $purple		#e345ff
-set $darkgrey		#171921
+set $darkgrey		#171922
 set $grey		#b0b5bd
 set $mediumgrey		#8b8b8b
 set $yellowbrown	#e1b700
