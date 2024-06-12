@@ -82,7 +82,9 @@ zle -N cdf
 
 # Convert video for web
 conv4wp() {
-    ffmpeg -i "$1" -c:v libx264 -profile:v baseline -level 3.0 -pix_fmt yuv420p "$2"
+    input_file="$1"
+    output_file="${input_file%.*}.mp4"
+    ffmpeg -i "$input_file" -c:v libx264 -profile:v baseline -level 3.0 -pix_fmt yuv420p "$output_file"
 }
 
 extract() {
