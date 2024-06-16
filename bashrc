@@ -55,15 +55,12 @@ fzf_reverse_i_search() {
 bind -x '"\C-r": fzf_reverse_i_search'
 
 # Use fzf to change directories
-cdf() {
-	local dir
-	dir=$(find ${1:-.} -path '*/\.*' -prune -o -type d -print 2>/dev/null | fzf +m) && cd "$dir"
+conv4wp() {
+	input_file="$1"
+	output_file="${input_file%.*}.mp4"
+	ffmpeg -i "$input_file" -c:v libx264 -profile:v baseline -level 3.0 -pix_fmt yuv420p "$output_file"
 }
 bind -x '"\C-f": cdf'
-
-conv4wp() {
-	ffmpeg -i "$1" -c:v libx264 -profile:v baseline -level 3.0 -pix_fmt yuv420p "$2"
-}
 
 cdc() {
 	local dir
@@ -81,33 +78,30 @@ cdc() {
 }
 
 extract() {
-	if [ -z "$1" ]; then
-		echo "Usage: extract <file>"
-		return 1
-	elif [ ! -f "$1" ]; then
-		echo "'$1' is not a valid file."
-		return 1
-	fi
+    if [ -z "$1" ]; then
+        echo "Usage: extract <file>"
+        return 1
+    elif [ ! -f "$1" ]; then
+        echo "'$1' is not a valid file."
+        return 1
+    fi
 
-	case "$1" in
-	*.tar.gz | *.tgz) tar -xzf "$1" ;;
-	*.tar.bz2) tar -xjf "$1" ;;
-	*.tar.xz) tar -xJf "$1" ;;
-	*.tar) tar -xf "$1" ;;
-	*.gz) gunzip "$1" ;;
-	*.bz2) bunzip2 "$1" ;;
-	*.xz) unxz "$1" ;;
-	*.zip) unzip "$1" ;;
-	*.7z) 7z x "$1" ;;
-	*.rar) unrar x "$1" ;;
-	*.zst) unzstd "$1" ;;
-	*.lz4) unlz4 "$1" ;;
-	*.lzma) unlzma "$1" ;;
-	*)
-		echo "Unsupported file format: '$1'"
-		return 1
-		;;
-	esac
+    case "$1" in
+        *.tar.gz|*.tgz) pv "$1" | tar -xzf - ;;
+        *.tar.bz2) pv "$1" | tar -xjf - ;;
+        *.tar.xz) pv "$1" | tar -xJf - ;;
+        *.tar) pv "$1" | tar -xf - ;;
+        *.gz) pv "$1" | gunzip ;;
+        *.bz2) pv "$1" | bunzip2 ;;
+        *.xz) pv "$1" | unxz ;;
+        *.zip) unzip "$1" ;;
+        *.7z) 7z x "$1" ;;
+        *.rar) unrar x "$1" ;;
+        *.zst) pv "$1" | unzstd ;;
+        *.lz4) pv "$1" | unlz4 ;;
+        *.lzma) pv "$1" | unlzma ;;
+        *) echo "Unsupported file format: '$1'"; return 1 ;;
+    esac
 }
 
 export TERM=xterm-256color

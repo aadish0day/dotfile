@@ -23,6 +23,7 @@ zinit cdreplay -q
 
 # Add in snippets
 zinit snippet OMZP::vi-mode
+zinit snippet OMZP::tmux
 
 # Define aliases
 alias mkdir='mkdir -p'
@@ -97,19 +98,19 @@ extract() {
     fi
 
     case "$1" in
-        *.tar.gz|*.tgz) tar -xzf "$1" ;;
-        *.tar.bz2) tar -xjf "$1" ;;
-        *.tar.xz) tar -xJf "$1" ;;
-        *.tar) tar -xf "$1" ;;
-        *.gz) gunzip "$1" ;;
-        *.bz2) bunzip2 "$1" ;;
-        *.xz) unxz "$1" ;;
+        *.tar.gz|*.tgz) pv "$1" | tar -xzf - ;;
+        *.tar.bz2) pv "$1" | tar -xjf - ;;
+        *.tar.xz) pv "$1" | tar -xJf - ;;
+        *.tar) pv "$1" | tar -xf - ;;
+        *.gz) pv "$1" | gunzip ;;
+        *.bz2) pv "$1" | bunzip2 ;;
+        *.xz) pv "$1" | unxz ;;
         *.zip) unzip "$1" ;;
         *.7z) 7z x "$1" ;;
         *.rar) unrar x "$1" ;;
-        *.zst) unzstd "$1" ;;
-        *.lz4) unlz4 "$1" ;;
-        *.lzma) unlzma "$1" ;;
+        *.zst) pv "$1" | unzstd ;;
+        *.lz4) pv "$1" | unlz4 ;;
+        *.lzma) pv "$1" | unlzma ;;
         *) echo "Unsupported file format: '$1'"; return 1 ;;
     esac
 }
