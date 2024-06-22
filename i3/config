@@ -23,7 +23,7 @@
 # is used in the bar {} block below.
 # This font is widely installed, provides lots of unicode glyphs, right-to-left
 # text rendering and scalability on retina/hidpi displays (thanks to pango).
-font pango: Noto Sans Regular 10
+font pango: Noto Sans Regular 14
 
 # set the mod key to the winkey:
 set $mod Mod4
@@ -292,7 +292,8 @@ bindsym $mod+m exec --no-startup-id github-desktop
 bindsym Print exec --no-startup-id exec flameshot gui
 
 # Power Profiles menu switcher (rofi)
-bindsym $mod+Shift+p exec --no-startup-id ~/.config/i3/scripts/power-profiles
+#bindsym $mod+Shift+p exec --no-startup-id ~/.config/i3/scripts/power-profiles
+bindsym $mod+Shift+p exec --no-startup-id ~/.config/i3/scripts/power-profiles-ausu
 
 bindsym Control+Mod1+n exec /usr/bin/mocp --next
 bindsym Control+Mod1+b exec /usr/bin/mocp --previous
@@ -515,14 +516,14 @@ client.urgent		    	$urgentred	$urgentred	$white		$yellowbrown	$yellowbrown
 # Start i3bar to display a workspace bar
 # (plus the system information i3status finds out, if available)
 bar {
-		font pango: Noto Sans Regular 10
+		font pango: Noto Sans Regular 14
 		status_command i3blocks -c ~/.config/i3/i3blocks.conf
 	    	position top
 #	    	i3bar_command i3bar --transparency
 # it could be that you have no primary display set: set one (xrandr --output <output> --primary)
 # reference: https://i3wm.org/docs/userguide.html#_tray_output
 		    #tray_output primary
-		    tray_padding 0
+		    tray_padding 2
 
 # When strip_workspace_numbers is set to yes,
 # any workspace that has a name of the form

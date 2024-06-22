@@ -21,6 +21,7 @@ declare -A paths=(
     [~/.config/qutebrowser]="$backup_dir/qutebrowser"
     [~/.config/qutebrowser]="$backup_dir/qutebrowser"
     [~/.config/mpv]="$backup_dir/mpv"
+    [~/.config/rofi]"$backup_dir/rofi"
 )
 
 # Loop through the associative array
@@ -32,4 +33,5 @@ for src in "${!paths[@]}"; do
 done
 
 echo "All configurations have been backed up successfully!"
+
 

@@ -9,14 +9,15 @@ update_config() {
 	local dest=$2
 	echo "Updating $src configuration..."
 	rm -fr "$dest"
+	mkdir -p "$(dirname "$dest")"
 	cp -r "$src/" "$dest"
 }
 
 # Copy essential dotfiles
 cp -r ./bring_dotfile.sh ~/
-cp -r ./bashrc ~/.bashrc
+cp ./bashrc ~/.bashrc
 source ~/.bashrc
-cp -r ./zshrc ~/.zshrc
+cp ./zshrc ~/.zshrc
 cp -r ./theme/ ~/.theme
 
 # Update configurations for various applications
@@ -30,6 +31,7 @@ update_config ./tmux ~/.config/tmux
 update_config ./picom ~/.config/picom
 update_config ./alacritty ~/.config/alacritty
 update_config ./qutebrowser ~/.config/qutebrowser
+update_config ./rofi ~/.config/rofi
 
 # Conditional update for Xfce4 configuration
 echo "Do you want to update the xfce4 configuration? (y/n)"
