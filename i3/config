@@ -298,9 +298,6 @@ bindsym Control+Mod1+n exec /usr/bin/mocp --next
 bindsym Control+Mod1+b exec /usr/bin/mocp --previous
 bindsym Control+Mod1+p exec mocp --toggle-pause
 
-# Open qutebrowser
-bindsym $mod+Shift+w exec --no-startup-id qutebrowser
-
 ##########################################
 # configuration for workspace behaviour: #
 ##########################################
