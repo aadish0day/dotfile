@@ -20,7 +20,6 @@ declare -A paths=(
     [~/.config/fastfetch]="$backup_dir/fastfetch"
     [~/.config/qutebrowser]="$backup_dir/qutebrowser"
     [~/.config/qutebrowser]="$backup_dir/qutebrowser"
-    [~/.config/mpv]="$backup_dir/mpv"
     [~/.config/rofi]"$backup_dir/rofi"
 )
 

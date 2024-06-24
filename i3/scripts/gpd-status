@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+# Get the current GPU mode
+current_profile=$(supergfxctl -g)
+echo "$current_profile"
+
