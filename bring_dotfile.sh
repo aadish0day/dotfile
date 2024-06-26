@@ -20,7 +20,7 @@ declare -A paths=(
     [~/.config/fastfetch]="$backup_dir/fastfetch"
     [~/.config/qutebrowser]="$backup_dir/qutebrowser"
     [~/.config/qutebrowser]="$backup_dir/qutebrowser"
-    [~/.config/rofi]"$backup_dir/rofi"
+    [~/.config/rofi]="$backup_dir/rofi"
 )
 
 # Loop through the associative array
