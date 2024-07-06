@@ -18,7 +18,6 @@ zinit light Aloxaf/fzf-tab
 
 # Load completions
 autoload -Uz compinit && compinit
-
 zinit cdreplay -q
 
 # Add in snippets
@@ -42,7 +41,7 @@ alias ytmusic='noglob yt-dlp -x --audio-format mp3 --audio-quality 0 --embed-met
 alias extractgz='tar -xzvf'
 
 # History settings
-HISTSIZE=5000
+HISTSIZE=50000
 HISTFILE=~/.zsh_history
 SAVEHIST=$HISTSIZE
 HISTDUP=erase
@@ -96,21 +95,23 @@ extract() {
         echo "'$1' is not a valid file."
         return 1
     fi
-
+    FILENAME=$(basename "$1")
+    DEST_DIR="${FILENAME%.*.*}"
+    mkdir -p "$DEST_DIR"
     case "$1" in
-        *.tar.gz|*.tgz) pv "$1" | tar -xzf - ;;
-        *.tar.bz2) pv "$1" | tar -xjf - ;;
-        *.tar.xz) pv "$1" | tar -xJf - ;;
-        *.tar) pv "$1" | tar -xf - ;;
-        *.gz) pv "$1" | gunzip ;;
-        *.bz2) pv "$1" | bunzip2 ;;
-        *.xz) pv "$1" | unxz ;;
-        *.zip) unzip "$1" ;;
-        *.7z) 7z x "$1" ;;
-        *.rar) unrar x "$1" ;;
-        *.zst) pv "$1" | unzstd ;;
-        *.lz4) pv "$1" | unlz4 ;;
-        *.lzma) pv "$1" | unlzma ;;
+        *.tar.gz|*.tgz) pv "$1" | tar -xzf - -C "$DEST_DIR" ;;
+        *.tar.bz2) pv "$1" | tar -xjf - -C "$DEST_DIR" ;;
+        *.tar.xz) pv "$1" | tar -xJf - -C "$DEST_DIR" ;;
+        *.tar) pv "$1" | tar -xf - -C "$DEST_DIR" ;;
+        *.gz) gunzip -c "$1" > "$DEST_DIR/${FILENAME%.gz}" ;;
+        *.bz2) bunzip2 -c "$1" > "$DEST_DIR/${FILENAME%.bz2}" ;;
+        *.xz) unxz -c "$1" > "$DEST_DIR/${FILENAME%.xz}" ;;
+        *.zip) unzip "$1" -d "$DEST_DIR" ;;
+        *.7z) 7z x "$1" -o"$DEST_DIR" ;;
+        *.rar) unrar x "$1" "$DEST_DIR" ;;
+        # *.zst) unzstd -c "$1" > "$DEST_DIR/${FILENAME%.zst}" ;;
+        # *.lz4) unlz4 -c "$1" > "$DEST_DIR/${FILENAME%.lz4}" ;;
+        # *.lzma) unlzma -c "$1" > "$DEST_DIR/${FILENAME%.lzma}" ;;
         *) echo "Unsupported file format: '$1'"; return 1 ;;
     esac
 }
