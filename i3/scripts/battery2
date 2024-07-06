@@ -78,7 +78,8 @@ else:
 
     def color(percent):
         if percent < 10:
-            # exit code 33 will turn background red
+            # Trigger notification using Dunst
+            os.system('notify-send "Low Battery" "Battery is {}%"'.format(percent))
             return config.get("color_10", "#FFFFFF")
         if percent < 20:
             return config.get("color_20", "#FF3300")
@@ -102,5 +103,4 @@ else:
 
 print(fulltext)
 print(fulltext)
-if percentleft < 10:
-    exit(33)
+

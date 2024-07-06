@@ -199,9 +199,11 @@ bindsym $mod+Shift+r restart
 # bindsym XF86MonBrightnessDown exec --no-startup-id xbacklight -10 && notify-send "Brightness - $(xbacklight -get | cut -d '.' -f 1)%"
 # Backlight setting using dunst osc
 # Increase brightness
-bindsym XF86MonBrightnessUp exec --no-startup-id brightnessctl set +10%
+# Increase brightness
+bindsym XF86MonBrightnessUp exec --no-startup-id ~/.config/i3/scripts/brightness.sh brightness_up
+
 # Decrease brightness
-bindsym XF86MonBrightnessDown exec --no-startup-id brightnessctl set 10%-
+bindsym XF86MonBrightnessDown exec --no-startup-id ~/.config/i3/scripts/brightness.sh brightness_down
 
 
 # change focus
