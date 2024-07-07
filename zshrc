@@ -22,7 +22,8 @@ zinit cdreplay -q
 
 # Add in snippets
 zinit snippet OMZP::vi-mode
-zinit snippet OMZP::tmux
+# Commented out the problematic line
+# zinit snippet OMZP::tmux
 
 # Define aliases
 alias mkdir='mkdir -p'
@@ -39,6 +40,13 @@ alias ytvideo='noglob yt-dlp -f "bestvideo[height<=1080]+bestaudio/best[height<=
 alias ytshort='noglob yt-dlp -f "bestvideo[height<=1080]+bestaudio/best[height<=1080]" --embed-metadata --concurrent-fragments 16 --recode-video mp4 -o "%(playlist)s/%(title)s.%(ext)s"'
 alias ytmusic='noglob yt-dlp -x --audio-format mp3 --audio-quality 0 --embed-metadata --ignore-errors --no-overwrites -o "%(playlist)s/%(title)s.%(ext)s"'
 alias extractgz='tar -xzvf'
+alias ta='tmux attach -t'                  # Attach new tmux session to already running named session
+alias tl='tmux list-sessions'              # Displays a list of running tmux sessions
+# alias tmux='tmux new-session'              # Start a new tmux session
+alias ts='tmux new-session -s'             # Create a new named tmux session
+alias tkss='tmux kill-session -t'          # Terminate named running tmux session
+alias tksv='tmux kill-server'              # Terminate all running tmux sessions
+
 
 # History settings
 HISTSIZE=50000
