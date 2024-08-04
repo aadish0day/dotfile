@@ -43,6 +43,7 @@ alias extractgz='tar -xzvf'
 alias ta='tmux attach -t'                  # Attach new tmux session to already running named session
 alias tl='tmux list-sessions'              # Displays a list of running tmux sessions
 # alias tmux='tmux new-session'              # Start a new tmux session
+alias tn='tmux new-session'             # Create a new named tmux session
 alias ts='tmux new-session -s'             # Create a new named tmux session
 alias tkss='tmux kill-session -t'          # Terminate named running tmux session
 alias tksv='tmux kill-server'              # Terminate all running tmux sessions
