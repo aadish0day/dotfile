@@ -5,6 +5,7 @@ picom --backend glx --vsync
 map i recolor
 map p print
 
+set smooth-scroll true
 set browser "xdg-open"
 
 set selection-clipboard clipboard

@@ -50,7 +50,7 @@ alias tksv='tmux kill-server'              # Terminate all running tmux sessions
 
 
 # History settings
-HISTSIZE=50000
+HISTSIZE=500000
 HISTFILE=~/.zsh_history
 SAVEHIST=$HISTSIZE
 HISTDUP=erase
