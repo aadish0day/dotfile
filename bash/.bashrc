@@ -10,13 +10,13 @@
 PS1='[\u@\h \W]\$ '
 
 case ${TERM} in
-    Eterm* | alacritty* | aterm* | foot* | gnome* | konsole* | kterm* | putty* | rxvt* | tmux* | xterm*)
-        PROMPT_COMMAND+=('printf "\033]0;%s@%s:%s\007" "${USER}" "${HOSTNAME%%.*}" "${PWD/#$HOME/\~}"')
+Eterm* | alacritty* | aterm* | foot* | gnome* | konsole* | kterm* | putty* | rxvt* | tmux* | xterm*)
+    PROMPT_COMMAND+=('printf "\033]0;%s@%s:%s\007" "${USER}" "${HOSTNAME%%.*}" "${PWD/#$HOME/\~}"')
 
-        ;;
-    screen*)
-        PROMPT_COMMAND+=('printf "\033_%s@%s:%s\033\\" "${USER}" "${HOSTNAME%%.*}" "${PWD/#$HOME/\~}"')
-        ;;
+    ;;
+screen*)
+    PROMPT_COMMAND+=('printf "\033_%s@%s:%s\033\\" "${USER}" "${HOSTNAME%%.*}" "${PWD/#$HOME/\~}"')
+    ;;
 esac
 
 if [[ -r /usr/share/bash-completion/bash_completion ]]; then
@@ -75,40 +75,40 @@ cdc() {
                 tmux new-session -s mysession
             fi
         fi
-    }
+}
 
-    extract() {
-        if [ -z "$1" ]; then
-            echo "Usage: extract <file>"
-            return 1
-        elif [ ! -f "$1" ]; then
-            echo "'$1' is not a valid file."
-            return 1
-        fi
+extract() {
+    if [ -z "$1" ]; then
+        echo "Usage: extract <file>"
+        return 1
+    elif [ ! -f "$1" ]; then
+        echo "'$1' is not a valid file."
+        return 1
+    fi
 
-        case "$1" in
-            *.tar.gz | *.tgz) pv "$1" | tar -xzf - ;;
-            *.tar.bz2) pv "$1" | tar -xjf - ;;
-            *.tar.xz) pv "$1" | tar -xJf - ;;
-            *.tar) pv "$1" | tar -xf - ;;
-            *.gz) pv "$1" | gunzip ;;
-            *.bz2) pv "$1" | bunzip2 ;;
-            *.xz) pv "$1" | unxz ;;
-            *.zip) unzip "$1" ;;
-            *.7z) 7z x "$1" ;;
-            *.rar) unrar x "$1" ;;
-            *.zst) pv "$1" | unzstd ;;
-            *.lz4) pv "$1" | unlz4 ;;
-            *.lzma) pv "$1" | unlzma ;;
-            *)
-                echo "Unsupported file format: '$1'"
-                return 1
-                ;;
-        esac
-    }
+    case "$1" in
+    *.tar.gz | *.tgz) pv "$1" | tar -xzf - ;;
+    *.tar.bz2) pv "$1" | tar -xjf - ;;
+    *.tar.xz) pv "$1" | tar -xJf - ;;
+    *.tar) pv "$1" | tar -xf - ;;
+    *.gz) pv "$1" | gunzip ;;
+    *.bz2) pv "$1" | bunzip2 ;;
+    *.xz) pv "$1" | unxz ;;
+    *.zip) unzip "$1" ;;
+    *.7z) 7z x "$1" ;;
+    *.rar) unrar x "$1" ;;
+    *.zst) pv "$1" | unzstd ;;
+    *.lz4) pv "$1" | unlz4 ;;
+    *.lzma) pv "$1" | unlzma ;;
+    *)
+        echo "Unsupported file format: '$1'"
+        return 1
+        ;;
+    esac
+}
 
-    export TERM=xterm-256color
-    export EDITOR='nvim'
-    export BAT_THEME=Dracula
+export TERM=xterm-256color
+export EDITOR='nvim'
+export BAT_THEME=Dracula
 
-    eval "$(starship init bash)"
+eval "$(starship init bash)"
