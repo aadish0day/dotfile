@@ -76,18 +76,8 @@ bindkey -e
 bindkey '^w' autosuggest-accept
 bindkey '^p' history-search-backward
 bindkey '^n' history-search-forward
-bindkey '^F' cdf
+bindkey '^F' fzf-cd-widget
 bindkey '^[' vi-cmd-mode
-
-# Use fzf to change directories
-cdf() {
-    local dir
-    dir=$(find "${1:-.}" -path '*/\.*' -prune -o -type d -print 2>/dev/null | fzf +m)
-    if [[ -n $dir ]]; then
-        cd "$dir" || return # Ensure cd is successful
-    fi
-}
-zle -N cdf
 
 # Convert video for web
 conv4wp() {
