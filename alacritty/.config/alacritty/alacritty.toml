@@ -30,13 +30,13 @@ text = "#FFFFFF"
 opacity = 0.75
 
 [font]
-normal = { family = "Source Code Pro", style = "Bold" }
-bold = { family = "Source Code Pro", style = "Bold" }
-italic = { family = "Source Code Pro", style = "Italic" }
-bold_italic = { family = "Source Code Pro", style = "Bold Italic" }
+# normal = { family = "Source Code Pro", style = "Bold" }
+# bold = { family = "Source Code Pro", style = "Bold" }
+# italic = { family = "Source Code Pro", style = "Italic" }
+# bold_italic = { family = "Source Code Pro", style = "Bold Italic" }
 
-# normal = { family = "FiraMono Nerd font", style = "Bold" }
-# bold = { family = "FiraMono Nerd font", style = "Bold" }
-# italic = { family = "FiraMono Nerd font", style = "Italic" }
-# bold_italic = { family = "FiraMono Nerd font", style = "Bold Italic" }
+normal = { family = "FiraMono Nerd font", style = "Bold" }
+bold = { family = "FiraMono Nerd font", style = "Bold" }
+italic = { family = "FiraMono Nerd font", style = "Italic" }
+bold_italic = { family = "FiraMono Nerd font", style = "Bold Italic" }
 size = 7.5 # You can adjust the size according to your preference
