@@ -3,35 +3,47 @@
 # Define the step for brightness change
 brightness_step=5
 
-# Uses regex to get brightness from brightnessctl
+# Uses brightnessctl to get the current brightness as a percentage
 function get_brightness {
-    brightnessctl g | awk '{print int($1*100/255)}'
+	max_brightness=$(brightnessctl m)     # Maximum brightness value
+	current_brightness=$(brightnessctl g) # Current brightness value
+	echo $((current_brightness * 100 / max_brightness))
 }
 
-# Always returns the same icon - a sun icon for brightness
+# Returns the brightness icon based on the brightness level
 function get_brightness_icon {
-    brightness_icon="󰃞"
+	brightness=$(get_brightness)
+	if ((brightness <= 20)); then
+		echo "󰃞" # Low brightness icon
+	elif ((brightness <= 60)); then
+		echo "󰃟" # Medium brightness icon
+	else
+		echo "󰃠" # High brightness icon
+	fi
 }
 
 # Displays a brightness notification using dunstify
 function show_brightness_notif {
-    brightness=$(get_brightness)
-    get_brightness_icon
-    dunstify -t 1000 -r 2593 -u normal "$brightness_icon $brightness%" -h int:value:$brightness -h string:hlcolor:$bar_color
+	brightness=$(get_brightness)
+	brightness_icon=$(get_brightness_icon)
+	bar_color="${bar_color:-#FFD700}" # Set default color if not provided
+	dunstify -t 1000 -r 2593 -u normal "$brightness_icon $brightness%" -h int:value:"$brightness" -h string:hlcolor:"$bar_color"
 }
 
 # Main function - Takes user input, "brightness_up" or "brightness_down"
 case $1 in
 brightness_up)
-    # Increases brightness and displays the notification
-    brightnessctl set +$brightness_step%
-    show_brightness_notif
-    ;;
+	# Increases brightness and displays the notification
+	brightnessctl set +"$brightness_step"%
+	show_brightness_notif
+	;;
 
 brightness_down)
-    # Decreases brightness and displays the notification
-    brightnessctl set $brightness_step%-
-    show_brightness_notif
-    ;;
+	# Decreases brightness and displays the notification
+	brightnessctl set "$brightness_step"%-
+	show_brightness_notif
+	;;
+*)
+	echo "Usage: $0 {brightness_up|brightness_down}"
+	;;
 esac
-

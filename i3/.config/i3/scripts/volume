@@ -25,13 +25,13 @@
 # For ALSA users, you may use "default" for your primary card
 # or you may use hw:# where # is the number of the card desired
 
-#!/usr/bin/env bash
-
 # Predefine necessary variables
-[[ -z "$MIXER" ]] && MIXER="default"
-[[ -z "$STEP" ]] && STEP="5%"
-[[ -z "$NATURAL_MAPPING" ]] && NATURAL_MAPPING=0
-AMIXER_PARAMS=($NATURAL_MAPPING -eq 1 ? "-M" : "")
+MIXER="${MIXER:-default}"
+STEP="${STEP:-5%}"
+NATURAL_MAPPING="${NATURAL_MAPPING:-0}"
+AMIXER_PARAMS=()
+
+[[ "$NATURAL_MAPPING" -eq 1 ]] && AMIXER_PARAMS+=("-M")
 
 # Determine the mixer automatically if not set explicitly
 if [[ "$MIXER" == "default" ]]; then
@@ -54,20 +54,28 @@ fi
 
 # Function to get volume and mute state
 function get_volume_info() {
-	amixer $AMIXER_PARAMS -D "$MIXER" get "$SCONTROL" | grep -oP "\[(\d+%)\].*\[(on|off)\]"
+	amixer "${AMIXER_PARAMS[@]}" -D "$MIXER" get "$SCONTROL" | grep -oP "\[(\d+%)\].*\[(on|off)\]"
 }
 
 # Format output
 function format_output() {
-	read volume mute <<<$(get_volume_info | grep -oP "\d+%" -m 1 && get_volume_info | grep -oP "(on|off)" -m 1)
-	echo "$LABEL${mute,,}" == "off" ? "MUTE" : "$volume"
+	local volume mute
+	volume=$(get_volume_info | grep -oP "\d+%" -m 1)
+	mute=$(get_volume_info | grep -oP "(on|off)" -m 1)
+
+	if [[ "$mute" == "off" ]]; then
+		echo "$LABEL MUTE"
+	else
+		echo "$LABEL $volume"
+	fi
 }
 
 # Handle button events for volume control
 case $BLOCK_BUTTON in
-3) amixer $AMIXER_PARAMS -q -D $MIXER sset $SCONTROL toggle ;;          # right click, mute/unmute
-4) amixer $AMIXER_PARAMS -q -D $MIXER sset $SCONTROL ${STEP}+ unmute ;; # scroll up, increase
-5) amixer $AMIXER_PARAMS -q -D $MIXER sset $SCONTROL ${STEP}- unmute ;; # scroll down, decrease
+3) amixer "${AMIXER_PARAMS[@]}" -q -D "$MIXER" sset "$SCONTROL" toggle ;;            # right click, mute/unmute
+4) amixer "${AMIXER_PARAMS[@]}" -q -D "$MIXER" sset "$SCONTROL" "${STEP}+" unmute ;; # scroll up, increase
+5) amixer "${AMIXER_PARAMS[@]}" -q -D "$MIXER" sset "$SCONTROL" "${STEP}-" unmute ;; # scroll down, decrease
 esac
 
+# Output the formatted volume or mute state
 volume | format
