@@ -22,8 +22,6 @@ zinit cdreplay -q
 
 # Add in snippets
 zinit snippet OMZP::vi-mode
-# Commented out the problematic line
-# zinit snippet OMZP::tmux
 
 # Define aliases
 alias mkdir='mkdir -p'
