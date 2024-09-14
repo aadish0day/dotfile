@@ -3,17 +3,17 @@
 # Directories to stow
 directories=(
     "alacritty"
-    "i3"
-    "moc"
-    "ranger"
-    "rofi"
-    "tmux"
-    "zathura"
     "bash"
     "fastfetch"
+    "i3"
     "kitty"
+    "moc"
     "picom"
+    "ranger"
+    "rofi"
     "theme"
+    "tmux"
+    "zathura"
     "xfce4"
     "zsh"
 )
