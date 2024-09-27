@@ -48,7 +48,7 @@ alias tksv='tmux kill-server'              # Terminate all running tmux sessions
 
 
 # History settings
-HISTSIZE=500000
+HISTSIZE=10000
 HISTFILE=~/.zsh_history
 SAVEHIST=$HISTSIZE
 HISTDUP=erase
@@ -81,7 +81,7 @@ bindkey '^[' vi-cmd-mode
 conv4wp() {
     input_file="$1"
     output_file="${input_file%.*}.mp4"
-    ffmpeg -i "$input_file" -c:v libx264 -profile:v baseline -level 3.0 -pix_fmt yuv420p "$output_file"
+    ffmpeg -i "$input_file" -c:v libx264 -profile:v baseline -level 3.0 -pix_fmt yuv420p -threads 0 "$output_file"
 }
 
 extract() {
@@ -116,6 +116,7 @@ extract() {
 # Shell integration
 eval "$(fzf --zsh)"
 eval "$(starship init zsh)"
+eval "$(zoxide init zsh)"
 
 export TERM=xterm-256color
 export EDITOR='nvim'
