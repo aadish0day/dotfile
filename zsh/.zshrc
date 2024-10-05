@@ -76,6 +76,7 @@ bindkey '^p' history-search-backward
 bindkey '^n' history-search-forward
 bindkey '^F' fzf-cd-widget
 bindkey '^[' vi-cmd-mode
+bindkey -s '^N' 'nvim\n'
 
 # Convert video for web
 conv4wp() {
