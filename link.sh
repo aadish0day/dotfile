@@ -14,7 +14,6 @@ directories=(
     "theme"
     "tmux"
     "zathura"
-    "xfce4"
     "zsh"
 )
 
