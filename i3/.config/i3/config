@@ -184,6 +184,9 @@ bindsym $mod+Shift+e exec --no-startup-id ~/.config/i3/scripts/powermenu
 bindsym $mod+l exec --no-startup-id ~/.config/i3/scripts/lockscreen
 # bindsym $mod+l exec --no-startup-id i3lock
 
+exec --no-startup-id xss-lock --transfer-sleep-lock -- ~/.config/i3/scripts/lockscreen
+# exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock --nofork
+
 # reload the configuration file
 bindsym $mod+Shift+c reload
 
@@ -416,9 +419,6 @@ exec --no-startup-id sleep 2 && nitrogen --restore
 
 # set powersavings for display:
 exec --no-startup-id xset s 480 dpms 600 86400 86400 
-
-exec --no-startup-id xss-lock --transfer-sleep-lock -- ~/.config/i3/scripts/lockscreen
-# exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock --nofork
 
 # disable power saving (for example if using xscreensaver)
 #exec --no-startup-id xset -dpms
