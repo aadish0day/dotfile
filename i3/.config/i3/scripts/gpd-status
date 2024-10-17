@@ -2,5 +2,6 @@
 
 # Get the current GPU mode
 current_profile=$(supergfxctl -g)
-echo "$current_profile"
 
+# Print the current profile in a user-friendly format
+echo "$current_profile"

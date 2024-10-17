@@ -1,42 +1,46 @@
 #!/usr/bin/env bash
 
 # Colors for ROFI menu
-FG_COLOR="#bbbbbb"
-BG_COLOR="#111111"
-HLFG_COLOR="#111111"
-HLBG_COLOR="#bbbbbb"
-BORDER_COLOR="#222222"
+declare -r FG_COLOR="#bbbbbb"
+declare -r BG_COLOR="#111111"
+declare -r HLFG_COLOR="#111111"
+declare -r HLBG_COLOR="#bbbbbb"
+declare -r BORDER_COLOR="#222222"
 
 # ROFI options
-ROFI_OPTIONS=(-theme ~/.config/rofi/power-profiles.rasi)
+declare -r ROFI_THEME="~/.config/rofi/power-profiles.rasi"
 
 # List of available GPU power profiles
 declare -A gpu_profiles=(
-	["Integrated"]="supergfxctl -m Integrated"
-	["Hybrid"]="supergfxctl -m Hybrid"
-	["AsusMuxDgpu"]="supergfxctl -m AsusMuxDgpu"
+    ["Integrated"]="supergfxctl -m Integrated"
+    ["Hybrid"]="supergfxctl -m Hybrid"
+    ["AsusMuxDgpu"]="supergfxctl -m AsusMuxDgpu"
 )
 
-# Prepare ROFI launcher
-launcher_exe="rofi"
-launcher_options=(-dmenu -i -lines "${#gpu_profiles[@]}" -p "Select GPU Profile:"
-	-bc "${BORDER_COLOR}" -bg "${BG_COLOR}" -fg "${FG_COLOR}" -hlfg "${HLFG_COLOR}" -hlbg "${HLBG_COLOR}"
-	"${ROFI_OPTIONS[@]}")
+# Prepare ROFI launcher options
+launcher_options=(
+    -dmenu -i -lines "${#gpu_profiles[@]}"
+    -p "Select GPU Profile:"
+    -bc "${BORDER_COLOR}" -bg "${BG_COLOR}" -fg "${FG_COLOR}"
+    -hlfg "${HLFG_COLOR}" -hlbg "${HLBG_COLOR}"
+    -theme "${ROFI_THEME}"
+)
 
 # Display the ROFI menu and get user selection
-selected_profile=$("${launcher_exe}" "${launcher_options[@]}" <<<"$(printf '%s\n' "${!gpu_profiles[@]}" | sort)")
+selected_profile=$(printf '%s\n' "${!gpu_profiles[@]}" | sort | rofi "${launcher_options[@]}")
 
 # Check if a selection was made and execute the corresponding command
 if [[ -n "${selected_profile}" && -v gpu_profiles["${selected_profile}"] ]]; then
-	confirmation=$(echo -e "Yes\nNo" | rofi -dmenu -i -lines 2 -p "Confirm ${selected_profile}?" \
-		-bc "${BORDER_COLOR}" -bg "${BG_COLOR}" -fg "${FG_COLOR}" -hlfg "${HLFG_COLOR}" -hlbg "${HLBG_COLOR}" \
-		"${ROFI_OPTIONS[@]}")
+    # Confirmation prompt
+    confirmation=$(echo -e "Yes\nNo" | rofi -dmenu -i -lines 2 -p "Confirm ${selected_profile}?" \
+        -bc "${BORDER_COLOR}" -bg "${BG_COLOR}" -fg "${FG_COLOR}" \
+        -hlfg "${HLFG_COLOR}" -hlbg "${HLBG_COLOR}" -theme "${ROFI_THEME}")
 
-	if [[ "${confirmation}" == "Yes" ]]; then
-		# Execute the selected GPU profile command
-		eval "${gpu_profiles[${selected_profile}]}"
+    if [[ "${confirmation}" == "Yes" ]]; then
+        # Execute the selected GPU profile command
+        ${gpu_profiles[${selected_profile}]}
 
-		# Logout the user
-		i3-msg exit
-	fi
+        # Logout the user
+        i3-msg exit
+    fi
 fi
