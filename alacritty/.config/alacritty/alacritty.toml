@@ -39,4 +39,4 @@ normal = { family = "FiraMono Nerd font", style = "Bold" }
 bold = { family = "FiraMono Nerd font", style = "Bold" }
 italic = { family = "FiraMono Nerd font", style = "Italic" }
 bold_italic = { family = "FiraMono Nerd font", style = "Bold Italic" }
-size = 7.5 # You can adjust the size according to your preference
+size = 7.2 # You can adjust the size according to your preference
