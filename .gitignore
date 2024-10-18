@@ -1,4 +1,5 @@
 tmux/.config/tmux/plugins/
 moc/.moc/last_directory
 moc/.moc/pid
-
+ranger/.config/ranger/plugins/__pycache__/
+ranger/.config/ranger/plugins/ranger_devicons/__pycache__/
