@@ -311,7 +311,7 @@ bindsym Control+Mod1+p exec mocp --toggle-pause
 # GPU Profiles menu switcher (rofi)
 bindsym $mod+Shift+g exec --no-startup-id ~/.config/i3/scripts/gpu-profile-ausu
 
-exec --no-startup-id xrandr --output eDP-1 --scale 0.80x0.80
+# exec --no-startup-id xrandr --output eDP-1 --scale 0.80x0.80
 
 bindsym F3 exec asusctl -n
 bindsym F2 exec asusctl -p
