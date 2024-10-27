@@ -11,8 +11,10 @@ directories=(
     "picom"
     "ranger"
     "rofi"
+    "rofi-theme"
     "theme"
     "tmux"
+    "xresources"
     "zathura"
     "zsh"
 )
@@ -27,6 +29,7 @@ cd "$DOTFILES_DIR" || exit
 for dir in "${directories[@]}"; do
     if [ -d "$dir" ]; then
         echo "Stowing $dir..."
+        # stow -R --override="*" "$dir"
         stow "$dir"
     else
         echo "Directory $dir not found, skipping..."
