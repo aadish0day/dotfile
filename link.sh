@@ -9,6 +9,7 @@ directories=(
     "kitty"
     "moc"
     "picom"
+    "qutebrowser"
     "ranger"
     "rofi"
     "rofi-theme"
