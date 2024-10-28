@@ -8,7 +8,7 @@ config.set("colors.webpage.darkmode.enabled", True)
 config.set("colors.webpage.preferred_color_scheme", "dark")
 
 # Set the default font size and zoom level for improved readability.
-c.fonts.default_size = "12pt"
+c.fonts.default_size = "10pt"
 c.zoom.default = "100%"
 
 # Always show the status bar and tabs if multiple are open.
@@ -30,7 +30,9 @@ c.colors.tabs.selected.odd.fg = "#f8f8f2"
 # Block third-party cookies and disable geolocation for increased privacy.
 c.content.cookies.accept = "no-3rdparty"
 c.content.geolocation = False
-c.content.headers.referer = "same-domain"  # Only send referer headers to same-domain requests
+c.content.headers.referer = (
+    "same-domain"  # Only send referer headers to same-domain requests
+)
 c.content.blocking.method = "adblock"  # Enable adblocker
 
 # Block pages with certificate errors and change user agent to a Chrome-like one for compatibility.
@@ -40,12 +42,18 @@ c.content.headers.user_agent = (
     "(KHTML, like Gecko) Chrome/99 Safari/537.36"
 )
 
-# Add commonly used adblock lists for increased privacy and ad blocking.
+# Enhanced Adblock lists with more options for privacy and social media blocking
 c.content.blocking.adblock.lists = [
-    "https://easylist.to/easylist/easylist.txt",
-    "https://easylist.to/easylist/easyprivacy.txt",
-    "https://secure.fanboy.co.nz/fanboy-cookiemonster.txt",
-    "https://www.i-dont-care-about-cookies.eu/abp/"
+    "https://easylist.to/easylist/easylist.txt",  # General ad-blocking list
+    "https://easylist.to/easylist/easyprivacy.txt",  # Tracker blocking list
+    "https://secure.fanboy.co.nz/fanboy-cookiemonster.txt",  # Cookie notice blocking
+    "https://www.i-dont-care-about-cookies.eu/abp/",  # Extra cookie notice blocking
+    "https://secure.fanboy.co.nz/fanboy-social.txt",  # Social media element blocking
+    "https://raw.githubusercontent.com/uBlockOrigin/uAssets/master/filters/filters.txt",  # General uBlock filter
+    "https://raw.githubusercontent.com/uBlockOrigin/uAssets/master/filters/privacy.txt",  # Enhanced privacy blocking
+    "https://raw.githubusercontent.com/uBlockOrigin/uAssets/master/filters/badware.txt",  # Badware and malware blocking
+    "https://raw.githubusercontent.com/uBlockOrigin/uAssets/master/filters/annoyances.txt",  # Blocks annoyances and pop-ups
+    "https://raw.githubusercontent.com/uBlockOrigin/uAssets/master/filters/legacy.txt",  # Legacy ad-blocking elements
 ]
 
 ### 3. Performance Tweaks ###
@@ -94,12 +102,12 @@ c.url.searchengines = {
     "w": "https://en.wikipedia.org/wiki/{}",
     "yt": "https://www.youtube.com/results?search_query={}",
     "gh": "https://github.com/search?q={}",
-    "rd": "https://www.reddit.com/search/?q={}"
+    "rd": "https://www.reddit.com/search/?q={}",
 }
 
 # Configure start and default pages for new tabs and start-up.
-c.url.start_pages = ["https://duckduckgo.com"]
-c.url.default_page = "https://duckduckgo.com"
+c.url.start_pages = ["https://start.duckduckgo.com"]
+c.url.default_page = "https://start.duckduckgo.com"
 
 ### 7. Plugins and Scripting ###
 
@@ -120,4 +128,3 @@ config.bind(",pdf", "spawn --detach zathura {download}")
 # Uncomment below if you want to enable smooth scrolling on specific pages
 # (useful if some sites behave oddly).
 # config.set("scrolling.smooth", True, "https://www.example.com")
-
