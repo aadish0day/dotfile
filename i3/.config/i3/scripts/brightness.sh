@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define the step for brightness change
-brightness_step=5
+brightness_step=10
 
 # Uses brightnessctl to get the current brightness as a percentage
 function get_brightness {

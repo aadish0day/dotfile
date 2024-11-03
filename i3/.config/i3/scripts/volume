@@ -17,6 +17,7 @@
 
 # original source: https://github.com/vivien/i3blocks-contrib/tree/master/volume
 # check the readme: https://github.com/vivien/i3blocks-contrib/blob/master/volume/README.md
+
 #------------------------------------------------------------------------
 
 # The second parameter overrides the mixer selection
@@ -35,13 +36,13 @@ AMIXER_PARAMS=()
 
 # Determine the mixer automatically if not set explicitly
 if [[ "$MIXER" == "default" ]]; then
-	if command -v pulseaudio >/dev/null && pulseaudio --check; then
-		if amixer -D pulse info >/dev/null 2>&1; then
-			MIXER="pulse"
-		fi
-	elif lsmod | grep -q jack; then
-		MIXER="jackplug"
-	fi
+    if command -v pulseaudio >/dev/null && pulseaudio --check; then
+        if amixer -D pulse info >/dev/null 2>&1; then
+            MIXER="pulse"
+        fi
+    elif lsmod | grep -q jack; then
+        MIXER="jackplug"
+    fi
 fi
 
 # Override mixer if passed as an argument
@@ -49,33 +50,33 @@ MIXER="${2:-$MIXER}"
 
 # Determine the scontrol (audio control name)
 if [[ -z "$SCONTROL" ]]; then
-	SCONTROL=$(amixer -D "$MIXER" scontrols | grep -oP "Simple mixer control '\K[^']+" | head -n 1)
+    SCONTROL=$(amixer -D "$MIXER" scontrols | grep -oP "Simple mixer control '\K[^']+" | head -n 1)
 fi
 
 # Function to get volume and mute state
-function get_volume_info() {
-	amixer "${AMIXER_PARAMS[@]}" -D "$MIXER" get "$SCONTROL" | grep -oP "\[(\d+%)\].*\[(on|off)\]"
+get_volume_info() {
+    amixer "${AMIXER_PARAMS[@]}" -D "$MIXER" get "$SCONTROL" | grep -oP "\[(\d+%)\].*\[(on|off)\]"
 }
 
 # Format output
-function format_output() {
-	local volume mute
-	volume=$(get_volume_info | grep -oP "\d+%" -m 1)
-	mute=$(get_volume_info | grep -oP "(on|off)" -m 1)
-
-	if [[ "$mute" == "off" ]]; then
-		echo "$LABEL MUTE"
-	else
-		echo "$LABEL $volume"
-	fi
+format_output() {
+    local volume mute
+    volume=$(get_volume_info | grep -oP "\d+%" -m 1)
+    mute=$(get_volume_info | grep -oP "(on|off)" -m 1)
+    
+    if [[ "$mute" == "off" ]]; then
+        echo "$LABEL MUTE"
+    else
+        echo "$LABEL $volume"
+    fi
 }
 
 # Handle button events for volume control
 case $BLOCK_BUTTON in
-3) amixer "${AMIXER_PARAMS[@]}" -q -D "$MIXER" sset "$SCONTROL" toggle ;;            # right click, mute/unmute
-4) amixer "${AMIXER_PARAMS[@]}" -q -D "$MIXER" sset "$SCONTROL" "${STEP}+" unmute ;; # scroll up, increase
-5) amixer "${AMIXER_PARAMS[@]}" -q -D "$MIXER" sset "$SCONTROL" "${STEP}-" unmute ;; # scroll down, decrease
+    3) amixer "${AMIXER_PARAMS[@]}" -q -D "$MIXER" sset "$SCONTROL" toggle ;;            # right click, mute/unmute
+    4) amixer "${AMIXER_PARAMS[@]}" -q -D "$MIXER" sset "$SCONTROL" "${STEP}+" unmute ;; # scroll up, increase
+    5) amixer "${AMIXER_PARAMS[@]}" -q -D "$MIXER" sset "$SCONTROL" "${STEP}-" unmute ;; # scroll down, decrease
 esac
 
 # Output the formatted volume or mute state
-volume | format
+format_output
