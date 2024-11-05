@@ -24,12 +24,12 @@ zinit cdreplay -q
 zinit snippet OMZP::vi-mode
 
 # Define aliases
+alias ls='lsd --color=auto --group-dirs=first --icon=always'
+alias ll='lsd -l --group-dirs=first --icon=always'
+alias la='lsd -a --group-dirs=first --icon=always'
+alias l='lsd --group-dirs=first --icon=always --classify'
 alias mkdir='mkdir -p'
 alias reload='source ~/.zshrc'
-alias ls='ls --color=auto'
-alias ll='ls -l'
-alias la='ls -A'
-alias l='ls -CF'
 alias grep='grep --color=auto'
 alias rd='rm -fr'
 alias music='mocp'
