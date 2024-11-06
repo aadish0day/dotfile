@@ -50,9 +50,7 @@
             "type": "custom",
             "format": "└──────────────────────────────────────────┘"
         },
-        {
-            "type": "break"
-        },
+        "break",
         {
             "type": "title",
             "key": "  "
@@ -69,13 +67,13 @@
         },
         {
             "type": "gpu",
-            "format": "{1}",
+            "format": "{2}",
             "key": "   GPU",
             "keyColor": "blue"
         },
         {
             "type": "gpu",
-            "format": "{2}",
+            "format": "{3}",
             "key": "   GPU Driver",
             "keyColor": "magenta"
         },
@@ -87,7 +85,7 @@
         {
             "type": "custom",
             "format": "└──────────────────────────────────────────┘"
-        }
+        },
     ]
 }
 
