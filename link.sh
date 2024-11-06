@@ -4,6 +4,7 @@
 directories=(
     "alacritty"
     "bash"
+    "dunst"
     "fastfetch"
     "i3"
     "kitty"
