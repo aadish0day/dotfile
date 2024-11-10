@@ -1,0 +1,44 @@
+#!/bin/bash
+
+extract() {
+    if [ -z "$1" ]; then
+        echo "Usage: extract <file>"
+        return 1
+    elif [ ! -f "$1" ]; then
+        echo "'$1' is not a valid file."
+        return 1
+    fi
+    FILENAME=$(basename "$1")
+    EXT="${FILENAME##*.}"
+    DEST_DIR="${FILENAME%.*}" # Strip the extension from the file name
+
+    # Ensure the destination directory doesn't already exist
+    if [ -e "$DEST_DIR" ]; then
+        echo "Directory '$DEST_DIR' already exists. Extracting into it."
+    else
+        mkdir -p "$DEST_DIR"
+    fi
+
+    case "$1" in
+    *.tar.gz | *.tgz) pv "$1" | tar -xzf - -C "$DEST_DIR" ;;
+    *.tar.bz2) pv "$1" | tar -xjf - -C "$DEST_DIR" ;;
+    *.tar.xz) pv "$1" | tar -xJf - -C "$DEST_DIR" ;;
+    *.tar) pv "$1" | tar -xf - -C "$DEST_DIR" ;;
+    *.gz) gunzip -c "$1" >"$DEST_DIR/${FILENAME%.gz}" ;;
+    *.bz2) bunzip2 -c "$1" >"$DEST_DIR/${FILENAME%.bz2}" ;;
+    *.xz) unxz -c "$1" >"$DEST_DIR/${FILENAME%.xz}" ;;
+    *.zip) unzip "$1" -d "$DEST_DIR" ;;
+    *.7z) 7z x "$1" -o"$DEST_DIR" ;;
+    *.rar) unrar x "$1" "$DEST_DIR" ;;
+    # *.zst) unzstd -c "$1" > "$DEST_DIR/${FILENAME%.zst}" ;;
+    # *.lz4) unlz4 -c "$1" > "$DEST_DIR/${FILENAME%.lz4}" ;;
+    # *.lzma) unlzma -c "$1" > "$DEST_DIR/${FILENAME%.lzma}" ;;
+    *)
+        echo "Unsupported file format: '$1'"
+        return 1
+        ;;
+    esac
+}
+
+# Example usage:
+extract "$1"
