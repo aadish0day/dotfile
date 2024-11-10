@@ -75,43 +75,7 @@ bindkey '^p' history-search-backward
 bindkey '^n' history-search-forward
 bindkey '^F' fzf-cd-widget
 bindkey '^[' vi-cmd-mode
-bindkey -s '^N' 'nvim\n'
-
-# Convert video for web
-conv4wp() {
-    input_file="$1"
-    output_file="${input_file%.*}.mp4"
-    ffmpeg -i "$input_file" -c:v libx264 -profile:v baseline -level 3.0 -pix_fmt yuv420p -threads 0 "$output_file"
-}
-
-extract() {
-    if [ -z "$1" ]; then
-        echo "Usage: extract <file>"
-        return 1
-    elif [ ! -f "$1" ]; then
-        echo "'$1' is not a valid file."
-        return 1
-    fi
-    FILENAME=$(basename "$1")
-    DEST_DIR="${FILENAME%.*.*}"
-    mkdir -p "$DEST_DIR"
-    case "$1" in
-        *.tar.gz|*.tgz) pv "$1" | tar -xzf - -C "$DEST_DIR" ;;
-        *.tar.bz2) pv "$1" | tar -xjf - -C "$DEST_DIR" ;;
-        *.tar.xz) pv "$1" | tar -xJf - -C "$DEST_DIR" ;;
-        *.tar) pv "$1" | tar -xf - -C "$DEST_DIR" ;;
-        *.gz) gunzip -c "$1" > "$DEST_DIR/${FILENAME%.gz}" ;;
-        *.bz2) bunzip2 -c "$1" > "$DEST_DIR/${FILENAME%.bz2}" ;;
-        *.xz) unxz -c "$1" > "$DEST_DIR/${FILENAME%.xz}" ;;
-        *.zip) unzip "$1" -d "$DEST_DIR" ;;
-        *.7z) 7z x "$1" -o"$DEST_DIR" ;;
-        *.rar) unrar x "$1" "$DEST_DIR" ;;
-        # *.zst) unzstd -c "$1" > "$DEST_DIR/${FILENAME%.zst}" ;;
-        # *.lz4) unlz4 -c "$1" > "$DEST_DIR/${FILENAME%.lz4}" ;;
-        # *.lzma) unlzma -c "$1" > "$DEST_DIR/${FILENAME%.lzma}" ;;
-        *) echo "Unsupported file format: '$1'"; return 1 ;;
-    esac
-}
+# bindkey -s '^N' 'nvim\n'
 
 # Shell integration
 eval "$(fzf --zsh)"
@@ -122,3 +86,4 @@ export TERM=xterm-256color
 export EDITOR='nvim'
 export BAT_THEME='Dracula'
 export TERMINAL='alacritty'
+export PATH="$HOME/.local/bin:$PATH"
