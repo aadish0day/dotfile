@@ -14,6 +14,7 @@ directories=(
     "ranger"
     "rofi"
     "rofi-theme"
+    "scripts"
     "theme"
     "tmux"
     "xresources"

@@ -27,7 +27,7 @@ background = "#ff7f7f"
 text = "#FFFFFF"
 
 [window]
-opacity = 0.75
+opacity = 0.73
 
 [font]
 # normal = { family = "FiraMono Nerd font", style = "Bold" }

@@ -1,20 +1,3 @@
-# exec --no-startup-id ~/set_once.sh
-# This file is a modified version based on default i3-config-wizard config
-# source is available here:
-# https://raw.githubusercontent.com/endeavouros-team/endeavouros-i3wm-setup/main/etc/skel/.config/i3/config
-# Maintainer: joekamprad [joekamprad //a_t// endeavouros.com]
-# https://endeavouros.com
-#
-# iconic font icon search: https://fontawesome.com/v4.7/cheatsheet/
-#
-# --> to update this run the following command (will backup existing setup file)
-# wget --backups=1 https://raw.githubusercontent.com/endeavouros-team/endeavouros-i3wm-setup/main/etc/skel/.config/i3/config -P ~/.config/i3/
-#
-# Endeavouros-i3 config file
-# Source for complete framework of our i3 config and theming here: https://github.com/endeavouros-team/endeavouros-i3wm-setup
-# EndeavourOS wiki holds some Information also: https://discovery.endeavouros.com/window-tiling-managers/i3-wm/
-# Please see http://i3wm.org/docs/userguide.html for the official i3 reference!
-
 #######################
 # config starts here: #
 #######################
@@ -48,15 +31,15 @@ workspace_layout default
 ##############################
 
 #border indicator on windows:
-new_window pixel 1
+new_window pixel 12
 
 
 # thin borders
 # hide_edge_borders both
 
 # Set inner/outer gaps
-gaps inner 6
-gaps outer 3
+gaps inner 8
+gaps outer 5
 
 # show window title bars (not officially supported with i3gaps)
 #default_border normal
@@ -181,7 +164,7 @@ bindsym $mod+Shift+e exec --no-startup-id ~/.config/i3/scripts/powermenu
 # lock with a picture:
 #bindsym $mod+l exec --no-startup-id i3lock -i  ~/.config/i3/i3-lock-screen.png -p default|win -t
 # lock by blurring the screen:
-bindsym $mod+l exec --no-startup-id ~/.config/i3/scripts/lockscreen
+bindsym $mod+o exec --no-startup-id ~/.config/i3/scripts/lockscreen
 # bindsym $mod+l exec --no-startup-id i3lock
 
 exec --no-startup-id xss-lock --transfer-sleep-lock -- ~/.config/i3/scripts/lockscreen
@@ -212,10 +195,10 @@ bindsym XF86MonBrightnessDown exec --no-startup-id ~/.config/i3/scripts/brightne
 
 
 # change focus
-bindsym $mod+j focus left
-bindsym $mod+k focus down
-bindsym $mod+b focus up
-bindsym $mod+o focus right
+bindsym $mod+h focus left
+bindsym $mod+j focus down
+bindsym $mod+k focus up
+bindsym $mod+l focus right
 
 # alternatively, you can use the cursor keys:
 bindsym $mod+Left focus left
@@ -224,10 +207,10 @@ bindsym $mod+Up focus up
 bindsym $mod+Right focus right
 
 # move focused window
-bindsym $mod+Shift+j move left
-bindsym $mod+Shift+k move down
-bindsym $mod+Shift+b move up
-bindsym $mod+Shift+o move right
+bindsym $mod+Shift+h move left
+bindsym $mod+Shift+j move down
+bindsym $mod+Shift+k move up
+bindsym $mod+Shift+l move right
 
 # alternatively, you can use the cursor keys:
 bindsym $mod+Shift+Left move left
@@ -399,9 +382,6 @@ exec --no-startup-id /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
 # exec --no-startup-id dex -a -s /etc/xdg/autostart/:~/.config/autostart/
 exec --no-startup-id dex --autostart --environment i3
 
-# Start welcome app (optional)
-# exec --no-startup-id sh /usr/share/endeavouros/scripts/welcome --startdelay=3 
-
 # Activate num lock on startup
 # exec --no-startup-id numlockx on
 
@@ -495,7 +475,7 @@ for_window [class=".*"] border pixel 2
 #for_window [class=".*"] resize set 640 480 #to change size of all floating windows 
 
 # set position of floating window
-#for_window [class=".*"] move position center
+for_window [class=".*"] move position center
 
 ######################################
 # color settings for bar and windows #
@@ -504,7 +484,8 @@ for_window [class=".*"] border pixel 2
 # Define colors variables:
 set $darkbluetrans	#08052be6
 set $darkblue		#08052b
-set $lightblue		#5294e2
+set $lightblue		#88c0d0 
+# set $lightblue		#5294e2
 set $urgentred		#e53935
 set $white		#ffffff
 set $black		#000000
@@ -516,7 +497,7 @@ set $yellowbrown	#e1b700
 
 # define colors for windows:
 #class		        	border		bground		text		indicator	child_border
-client.focused		    	$lightblue	$darkblue	$white		$mediumgrey	$mediumgrey
+client.focused		    	$lightblue	$darkblue	$white		$mediumgrey	$lightblue
 client.unfocused	    	$darkblue	$darkblue	$grey		$darkgrey	$darkgrey
 client.focused_inactive		$darkblue	$darkblue	$grey		$black		$black
 client.urgent		    	$urgentred	$urgentred	$white		$yellowbrown	$yellowbrown
