@@ -272,33 +272,65 @@ bindsym XF86AudioPause exec --no-startup-id playerctl pause
 bindsym XF86AudioNext exec --no-startup-id playerctl next
 bindsym XF86AudioPrev exec --no-startup-id playerctl previous
 
-# Redirect sound to headphones
-bindsym $mod+p exec --no-startup-id /usr/local/bin/switch-audio-port
+# bindsym $mod+p exec 
 
 # App shortcuts
-bindsym $mod+w exec --no-startup-id thorium-browser
-bindsym $mod+n exec --no-startup-id thunar
-bindsym $mod+m exec --no-startup-id virt-manager
-bindsym F6 exec --no-startup-id flameshot gui
-bindsym F4 exec --no-startup-id rog-control-center
+# Application Shortcuts
+# Opens the Thorium browser
+bindsym $mod+w exec --no-startup-id thorium-browser       
 
-# Power Profiles menu switcher (rofi)
-#bindsym $mod+Shift+p exec --no-startup-id ~/.config/i3/scripts/power-profiles
+# Opens Thunar file manager
+bindsym $mod+n exec --no-startup-id thunar                
+
+# Opens Virt-Manager (virtual machine manager)
+bindsym $mod+m exec --no-startup-id virt-manager          
+
+# Launches Flameshot in GUI mode for screen capture
+bindsym F6 exec --no-startup-id flameshot gui             
+
+# Opens the ROG Control Center
+bindsym F4 exec --no-startup-id rog-control-center        
+
+
+# Power Profiles Menu Switcher (via rofi)
+#bindsym $mod+Shift+p exec --no-startup-id ~/.config/i3/scripts/power-profiles  
 bindsym $mod+Shift+p exec --no-startup-id ~/.config/i3/scripts/power-profiles-ausu
 
-# Mocp to control music
-bindsym Control+Mod1+n exec /usr/bin/mocp --next
-bindsym Control+Mod1+b exec /usr/bin/mocp --previous
-bindsym Control+Mod1+p exec mocp --toggle-pause
 
-# GPU Profiles menu switcher (rofi)
-bindsym $mod+Shift+g exec --no-startup-id ~/.config/i3/scripts/gpu-profile-ausu
+# Music Control with mocp
+# Skips to the next track in mocp (Music On Console Player)
+bindsym Control+Mod1+n exec /usr/bin/mocp --next          
 
-# exec --no-startup-id xrandr --output eDP-1 --scale 0.80x0.80
+# Goes to the previous track in mocp
+bindsym Control+Mod1+b exec /usr/bin/mocp --previous      
 
-bindsym F3 exec asusctl -n
-bindsym F2 exec asusctl -p
+# Toggles play/pause in mocp
+bindsym Control+Mod1+p exec mocp --toggle-pause           
 
+
+# GPU Profiles Menu Switcher (via rofi)
+# Opens a custom GPU profile switcher script for ASUS
+bindsym $mod+Shift+g exec --no-startup-id ~/.config/i3/scripts/gpu-profile-ausu 
+
+
+# Asusctl Power Control Shortcuts
+# Cycles to the next available profile in asusctl
+bindsym F3 exec asusctl -n                                
+
+# Switches to the previous profile in asusctl
+bindsym F2 exec asusctl -p                                
+
+# Screenshot Shortcuts
+# Takes a screenshot of the currently focused window
+bindsym $mod+Shift+s exec scrot -u 
+
+# Takes a fullscreen screenshot using Flameshot
+bindsym $mod+Shift+f exec flameshot screen                
+
+bindsym F9 exec --no-startup-id arandr
+
+bindsym Mod1+p exec playerctl play-pause
+bindsym Mod1+n exec playerctl next
 
 ##########################################
 # configuration for workspace behaviour: #
@@ -446,6 +478,9 @@ exec --no-startup-id blueberry-tray
 # Start Flameshot for screenshots
 exec --no-startup-id flameshot
 
+exec --no-startup-id clipmenud
+bindsym $mod+c exec clipmenu
+
 ##################
 # floating rules #
 ##################
@@ -475,7 +510,7 @@ for_window [class=".*"] border pixel 2
 #for_window [class=".*"] resize set 640 480 #to change size of all floating windows 
 
 # set position of floating window
-for_window [class=".*"] move position center
+# for_window [class=".*"] move position center
 
 ######################################
 # color settings for bar and windows #
@@ -576,7 +611,7 @@ bar {
 bindsym $mod+d exec --no-startup-id rofi -modi drun -show drun \
             -config ~/.config/rofi/rofidmenu.rasi
 
-            bindsym F9 exec --no-startup-id rofi -modi drun -show drun \
+            # bindsym F9 exec --no-startup-id rofi -modi drun -show drun \
 #		-config ~/.config/rofi/rofidmenu.rasi
 
 ## rofi bindings for window menu ($mod+t /F10 optional disabled)
@@ -584,12 +619,12 @@ bindsym $mod+d exec --no-startup-id rofi -modi drun -show drun \
             bindsym $mod+t exec --no-startup-id rofi -show window \
                 -config ~/.config/rofi/rofidmenu.rasi
 
-                bindsym F10 exec --no-startup-id rofi -show window \
-#		-config ~/.config/rofi/rofidmenu.rasi
+#                 bindsym F10 exec --no-startup-id rofi -show window \
+# #		-config ~/.config/rofi/rofidmenu.rasi
 
 ## rofi bindings to manage clipboard (install rofi-greenclip from the AUR)
 
 exec --no-startup-id greenclip daemon>/dev/null
-                bindsym $mod+c exec --no-startup-id rofi -modi "clipboard:greenclip print" -show clipboard \
+                # bindsym $mod+c exec --no-startup-id rofi -modi "clipboard:greenclip print" -show clipboard \
 #		-config ~/.config/rofi/rofidmenu.rasi
 
