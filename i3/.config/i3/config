@@ -152,7 +152,7 @@ bindsym $mod+r mode "resize"
 ######################################
 
 # start a Terminal
-bindsym $mod+Return exec --no-startup-id alacritty
+bindsym $mod+Return exec --no-startup-id wezterm
 
 # kill focused window
 bindsym $mod+q kill
@@ -359,12 +359,12 @@ set $ws10 "10"
 #workspace $ws5 output HDMI-0
 
 # bind program to workspace and focus to them on startup:
-assign [class="Alacritty"] $ws1
+assign [class="wezterm"] $ws1
 assign [class="(?i)thorium-browser"] $ws2
 assign [class="Thunar"] $ws3
 
 # Automatically set focus to the new window if it opens in a different workspace
-for_window [class="Alacritty"] focus
+for_window [class="wezterm"] focus
 for_window [class="(?i)thorium-browser"] focus
 for_window [class="Thunar"] focus
 
@@ -455,8 +455,9 @@ exec --no-startup-id /usr/bin/dunst
 # Start autotiling script (install via AUR)
 exec_always --no-startup-id autotiling
 
-# Start Alacritty terminal
-exec --no-startup-id alacritty
+# Start wezterm terminal
+# exec --no-startup-id alacritty
+exec --no-startup-id wezterm
 
 # Autostart apps as you like
 # exec --no-startup-id sleep 2 && alacritty
