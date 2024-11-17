@@ -17,6 +17,7 @@ directories=(
     "scripts"
     "theme"
     "tmux"
+    "wezterm"
     "xresources"
     "zathura"
     "zsh"
