@@ -85,5 +85,5 @@ eval "$(zoxide init zsh)"
 export TERM=xterm-256color
 export EDITOR='nvim'
 export BAT_THEME='Dracula'
-export TERMINAL='alacritty'
+export TERMINAL='westerm'
 export PATH="$HOME/.local/bin:$PATH"
