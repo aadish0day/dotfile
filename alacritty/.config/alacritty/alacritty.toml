@@ -36,10 +36,10 @@ opacity = 0.73
 # bold_italic = { family = "FiraMono Nerd font", style = "Bold Italic" }
 
 # Hack Nerd Font configuration
-bold = { family = "Hack Nerd Font", style = "Bold" }
-normal = { family = "hack nerd font", style = "bold" }
-italic = { family = "hack nerd font", style = "italic" }
+bold = { family = "JetBrains Mono Nerd Font", style = "Bold" }
+normal = { family = "JetBrains Mono Nerd Font", style = "bold" }
+italic = { family = "JetBrains Mono Nerd Font", style = "italic" }
 bold_italic = { family = "hack nerd font", style = "bold italic" }
 
 # size = 9.5
-size = 10
+size = 10.3
