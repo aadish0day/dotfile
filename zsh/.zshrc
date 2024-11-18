@@ -44,6 +44,7 @@ alias tn='tmux new-session'             # Create a new named tmux session
 alias ts='tmux new-session -s'             # Create a new named tmux session
 alias tkss='tmux kill-session -t'          # Terminate named running tmux session
 alias tksv='tmux kill-server'              # Terminate all running tmux sessions
+alias n='nvim'
 
 
 # History settings
