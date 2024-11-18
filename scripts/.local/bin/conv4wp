@@ -1,3 +1,20 @@
 #!/bin/sh
 
-ffmpeg -i $1 -c:v libx264 -profile:v baseline -level 3.0 -pix_fmt yuv420p -threads 0 $2
+# Loop through all the files passed as arguments
+for input_file in "$@"; do
+    # Extract the base name of the input file (remove path and extension)
+    base_name=$(basename "$input_file" | sed 's/\.[^.]*$//')
+
+    # Set the output file name to the same as the input but with an .mp4 extension
+    output="${base_name}.mp4"
+
+    # Convert the file using ffmpeg
+    ffmpeg -i "$input_file" -c:v libx264 -profile:v baseline -level 3.0 -pix_fmt yuv420p -threads 0 "$output"
+
+    # Check if the conversion was successful
+    if [ $? -eq 0 ]; then
+        echo "Successfully converted $input_file to $output"
+    else
+        echo "Failed to convert $input_file"
+    fi
+done
