@@ -11,7 +11,6 @@ directories=(
     "kitty"
     "moc"
     "picom"
-    "qutebrowser"
     "ranger"
     "rofi"
     "scripts"
