@@ -1,7 +1,3 @@
-/*******************************************************
- * ROFI configs i3 keyhint-menu for EndeavourOS
- * Maintainer: joekamprad [joekamprad //a_t// endeavouros.com]
- *******************************************************/
 configuration {
     font:                "Noto Sans Regular 12"; /* Increased font size */
     show-icons:          false;

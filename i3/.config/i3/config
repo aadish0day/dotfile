@@ -482,6 +482,8 @@ exec --no-startup-id flameshot
 exec --no-startup-id clipmenud
 bindsym $mod+c exec clipmenu
 
+set $term wezterm
+
 ##################
 # floating rules #
 ##################

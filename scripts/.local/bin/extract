@@ -29,6 +29,7 @@ extract() {
     *.xz) unxz -c "$1" >"$DEST_DIR/${FILENAME%.xz}" ;;
     *.zip) unzip "$1" -d "$DEST_DIR" ;;
     *.7z) 7z x "$1" -o"$DEST_DIR" ;;
+    *.iso) 7z x "$1" -o"$DEST_DIR" ;;
     *.rar) unrar x "$1" "$DEST_DIR" ;;
     # *.zst) unzstd -c "$1" > "$DEST_DIR/${FILENAME%.zst}" ;;
     # *.lz4) unlz4 -c "$1" > "$DEST_DIR/${FILENAME%.lz4}" ;;

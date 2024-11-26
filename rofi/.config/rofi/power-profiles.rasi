@@ -1,118 +1,147 @@
-/*******************************************************
- * ROFI configs i3 powermenu for EndeavourOS
- * Maintainer: joekamprad [joekamprad //a_t// endeavouros.com]
- *******************************************************/
 configuration {
-    font:             "Noto Sans Regular 12";  /* Increased font size */
-    show-icons:       false;
-    icon-theme:       "Qogir";
-    scroll-method:    0;
-    disable-history:  false;
-    fullscreen:       false;
-    hide-scrollbar:   true;
-    sidebar-mode:     false;
+    font:            "Noto Sans Regular 14";
+    show-icons:      false;                 
+    icon-theme:      "Papirus";             
+    scroll-method:   0;                    
+    disable-history: false;                 
+    fullscreen:      false;                
+    hide-scrollbar:  true;                  
+    sidebar-mode:    false;                 
 }
 
 @import "~/.config/rofi/config.rasi"
-/* Insert theme modifications after this */
 
+/* Window Styling */
 window {
     background-color: @background;
     border:           0;
-    padding:          15;  /* Increased padding */
+    padding:          15;  
     transparency:     "real";
-    width:            200px;  /* Increased window width */
-    location:         east;
-    /*y-offset:       18;*/
-    /*x-offset:       850;*/
+    width:            200px;  /* Set window width */
+    location:         east;   /* Align the window to the right */
+    /* Uncomment and adjust offsets if needed */
+    /* y-offset:       18; */
+    /* x-offset:       850; */
 }
+
+/* List View Styling */
 listview {
-    lines:   4;
-    columns: 1;
+    lines:    4;  /* Number of visible rows */
+    columns:  1;  /* Single-column layout */
 }
+
+/* Element Styling */
 element {
     border:  0;
-    padding: 2px;  /* Increased padding */
+    padding: 4px;  /* Increased padding for better spacing */
 }
+
 element-text {
     background-color: inherit;
     text-color:       inherit;
 }
+
+/* Normal Elements */
 element.normal.normal {
     background-color: @normal-background;
     text-color:       @normal-foreground;
 }
+
 element.normal.urgent {
     background-color: @urgent-background;
     text-color:       @urgent-foreground;
 }
+
 element.normal.active {
     background-color: @active-background;
     text-color:       @active-foreground;
 }
+
+/* Selected Elements */
 element.selected.normal {
     background-color: @selected-normal-background;
     text-color:       @selected-normal-foreground;
 }
+
 element.selected.urgent {
     background-color: @selected-urgent-background;
     text-color:       @selected-urgent-foreground;
 }
+
 element.selected.active {
     background-color: @selected-active-background;
     text-color:       @selected-active-foreground;
 }
+
+/* Alternate Elements */
 element.alternate.normal {
     background-color: @alternate-normal-background;
     text-color:       @alternate-normal-foreground;
 }
+
 element.alternate.urgent {
     background-color: @alternate-urgent-background;
     text-color:       @alternate-urgent-foreground;
 }
+
 element.alternate.active {
     background-color: @alternate-active-background;
     text-color:       @alternate-active-foreground;
 }
+
+/* Scrollbar Styling */
 scrollbar {
     width:        4px;
     border:       0;
-    handle-color: @normal-foreground;
+    handle-color: @normal-foreground;  /* Match the handle color to text color */
     handle-width: 8px;
     padding:      0;
 }
+
+/* Mode Switcher Styling */
 mode-switcher {
     border:       2px 0px 0px;
     border-color: @separatorcolor;
 }
+
+/* Button Styling */
 button {
     spacing:    0;
     text-color: @normal-foreground;
 }
+
 button.selected {
     background-color: @selected-normal-background;
     text-color:       @selected-normal-foreground;
 }
+
+/* Input Bar Styling */
 inputbar {
     spacing:    0;
     text-color: @normal-foreground;
     padding:    1px;
+    children:   [ prompt, textbox-prompt-colon, entry, case-indicator ];
 }
+
+/* Case Indicator Styling */
 case-indicator {
     spacing:    0;
     text-color: @normal-foreground;
 }
+
+/* Entry Field Styling */
 entry {
     spacing:    0;
     text-color: @normal-foreground;
 }
+
+/* Prompt Styling */
 prompt {
     spacing:    0;
     text-color: @normal-foreground;
 }
-inputbar {
-    children:   [ prompt,textbox-prompt-colon,entry,case-indicator ];
-}
+
+/* Custom Prompt Text */
 textbox-prompt-colon {
     expand:     false;
     str:        "Set Power Profile:";

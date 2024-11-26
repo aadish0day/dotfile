@@ -1,11 +1,7 @@
-/*******************************************************
- * ROFI configs i3 Apps menu for EndeavourOS
- * Maintainer: joekamprad [joekamprad //a_t// endeavouros.com]
- *******************************************************/
 configuration {
-    font:                "Noto Sans Regular 12"; /* Increased font size */
+    font:                "Noto Sans Regular 14"; /* Increased font size */
     show-icons:          true;
-    icon-theme:          "Qogir";
+    icon-theme:          "Papirus";
     display-drun:        "Apps";
     drun-display-format: "{name}";
     scroll-method:       0;
@@ -23,7 +19,7 @@ window {
 }
 listview {
     lines:   10;
-    columns: 3;
+    columns: 1;
 }
 mainbox {
     border:  0;
