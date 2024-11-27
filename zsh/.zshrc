@@ -37,7 +37,7 @@ alias music='mocp'
 alias ytvideo='noglob yt-dlp -f "bestvideo[height<=1080]+bestaudio/best[height<=1080]" --embed-metadata --concurrent-fragments 30 -o "%(playlist)s/%(title)s.%(ext)s"'
 alias ytmusic='noglob yt-dlp -x --audio-format mp3 --audio-quality 0 --embed-metadata --ignore-errors --no-overwrites -o "%(playlist)s/%(title)s.%(ext)s"'
 alias extractgz='tar -xzvf'
-alias ta='tmux attach -t'                  # Attach new tmux session to already running named session
+alias ta='tmux attach'                  # Attach new tmux session to already running named session
 alias tl='tmux list-sessions'              # Displays a list of running tmux sessions
 # alias tmux='tmux new-session'              # Start a new tmux session
 alias tn='tmux new-session'             # Create a new named tmux session
