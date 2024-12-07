@@ -33,19 +33,17 @@ alias reload='source ~/.zshrc'
 alias grep='grep --color=auto'
 alias rd='rm -fr'
 alias music='mocp'
-# alias tmux='TERM=xterm-256color tmux'
-alias ytvideo='noglob yt-dlp -f "bestvideo[height<=1080]+bestaudio/best[height<=1080]" --embed-metadata --concurrent-fragments 30 -o "%(playlist)s/%(title)s.%(ext)s"'
-alias ytmusic='noglob yt-dlp -x --audio-format mp3 --audio-quality 0 --embed-metadata --ignore-errors --no-overwrites -o "%(playlist)s/%(title)s.%(ext)s"'
 alias extractgz='tar -xzvf'
 alias ta='tmux attach'                  # Attach new tmux session to already running named session
 alias tl='tmux list-sessions'              # Displays a list of running tmux sessions
-# alias tmux='tmux new-session'              # Start a new tmux session
 alias tn='tmux new-session'             # Create a new named tmux session
 alias ts='tmux new-session -s'             # Create a new named tmux session
 alias tkss='tmux kill-session -t'          # Terminate named running tmux session
 alias tksv='tmux kill-server'              # Terminate all running tmux sessions
 alias n='nvim'
-
+alias ..='cd ..'
+# alias ytvideo='noglob yt-dlp -f "bestvideo[height<=1080]+bestaudio/best[height<=1080]" --embed-metadata --concurrent-fragments 30 -o "%(playlist)s/%(title)s.%(ext)s"'
+# alias ytmusic='noglob yt-dlp -x --audio-format mp3 --audio-quality 0 --embed-metadata --ignore-errors --no-overwrites -o "%(playlist)s/%(title)s.%(ext)s"'
 
 # History settings
 HISTSIZE=10000
