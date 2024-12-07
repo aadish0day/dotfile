@@ -2,11 +2,12 @@
 
 # Loop through all the files passed as arguments
 for input_file in "$@"; do
-    # Extract the base name of the input file (remove path and extension)
+    # Extract the directory and base name of the input file
+    input_dir=$(dirname "$input_file")
     base_name=$(basename "$input_file" | sed 's/\.[^.]*$//')
 
-    # Set the output file name to the same as the input but with an .mp4 extension
-    output="${base_name}.mp4"
+    # Set the output file path to the same directory as the input file, with an .mp4 extension
+    output="${input_dir}/${base_name}.mp4"
 
     # Convert the file using ffmpeg
     ffmpeg -i "$input_file" -c:v libx264 -profile:v baseline -level 3.0 -pix_fmt yuv420p -threads 0 "$output"
@@ -18,3 +19,4 @@ for input_file in "$@"; do
         echo "Failed to convert $input_file"
     fi
 done
+
