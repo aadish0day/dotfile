@@ -34,5 +34,5 @@ blueberry-tray &
 flameshot &
 
 # launch polybar
-$HOME/.config/polybar/launch.sh &
+~/.config/polybar/launch.sh &
 

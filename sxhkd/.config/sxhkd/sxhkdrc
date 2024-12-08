@@ -37,10 +37,10 @@ super + g
     bspc node -s biggest.window
 
 super + shift + e
-    ~/.config/i3/scripts/powermenu
+   ~/.config/bspwm/scripts/powermenu 
 
 super + o
-    ~/.config/i3/scripts/lockscreen
+    ~/.config/bspwm/scripts/lockscreen
 
 super + w 
     thorium-browser
