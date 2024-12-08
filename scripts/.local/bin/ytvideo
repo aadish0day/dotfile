@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# Check if a URL is provided
+if [ -z "$1" ]; then
+    echo "Usage: $0 <URL>"
+    exit 1
+fi
+
+# Download video with yt-dlp
+yt-dlp -f "bestvideo[height<=1080]+bestaudio/best[height<=1080]" \
+       --embed-metadata \
+       --concurrent-fragments 30 \
+       -o "%(playlist)s/%(title)s.%(ext)s" \
+       "$1"
+
