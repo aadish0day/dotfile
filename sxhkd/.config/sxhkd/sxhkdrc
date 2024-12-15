@@ -17,8 +17,11 @@ super + Escape
 # --------------
 
 # quit/restart bspwm
-super + alt + {q,r}
-    bspc {quit,wm -r}
+super + alt + {q}
+    bspc {quit}
+
+super + shift + {r}
+    bspc {wm -r}
 
 # close and kill node
 super + q
@@ -47,6 +50,33 @@ super + w
 
 super + c
     clipmenu
+
+super + n
+    thunar
+
+super + shift + p 
+    ~/.config/bspwm/scripts/power-profiles.sh
+
+super + shift + g 
+    ~/.config/bspwm/scripts/gpu-profile.sh
+
+F6 
+    flameshot gui
+
+super + shift + f 
+    flameshot screen                
+
+F4
+    rog-control-center        
+
+F3
+    asusctl -n
+
+F2
+    asusctl -p
+
+XF86AudioMicMute
+    amixer sset Capture toggle
 
 # Increase brightness
 XF86MonBrightnessUp 
