@@ -11,6 +11,15 @@ bspc config split_ratio          0.52
 bspc config borderless_monocle   true
 bspc config gapless_monocle      true
 
+bspc rule -a "org.wezfurlong.wezterm" desktop=^1 follow=on
+bspc rule -a "Thorium-browser" desktop=^2 follow=on
+bspc rule -a "Thunar" desktop=^3 follow=on
+
+bspc config focus_follows_pointer true
+
+# Start NetworkManager applet
+nm-applet &
+
 picom --config ~/.config/picom/picom.conf &
 
 clipmenud &
@@ -19,16 +28,10 @@ nitrogen --restore &
 
 xss-lock --transfer-sleep-lock -- ~/.config/i3/scripts/lockscreen &
 
-# Start NetworkManager applet
-nm-applet &
-
 # Get authentication working with polkit-gnome
 /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 &
 
 xset s 480 dpms 600 86400 86400 &
-
-# Start blueberry app for managing Bluetooth devices from tray
-blueberry-tray &
 
 # Start Flameshot for screenshots
 flameshot &
@@ -39,3 +42,4 @@ blueman-applet &
 # launch polybar
 ~/.config/polybar/launch.sh &
 
+wezterm &
