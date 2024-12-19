@@ -6,7 +6,7 @@
     
     # Geometry and positioning
     width = 300
-    height = 300
+    height = (0, 300)
     offset = 30x50
     origin = top-right
     
