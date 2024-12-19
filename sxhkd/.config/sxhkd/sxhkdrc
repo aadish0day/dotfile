@@ -3,7 +3,7 @@
 
 # terminal emulator
 super + Return
-    wezterm
+    wezterm-gui
 
 # program launcher
 super + d
@@ -45,20 +45,14 @@ super + shift + e
 super + o
     ~/.config/bspwm/scripts/lockscreen
 
-super + w 
-    thorium-browser
-
-super + c
-    clipmenu
-
-super + n
-    thunar
-
 super + shift + p 
     ~/.config/bspwm/scripts/power-profiles.sh
 
 super + shift + g 
     ~/.config/bspwm/scripts/gpu-profile.sh
+
+super + {w, c, n}
+    {thorium-browser, clipmenu, thunar}
 
 F6 
     flameshot gui
@@ -75,8 +69,6 @@ F3
 F2
     asusctl -p
 
-XF86AudioMicMute
-    amixer sset Capture toggle
 
 # Increase brightness
 XF86MonBrightnessUp 
@@ -86,11 +78,22 @@ XF86MonBrightnessUp
 XF86MonBrightnessDown 
     ~/.config/i3/scripts/brightness.sh brightness_down
 
+# Raise Volume
 XF86AudioRaiseVolume
     ~/.config/i3/scripts/volume_brightness.sh volume_up
 
+# Lower Volume
 XF86AudioLowerVolume 
     ~/.config/i3/scripts/volume_brightness.sh volume_down
+
+# Mute/Unmute Microphone
+XF86AudioMicMute
+    amixer sset Capture toggle
+
+# Mute/Unmute Audio
+XF86AudioMute
+    amixer sset Master toggle
+
 
 # state/flags
 # -----------
