@@ -94,6 +94,14 @@ XF86AudioMicMute
 XF86AudioMute
     amixer sset Master toggle
 
+alt + n 
+    playerctl next
+
+alt + b 
+    playerctl previous
+
+alt + p 
+    playerctl play-pause
 
 # state/flags
 # -----------
