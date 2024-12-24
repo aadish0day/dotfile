@@ -42,6 +42,9 @@ alias tkss='tmux kill-session -t'          # Terminate named running tmux sessio
 alias tksv='tmux kill-server'              # Terminate all running tmux sessions
 alias n='nvim'
 alias ..='cd ..'
+alias cp='cp -v'
+alias mv='mv -v'
+alias rm='rm -v'
 # alias ytvideo='noglob yt-dlp -f "bestvideo[height<=1080]+bestaudio/best[height<=1080]" --embed-metadata --concurrent-fragments 30 -o "%(playlist)s/%(title)s.%(ext)s"'
 # alias ytmusic='noglob yt-dlp -x --audio-format mp3 --audio-quality 0 --embed-metadata --ignore-errors --no-overwrites -o "%(playlist)s/%(title)s.%(ext)s"'
 
