@@ -21,6 +21,7 @@ directories=(
     "tmux"
     "wezterm"
     "xresources"
+    "yazi"
     "zathura"
     "zsh"
 )
