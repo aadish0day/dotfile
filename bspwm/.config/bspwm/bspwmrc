@@ -25,9 +25,9 @@ bspc config focused_border_color "#61AFEF"
 #
 nm-applet &
 
-picom --config ~/.config/picom/picom_bspwm.conf &
+picom --config ~/.config/picom/picom.conf
 
-/usr/bin/lxpolkit &
+/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 &
 
 clipmenud &
 
