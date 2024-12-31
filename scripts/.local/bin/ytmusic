@@ -8,9 +8,8 @@ fi
 
 # Extract audio with yt-dlp
 yt-dlp -x --audio-format mp3 --audio-quality 0 \
-       --embed-metadata \
-       --ignore-errors \
-       --no-overwrites \
-       -o "%(playlist)s/%(title)s.%(ext)s" \
-       "$1"
-
+    --embed-metadata \
+    --ignore-errors \
+    --no-overwrites \
+    -o "%(playlist)s/%(title)s.%(ext)s" \
+    "$1"

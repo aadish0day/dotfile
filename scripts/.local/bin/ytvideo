@@ -8,8 +8,7 @@ fi
 
 # Download video with yt-dlp
 yt-dlp -f "bestvideo[height<=1080]+bestaudio/best[height<=1080]" \
-       --embed-metadata \
-       --concurrent-fragments 30 \
-       -o "%(playlist)s/%(title)s.%(ext)s" \
-       "$1"
-
+    --embed-metadata \
+    --concurrent-fragments 30 \
+    -o "%(playlist)s/%(title)s.%(ext)s" \
+    "$1"
