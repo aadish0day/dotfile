@@ -1,45 +1,30 @@
-#! /bin/sh
+#!/bin/sh
 
+# Start sxhkd if not already running
 pgrep -x sxhkd > /dev/null || sxhkd &
 
-bspc monitor -d 1 2 3 4 5 6 
+# Define workspaces for monitors
+bspc monitor -d 1 2 3 4 5 6
 
+# Configure bspwm settings
 bspc config border_width         3
 bspc config window_gap          12
-
 bspc config split_ratio          0.52
 bspc config borderless_monocle   true
 bspc config gapless_monocle      true
 
+# Rules for specific applications on specific desktops
 bspc rule -a "org.wezfurlong.wezterm" desktop=^1 follow=on
 bspc rule -a "Thorium-browser" desktop=^2 follow=on
 bspc rule -a "Thunar" desktop=^3 follow=on
 
+# Enable focus follows pointer
 bspc config focus_follows_pointer true
 
-bspc config normal_border_color "#3E4451" 
+# Configure border colors
+bspc config normal_border_color "#3E4451"
 bspc config focused_border_color "#61AFEF"
 
-#
-# Autostart Applications
-#
-nm-applet &
+# Start applications from ~/.local/bin/autostart
+~/.local/bin/autostart &
 
-picom --config ~/.config/picom/picom.conf
-
-/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 &
-
-clipmenud &
-
-nitrogen --restore &
-
-xss-lock --transfer-sleep-lock -- ~/.config/i3/scripts/lockscreen &
-xset s 480 dpms 600 86400 86400 &
-
-# Start blueberry app for managing Bluetooth devices from tray
-blueman-applet &
-
-# launch polybar
-~/.config/polybar/launch.sh &
-
-wezterm &

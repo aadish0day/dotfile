@@ -1,0 +1,36 @@
+#!/bin/sh
+
+# Applications to start on session start
+# Intended to be called from bspwmrc or similar wm startup script
+
+#
+# Autostart Applications
+#
+nm-applet & # Network Manager applet
+
+# Start picom for compositing and transparency effects
+picom --config ~/.config/picom/picom.conf &
+
+# Start policykit for administrative authentication
+/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 &
+
+# Start clipmenud for clipboard management
+clipmenud &
+
+# Restore wallpaper from nitrogen
+nitrogen --restore &
+
+# Lock screen settings
+xss-lock --transfer-sleep-lock -- ~/.config/i3/scripts/lockscreen &
+
+# Set screen saver and DPMS settings
+xset s 480 dpms 600 86400 86400 &
+
+# Start Bluetooth manager
+blueman-applet &
+
+# Start polybar
+~/.config/polybar/launch.sh &
+
+# Start terminal emulator
+wezterm &
