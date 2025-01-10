@@ -1,15 +1,17 @@
 #!/bin/bash
 
-# Check if a URL is provided
-if [ -z "$1" ]; then
-    echo "Usage: $0 <URL>"
+# Check if at least one URL is provided
+if [ "$#" -eq 0 ]; then
+    echo "Usage: $0 <URL1> [URL2 ... URLn]"
     exit 1
 fi
 
-# Extract audio with yt-dlp
-yt-dlp -x --audio-format mp3 --audio-quality 0 \
-    --embed-metadata \
-    --ignore-errors \
-    --no-overwrites \
-    -o "%(playlist)s/%(title)s.%(ext)s" \
-    "$1"
+# Loop through all URLs provided as arguments
+for url in "$@"; do
+    yt-dlp -x --audio-format mp3 --audio-quality 0 \
+        --embed-metadata \
+        --ignore-errors \
+        --no-overwrites \
+        -o "%(playlist)s/%(title)s.%(ext)s" \
+        "$url"
+done
