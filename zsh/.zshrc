@@ -45,6 +45,8 @@ alias ..='cd ..'
 alias cp='cp -v'
 alias mv='mv -v'
 alias rm='rm -v'
+alias ip='ip --color=auto'
+
 # alias ytvideo='noglob yt-dlp -f "bestvideo[height<=1080]+bestaudio/best[height<=1080]" --embed-metadata --concurrent-fragments 30 -o "%(playlist)s/%(title)s.%(ext)s"'
 # alias ytmusic='noglob yt-dlp -x --audio-format mp3 --audio-quality 0 --embed-metadata --ignore-errors --no-overwrites -o "%(playlist)s/%(title)s.%(ext)s"'
 
