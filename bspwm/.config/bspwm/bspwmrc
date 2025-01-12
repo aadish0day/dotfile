@@ -26,5 +26,5 @@ bspc config normal_border_color "#3E4451"
 bspc config focused_border_color "#61AFEF"
 
 # Start applications from ~/.local/bin/autostart
-~/.local/bin/autostart &
+~/.config/bspwm/scripts/autostart &
 
