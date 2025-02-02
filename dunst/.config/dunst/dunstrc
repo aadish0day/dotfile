@@ -21,7 +21,7 @@
     alignment = left
     
     # Timeouts and urgency
-    timeout = 10
+    timeout = 5
     
     # Visual settings
     transparency = 10
