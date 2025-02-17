@@ -1,17 +1,17 @@
 #!/bin/bash
 
-# Get the list of tmux sessions excluding the one that you're currently attached to
+# Get the list of tmux sessions excluding the current one
 attached_session=$(tmux display-message -p '#{session_name}')
 sessions=$(tmux list-sessions -F "#{session_name}" | grep -v "^$attached_session$")
 
-# If there are sessions available, allow the user to select one
+# Use fzf-tmux to select a session
 if [[ -n "$sessions" ]]; then
-    selected_session=$(echo "$sessions" | fzf --prompt="Select a tmux session: " --height=25 --border --layout=reverse)
+    selected_session=$(echo "$sessions" | fzf-tmux -p 50%,50% --prompt="Select a tmux session: " --border --layout=reverse)
 
     # If a session was selected, switch to it
     if [[ -n "$selected_session" ]]; then
         tmux switch-client -t "$selected_session"
     fi
 else
-    echo "No available sessions to attach."
+    tmux display-message "No available sessions to attach."
 fi
