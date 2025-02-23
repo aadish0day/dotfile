@@ -7,7 +7,7 @@
     # Geometry and positioning
     width = 300
     height = (0, 300)
-    offset = 30x50
+    offset = (30, 50)
     origin = top-right
     
     # Notification behavior
@@ -49,7 +49,3 @@
     frame_color = "#D08770"
     timeout = 0
 
-[shortcuts]
-    close = ctrl+space
-    close_all = ctrl+shift+space
-    context = ctrl+shift+period
