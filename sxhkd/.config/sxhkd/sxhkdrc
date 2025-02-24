@@ -72,19 +72,19 @@ F2
 
 # Increase brightness
 XF86MonBrightnessUp 
-    ~/.config/i3/scripts/brightness.sh brightness_up
+    ~/.config/bspwm/scripts/brightness.sh brightness_up
 
 # Decrease brightness
 XF86MonBrightnessDown 
-    ~/.config/i3/scripts/brightness.sh brightness_down
+    ~/.config/bspwm/scripts/brightness.sh brightness_down
 
 # Raise Volume
 XF86AudioRaiseVolume
-    ~/.config/i3/scripts/volume_brightness.sh volume_up
+    ~/.config/bspwm/scripts/volume.sh volume_up
 
 # Lower Volume
 XF86AudioLowerVolume 
-    ~/.config/i3/scripts/volume_brightness.sh volume_down
+    ~/.config/bspwm/scripts/volume.sh volume_down
 
 # Mute/Unmute Microphone
 XF86AudioMicMute
