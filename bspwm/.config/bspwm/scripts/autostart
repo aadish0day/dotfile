@@ -33,4 +33,4 @@ blueman-applet &
 ~/.config/polybar/launch.sh &
 
 # Start terminal emulator
-wezterm &
+kitty &
