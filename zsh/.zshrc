@@ -50,6 +50,7 @@ alias gss='git status --short'
 alias gp='git push'
 alias gl='git pull'
 alias ga='git add'
+alias gd='git diff'
 alias tree='tree -C'
 
 # alias ytvideo='noglob yt-dlp -f "bestvideo[height<=1080]+bestaudio/best[height<=1080]" --embed-metadata --concurrent-fragments 30 -o "%(playlist)s/%(title)s.%(ext)s"'
@@ -96,3 +97,4 @@ export EDITOR='nvim'
 export BAT_THEME='Dracula'
 export TERMINAL='westerm'
 export PATH="$HOME/.local/bin:$PATH"
+export SAL_USE_VCL=gtk3
