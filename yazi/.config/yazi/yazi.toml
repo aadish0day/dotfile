@@ -81,11 +81,31 @@ image_alloc      = 536870912  # 512MB
 image_bound      = [ 0, 0 ]
 suppress_preload = false
 
-# [plugin]
-# prepend_previewers = [
-#     { mime = "{image,audio,video}/*", run = "mediainfo"},
-#     { mime = "application/subrip", run = "mediainfo"},
-# ]
+[plugin]
+prepend_preloaders = [
+    # Replace magick, image, video with mediainfo
+{ mime = "{audio,video,image}/*", run = "mediainfo" },
+{ mime = "application/subrip", run = "mediainfo" },
+]
+prepend_previewers = [
+    # Replace magick, image, video with mediainfo
+{ mime = "{audio,video,image}/*", run = "mediainfo"},
+{ mime = "application/subrip", run = "mediainfo" },
+]
+
+[[plugin.prepend_fetchers]]
+id   = "git"
+name = "*"
+run  = "git"
+
+[[plugin.prepend_fetchers]]
+id   = "git"
+name = "*/"
+run  = "git"
+
+[[manager.prepend_keymap]]
+on  = "M"
+run = "plugin mount"
 
 fetchers = [
 	# Mimetype
