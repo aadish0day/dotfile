@@ -103,10 +103,6 @@ id   = "git"
 name = "*/"
 run  = "git"
 
-[[manager.prepend_keymap]]
-on  = "M"
-run = "plugin mount"
-
 fetchers = [
 	# Mimetype
 	{ id = "mime", name = "*", run = "mime", if = "!mime", prio = "high" },
