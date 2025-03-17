@@ -42,6 +42,9 @@ alias tkss='tmux kill-session -t'          # Terminate named running tmux sessio
 alias tksv='tmux kill-server'              # Terminate all running tmux sessions
 alias n='nvim'
 alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias .....='cd ../../../..'
 alias cp='cp -v'
 alias mv='mv -v'
 alias ip='ip --color=auto'
