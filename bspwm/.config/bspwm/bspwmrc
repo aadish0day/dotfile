@@ -14,7 +14,7 @@ bspc config borderless_monocle   true
 bspc config gapless_monocle      true
 
 # Rules for specific applications on specific desktops
-bspc rule -a "org.wezfurlong.wezterm" desktop=^1 follow=on
+bspc rule -a "kitty" desktop=^1 follow=on
 bspc rule -a "Thorium-browser" desktop=^2 follow=on
 bspc rule -a "Thunar" desktop=^3 follow=on
 
