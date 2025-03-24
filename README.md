@@ -1,8 +1,8 @@
 # Dotfile Repository
 
 ## Picture of my desktop
-![Desktop 1](./output1.png)
-![Desktop 2](./output2.png)
+![Desktop 1](./output/output1.png)
+![Desktop 2](./output/output2.png)
 
 ## Overview
 This repository contains my personalized system configuration files, carefully crafted and optimized to enhance my computing experience across multiple Linux distributions.
