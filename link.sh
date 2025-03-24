@@ -3,6 +3,7 @@
 # Directories to stow
 directories=(
     "alacritty"
+    "aria2"
     "bash"
     "bspwm"
     "dunst"
