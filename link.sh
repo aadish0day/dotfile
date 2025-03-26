@@ -9,6 +9,7 @@ directories=(
     "dunst"
     "fastfetch"
     "gtk-theme"
+    "hypr"
     "i3"
     "kitty"
     "moc"
