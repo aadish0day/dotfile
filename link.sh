@@ -13,6 +13,7 @@ directories=(
     "i3"
     "kitty"
     "moc"
+    "paru"
     "picom"
     "polybar"
     "ranger"
