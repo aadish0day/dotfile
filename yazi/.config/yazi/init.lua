@@ -1,4 +1,4 @@
-require("git"):setup()
+-- require("git"):setup()
 require("starship"):setup()
 
 require("zoxide"):setup({
