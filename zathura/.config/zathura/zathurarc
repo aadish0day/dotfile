@@ -1,12 +1,12 @@
-set smooth-scroll true
+# Enable auto-reload of changed files (works!)
 set auto-reload true
-picom --backend glx --vsync
 
+# Enable recolor toggle with "i"
 map i recolor
+
+# Print with "p"
 map p print
 
-set smooth-scroll true
-set browser "xdg-open"
-
+# Use system clipboard for copy/paste
 set selection-clipboard clipboard
 
