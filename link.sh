@@ -22,6 +22,7 @@ directories=(
     "sxhkd"
     "theme"
     "tmux"
+    "waybar"
     "wezterm"
     "xresources"
     "yazi"
