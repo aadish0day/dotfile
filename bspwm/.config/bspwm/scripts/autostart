@@ -34,3 +34,5 @@ blueman-applet &
 
 # Start terminal emulator
 kitty &
+
+flameshot &
