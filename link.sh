@@ -8,6 +8,7 @@ directories=(
     "bspwm"
     "dunst"
     "fastfetch"
+    "gammastep"
     "gtk-theme"
     "hypr"
     "i3"
