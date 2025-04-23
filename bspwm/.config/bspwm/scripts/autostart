@@ -35,4 +35,9 @@ blueman-applet &
 # Start terminal emulator
 kitty &
 
+# start Flameshot for screenshots
 flameshot &
+
+# start night light 
+gammastep -c ~/.config/gammastep/config.ini &
+
