@@ -1,20 +1,22 @@
 {
     "layer": "bottom",
     "position": "top",
-    "height": 40,
+    "height": 20,
     "spacing": 2,
     "exclusive": true,
     "gtk-layer-shell": true,
     "passthrough": false,
     "fixed-center": true,
-    "modules-left": ["hyprland/workspaces", "hyprland/window"],
-    "modules-center": ["mpris"],
+    // "modules-left": ["hyprland/window"],
+    "modules-left": ["clock#simpleclock", "clock"],
+    "modules-center": ["hyprland/workspaces" ],
     "modules-right": [
-        "cpu",
-        "memory",
+        // "cpu",
+        // "memory",
+        "custom/powerprofile",
         "pulseaudio",
-        "clock",
-        "clock#simpleclock",
+        // "clock",
+        "battery",
         "tray",
         "custom/notification",
         "custom/power",
@@ -55,7 +57,7 @@
     },
     "clock#simpleclock": {
         "tooltip": false,
-        "format": " {:%H:%M}",
+        "format": " {:%I:%M:%S %p}",
     },
     "clock": {
         "format": " {:L%a %d %b}",
@@ -111,5 +113,24 @@
         "on-click": "sleep 0.1 && swaync-client -t -sw",
         "return-type": "json",
         "tooltip": false,
+    },
+    "custom/powerprofile": {
+        "format": "  {}",
+        "return-type": "text",
+        "exec": "powerprofilesctl get",
+        "interval": 5,
+        "on-click": "powerprofilesctl set performance || powerprofilesctl set balanced || powerprofilesctl set power-saver",
+        "on-click-right": "powerprofilesctl set power-saver",
+        "tooltip": false
+    },
+    "battery": {
+        "bat": "BAT0",
+        "adapter": "AC",
+        "interval": 10,
+        "format": "{icon} {capacity}%",
+        "format-charging": " {capacity}%",
+        "format-plugged": " {capacity}%",
+        "format-icons": ["", "", "", "", ""],
+        "tooltip": true
     },
 }
