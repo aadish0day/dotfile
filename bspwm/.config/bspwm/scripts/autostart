@@ -41,3 +41,5 @@ flameshot &
 # start night light 
 gammastep -c ~/.config/gammastep/config.ini &
 
+wmname LG3D
+
