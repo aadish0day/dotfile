@@ -9,6 +9,7 @@ directories=(
     "dunst"
     "fastfetch"
     "gammastep"
+    "git"
     "gtk-theme"
     "hypr"
     "i3"
