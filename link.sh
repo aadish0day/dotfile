@@ -26,6 +26,7 @@ directories=(
     "tmux"
     "waybar"
     "wezterm"
+    "xdg-desktop-portal"
     "xresources"
     "yazi"
     "zathura"
