@@ -18,6 +18,7 @@ directories=(
     "paru"
     "picom"
     "polybar"
+    "qalculate"
     "ranger"
     "rofi"
     "scripts"
