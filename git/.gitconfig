@@ -10,5 +10,6 @@
 	defaultBranch = main
 [core]
 	editor = nvim
+	sshCommand = ssh -C
 [color]
 	ui = auto
