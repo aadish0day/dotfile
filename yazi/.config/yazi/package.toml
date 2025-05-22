@@ -1,7 +1,7 @@
 [[plugin.deps]]
 use = "boydaihungst/mediainfo"
-rev = "9629b1e"
-hash = "5204b4e2bd238c40fa66cf0a0191f084"
+rev = "70ed228"
+hash = "99a9bd21bc896710bbfce44f1ea00f74"
 
 [[plugin.deps]]
 use = "Rolv-Apneseth/starship"
