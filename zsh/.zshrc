@@ -31,7 +31,7 @@ alias l='ls --icon=always --classify'
 alias lt='ls --tree'
 alias lta='ls --tree -a'
 alias mkdir='mkdir -p'
-alias reload='source ~/.zshrc'
+alias reload='source ~/.zshrc && rehash'
 alias grep='grep --color=auto'
 alias music='mocp'
 alias extractgz='tar -xzvf'
@@ -48,6 +48,8 @@ alias ....='cd ../../..'
 alias .....='cd ../../../..'
 alias cp='cpg -g'
 alias mv='mvg -g'
+# alias cp='cp -v'
+# alias mv='mv -v'
 alias rm='trash'
 alias ip='ip --color=auto'
 alias gst='git status'
@@ -57,6 +59,9 @@ alias gl='git pull'
 alias ga='git add'
 alias gd='git diff'
 alias tree='tree -C'
+
+# unalias commands
+unalias zi 2>/dev/null
 
 # alias ytvideo='noglob yt-dlp -f "bestvideo[height<=1080]+bestaudio/best[height<=1080]" --embed-metadata --concurrent-fragments 30 -o "%(playlist)s/%(title)s.%(ext)s"'
 # alias ytmusic='noglob yt-dlp -x --audio-format mp3 --audio-quality 0 --embed-metadata --ignore-errors --no-overwrites -o "%(playlist)s/%(title)s.%(ext)s"'
@@ -96,6 +101,7 @@ bindkey '^[' vi-cmd-mode
 eval "$(fzf --zsh)"
 eval "$(starship init zsh)"
 eval "$(zoxide init zsh)"
+eval "$(dircolors -b)"
 
 export TERM=xterm-256color
 export EDITOR='nvim'
@@ -103,3 +109,4 @@ export BAT_THEME='Dracula'
 export TERMINAL='westerm'
 export PATH="$HOME/.local/bin:$PATH"
 export SAL_USE_VCL=gtk3
+
