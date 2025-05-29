@@ -39,7 +39,7 @@ kitty &
 flameshot &
 
 # start night light 
-gammastep -c ~/.config/gammastep/config.ini &
+~/.config/gammastep/launch.sh &
 
 wmname LG3D
 
