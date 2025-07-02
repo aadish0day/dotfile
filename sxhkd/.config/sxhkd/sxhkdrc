@@ -69,6 +69,20 @@ F3
 F2
     asusctl -p
 
+alt + shift + n
+    rmpc next
+
+alt + shift + p
+    rmpc togglepause
+
+alt + shift + b
+    rmpc prev
+
+super + shift + n
+    obsidian
+
+super + shift + s
+    flameshot gui
 
 # Increase brightness
 XF86MonBrightnessUp 
