@@ -1,22 +1,22 @@
 [[plugin.deps]]
 use = "boydaihungst/mediainfo"
-rev = "70ed228"
-hash = "99a9bd21bc896710bbfce44f1ea00f74"
+rev = "cc12f3f"
+hash = "b92e44ad5004f1b45e5c3d717a60ed24"
 
 [[plugin.deps]]
 use = "Rolv-Apneseth/starship"
-rev = "6fde3b2"
-hash = "7ddb7a790746fd91ecdd0350cc5a5d8c"
+rev = "a63550b"
+hash = "c2021386289a0cbb3e152a052f67c177"
 
 [[plugin.deps]]
 use = "yazi-rs/plugins:mount"
-rev = "55bf699"
-hash = "dd97eede8e20e59cd2604e8006e470e2"
+rev = "b886025"
+hash = "f10a14e823382d90fab5b3ee54cb38fe"
 
 [[plugin.deps]]
 use = "yazi-rs/plugins:full-border"
-rev = "55bf699"
-hash = "1f3dad061209081a6b04dd6ff2cb06c7"
+rev = "b886025"
+hash = "3996fc74044bc44144b323686f887e1"
 
 [flavor]
 deps = []
