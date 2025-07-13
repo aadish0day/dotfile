@@ -3,12 +3,8 @@ moc/.moc/last_directory
 moc/.moc/pid
 ranger/.config/ranger/plugins/__pycache__/
 ranger/.config/ranger/plugins/ranger_devicons/__pycache__/
-yazi/.config/yazi/plugins/mount.yazi/README.md
-yazi/.config/yazi/plugins/mount.yazi/LICENSE
-yazi/.config/yazi/plugins/starship.yazi/README.md
-yazi/.config/yazi/plugins/starship.yazi/LICENSE
-yazi/.config/yazi/plugins/mediainfo.yazi/README.md
-yazi/.config/yazi/plugins/mediainfo.yazi/LICENSE
-yazi/.config/yazi/plugins/full-border.yazi/README.md
-yazi/.config/yazi/plugins/full-border.yazi/LICENSE
+
+yazi/.config/yazi/plugins/*/README.md
+yazi/.config/yazi/plugins/*/LICENSE
+
 qalculate/.config/qalculate/qalc.history
