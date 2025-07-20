@@ -117,6 +117,9 @@ alt + b
 alt + p 
     playerctl play-pause
 
+super + v 
+    vmware
+
 # state/flags
 # -----------
 
