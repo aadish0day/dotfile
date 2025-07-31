@@ -42,7 +42,7 @@ super + g
 super + shift + e
    ~/.config/bspwm/scripts/powermenu 
 
-super + o
+alt + l
     ~/.config/bspwm/scripts/lockscreen
 
 super + shift + p 
@@ -78,7 +78,7 @@ alt + shift + p
 alt + shift + b
     rmpc prev
 
-super + shift + n
+super + o
     obsidian
 
 super + shift + s
