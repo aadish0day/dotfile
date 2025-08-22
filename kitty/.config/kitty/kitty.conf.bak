@@ -37,9 +37,3 @@ sync_to_monitor yes
 enable_ligatures yes
 # include ./theme.conf
 
-
-
-# BEGIN_KITTY_THEME
-# Adwaita darker
-include current-theme.conf
-# END_KITTY_THEME
