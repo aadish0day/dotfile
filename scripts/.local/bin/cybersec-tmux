@@ -1,0 +1,28 @@
+#!/bin/bash
+
+# Check if already inside tmux
+if [ -n "$TMUX" ]; then
+    # Already in tmux, just create sessions and switch
+    if ! tmux has-session -t Recon 2>/dev/null; then
+        tmux new-session -d -s Recon
+    fi
+    
+    if ! tmux has-session -t Exploit 2>/dev/null; then
+        tmux new-session -d -s Exploit
+    fi
+    
+    # Switch to Recon session
+    tmux switch-client -t Recon
+else
+    # Not in tmux, create sessions and attach
+    if ! tmux has-session -t Recon 2>/dev/null; then
+        tmux new-session -d -s Recon
+    fi
+    
+    if ! tmux has-session -t Exploit 2>/dev/null; then
+        tmux new-session -d -s Exploit
+    fi
+    
+    # Attach to Recon session
+    tmux attach-session -t Recon
+fi
