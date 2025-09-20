@@ -1,28 +1,52 @@
 #!/bin/bash
 
-# Check if already inside tmux
-if [ -n "$TMUX" ]; then
-    # Already in tmux, just create sessions and switch
-    if ! tmux has-session -t Recon 2>/dev/null; then
-        tmux new-session -d -s Recon
-    fi
-    
-    if ! tmux has-session -t Exploit 2>/dev/null; then
-        tmux new-session -d -s Exploit
-    fi
-    
-    # Switch to Recon session
-    tmux switch-client -t Recon
-else
-    # Not in tmux, create sessions and attach
-    if ! tmux has-session -t Recon 2>/dev/null; then
-        tmux new-session -d -s Recon
-    fi
-    
-    if ! tmux has-session -t Exploit 2>/dev/null; then
-        tmux new-session -d -s Exploit
-    fi
-    
-    # Attach to Recon session
-    tmux attach-session -t Recon
-fi
+case "$1" in
+    "recon")
+        SESSION_NAME="Recon"
+        if [ -n "$TMUX" ]; then
+            if ! tmux has-session -t $SESSION_NAME 2>/dev/null; then
+                tmux new-session -d -s $SESSION_NAME
+            fi
+            tmux switch-client -t $SESSION_NAME
+        else
+            if ! tmux has-session -t $SESSION_NAME 2>/dev/null; then
+                tmux new-session -d -s $SESSION_NAME
+            fi
+            tmux attach-session -t $SESSION_NAME
+        fi
+        ;;
+    "exploit")
+        SESSION_NAME="Exploit"
+        if [ -n "$TMUX" ]; then
+            if ! tmux has-session -t $SESSION_NAME 2>/dev/null; then
+                tmux new-session -d -s $SESSION_NAME
+            fi
+            tmux switch-client -t $SESSION_NAME
+        else
+            if ! tmux has-session -t $SESSION_NAME 2>/dev/null; then
+                tmux new-session -d -s $SESSION_NAME
+            fi
+            tmux attach-session -t $SESSION_NAME
+        fi
+        ;;
+    *)
+        # Default behavior (both sessions)
+        if [ -n "$TMUX" ]; then
+            if ! tmux has-session -t Recon 2>/dev/null; then
+                tmux new-session -d -s Recon
+            fi
+            if ! tmux has-session -t Exploit 2>/dev/null; then
+                tmux new-session -d -s Exploit
+            fi
+            tmux switch-client -t Recon
+        else
+            if ! tmux has-session -t Recon 2>/dev/null; then
+                tmux new-session -d -s Recon
+            fi
+            if ! tmux has-session -t Exploit 2>/dev/null; then
+                tmux new-session -d -s Exploit
+            fi
+            tmux attach-session -t Recon
+        fi
+        ;;
+esac
