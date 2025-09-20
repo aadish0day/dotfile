@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 # Loop through all the files passed as arguments
 for input_file in "$@"; do

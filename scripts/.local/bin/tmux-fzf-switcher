@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Get the list of tmux sessions excluding the current one
 attached_session=$(tmux display-message -p '#{session_name}')
