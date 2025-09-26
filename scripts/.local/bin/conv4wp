@@ -1,22 +1,48 @@
 #!/usr/bin/env bash
 
+# Check if any file is provided
+if [ "$#" -eq 0 ]; then
+	echo "Usage: $0 <file1> [file2 ... filen]"
+	exit 1
+fi
+
 # Loop through all the files passed as arguments
 for input_file in "$@"; do
-    # Extract the directory and base name of the input file
-    input_dir=$(dirname "$input_file")
-    base_name=$(basename "$input_file" | sed 's/\.[^.]*$//')
+	# Check if input file exists
+	if [ ! -f "$input_file" ]; then
+		echo "✗ File not found: $input_file"
+		continue
+	fi
 
-    # Set the output file path to the same directory as the input file, with an .mp4 extension
-    output="${input_dir}/${base_name}.mp4"
+	echo "Converting: $input_file"
 
-    # Convert the file using ffmpeg
-    ffmpeg -i "$input_file" -c:v libx264 -profile:v baseline -level 3.0 -pix_fmt yuv420p -threads 0 "$output"
+	# Extract the directory and base name of the input file
+	input_dir=$(dirname "$input_file")
+	base_name=$(basename "$input_file" | sed 's/\.[^.]*$//')
 
-    # Check if the conversion was successful
-    if [ $? -eq 0 ]; then
-        echo "Successfully converted $input_file to $output"
-    else
-        echo "Failed to convert $input_file"
-    fi
+	# Set the output file path
+	output="${input_dir}/${base_name}.mp4"
+
+	# Skip if output already exists
+	if [ -f "$output" ]; then
+		echo "⚠ Output file already exists: $output"
+		continue
+	fi
+
+	# Convert the file using ffmpeg
+	ffmpeg -i "$input_file" \
+		-c:v libx264 -profile:v baseline -level 3.0 \
+		-pix_fmt yuv420p \
+		-crf 23 \
+		-preset medium \
+		-movflags +faststart \
+		-threads 0 \
+		"$output"
+
+	# Check if the conversion was successful
+	if [ $? -eq 0 ]; then
+		echo "✓ Successfully converted $input_file to $output"
+	else
+		echo "✗ Failed to convert $input_file"
+	fi
 done
-
