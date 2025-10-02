@@ -1,0 +1,27 @@
+[Default]
+# Save directory for screenshots
+save_dir=$HOME/Pictures/Screenshots
+
+# Filename format (strftime format)
+save_filename_format=%Y-%m-%d_%H-%M.png
+
+# Show save panel after annotation
+show_panel=true
+
+# Line size for drawing
+line_size=3
+
+# Text size
+text_size=20
+
+# Font to use for text
+text_font=sans-serif
+
+# Paint mode (draw, arrow, rectangle, ellipse, text, blur)
+paint_mode=rectangle
+
+# Early exit (close after saving)
+early_exit=false
+
+# Fill shapes by default
+fill_shape=false

@@ -90,6 +90,7 @@ directories=(
     "gammastep"
     "git"
     "gtk-theme"
+    "swappy"
     "hypr"
     "i3"
     "kitty"
