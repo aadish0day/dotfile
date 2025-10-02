@@ -11,32 +11,35 @@ window#waybar {
   transition-duration: 0.5s;
   /* background-color: #1e1e2e; */
   /* background-color: #181825; */
-  background-color: #11111b;
+  background-color: rgba(17, 17, 27, 0.8); /* similar to ${colors.crust} */
+  /* background-color: #11111b; */
   /* background-color: rgba(24, 24, 37, 0.6); */
+  border-bottom: 1px solid rgba(69, 71, 90, 0.6); /* surface1 */
+  box-shadow: none;
 }
 
 #workspaces button {
-  padding: 0.3rem 0.6rem;
-  margin: 0.4rem 0.25rem;
-  border-radius: 6px;
-  /* background-color: #181825; */
-  background-color: #1e1e2e;
-  color: #cdd6f4;
+  padding: 0.2rem 0.4rem;
+  margin: 0.2rem 0.2rem;
+  border-radius: 4px;
+  background-color: transparent;
+  color: #cdd6f4; /* text */
+  transition: background-color 150ms ease, color 150ms ease;
 }
 
 #workspaces button:hover {
-  color: #1e1e2e;
-  background-color: #cdd6f4;
+  background-color: rgba(49, 50, 68, 0.6); /* surface0 */
 }
 
 #workspaces button.active {
-  background-color: #1e1e2e;
-  color: #89b4fa;
+  background-color: transparent;
+  color: #cdd6f4; /* focused text */
+  border-bottom: 2px solid #89b4fa; /* blue accent */
 }
 
 #workspaces button.urgent {
-  background-color: #1e1e2e;
-  color: #f38ba8;
+  background-color: transparent;
+  color: #f38ba8; /* red */
 }
 
 #clock,
@@ -49,12 +52,17 @@ window#waybar {
 #tray,
 #memory,
 #window,
-#mpris {
-  padding: 0.3rem 0.6rem;
-  margin: 0.4rem 0.25rem;
-  border-radius: 6px;
-  /* background-color: #181825; */
-  background-color: #1e1e2e;
+#mpris,
+#battery,
+#custom-powerprofile,
+#custom-filesystem,
+#backlight,
+#custom-gpuprofile {
+  padding: 0.2rem 0.4rem;
+  margin: 0.2rem 0.2rem;
+  border-radius: 4px;
+  background-color: transparent;
+  transition: background-color 150ms ease, color 150ms ease;
 }
 
 #mpris.playing {
@@ -63,6 +71,14 @@ window#waybar {
 
 #mpris.paused {
   color: #9399b2;
+}
+
+#battery.warning {
+  color: #f9e2af;
+}
+
+#battery.critical {
+  color: #f38ba8;
 }
 
 #custom-sep {
@@ -113,4 +129,25 @@ window#waybar.empty #window {
 tooltip {
   background-color: #181825;
   border: 2px solid #89b4fa;
+  border-radius: 8px;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
+}
+
+/* Workspace non-active states to resemble Polybar coloring */
+#workspaces button:not(.active):not(.urgent) {
+  color: #6c7086; /* overlay0 for occupied */
+}
+
+/* Optional: when workspaces are effectively empty, make them subtler */
+#workspaces button.empty {
+  color: #313244; /* surface0 */
+}
+
+/* Battery state accents similar to Polybar */
+#battery.warning {
+  color: #f9e2af;
+}
+
+#battery.critical {
+  color: #f38ba8;
 }
