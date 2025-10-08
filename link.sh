@@ -102,6 +102,7 @@ directories=(
     "ranger"
     "rofi"
     "scripts"
+    "spectacle"
     "sxhkd"
     "theme"
     "tmux"

@@ -1,0 +1,7 @@
+[ImageSave]
+imageFilenameTemplate=<yyyy>-<mm>-<dd>_<dd>-<mm>
+lastImageSaveLocation=file:///home/aadish/Pictures/Screenshots/2025-46-08_08-46-4.png
+translatedScreenshotsFolder=Screenshots
+
+[VideoSave]
+translatedScreencastsFolder=Screencasts
