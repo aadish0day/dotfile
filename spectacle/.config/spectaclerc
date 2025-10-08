@@ -1,6 +1,6 @@
 [ImageSave]
-imageFilenameTemplate=<yyyy>-<mm>-<dd>_<dd>-<mm>
-lastImageSaveLocation=file:///home/aadish/Pictures/Screenshots/2025-46-08_08-46-4.png
+imageFilenameTemplate=<yyyy>-<MM>-<dd>_<hh>-<mm>
+lastImageSaveLocation=file:///home/aadish/Pictures/Screenshots/2025-10-08_07-02.png
 translatedScreenshotsFolder=Screenshots
 
 [VideoSave]
