@@ -95,6 +95,7 @@ directories=(
     "i3"
     "kitty"
     "moc"
+    "mpv"
     "paru"
     "picom"
     "polybar"
