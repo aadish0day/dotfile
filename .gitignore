@@ -4,7 +4,8 @@ moc/.moc/pid
 ranger/.config/ranger/plugins/__pycache__/
 ranger/.config/ranger/plugins/ranger_devicons/__pycache__/
 
-yazi/.config/yazi/plugins/*/README.md
-yazi/.config/yazi/plugins/*/LICENSE
+yazi/.config/yazi/plugins/*
+# yazi/.config/yazi/plugins/*/README.md
+# yazi/.config/yazi/plugins/*/LICENSE
 
 qalculate/.config/qalculate/qalc.history
