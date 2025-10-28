@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-
 # Check if at least one URL is provided
 if [ "$#" -eq 0 ]; then
     echo "Usage: $0 <URL1> [URL2 ... URLn]"
@@ -8,10 +7,16 @@ fi
 
 # Loop through all URLs provided as arguments
 for url in "$@"; do
-    yt-dlp -x --audio-format mp3 --audio-quality 0 \
+    echo "Processing: $url"
+    yt-dlp --extractor-args "youtube:player_client=android,ios" \
+        -x --audio-format mp3 --audio-quality 0 \
         --embed-metadata \
+        --embed-thumbnail \
         --ignore-errors \
         --no-overwrites \
+        --no-warnings \
         -o "%(playlist)s/%(title)s.%(ext)s" \
-        "$url"
+        "$url" || echo "⚠ Failed: $url"
 done
+
+echo "✓ Download batch complete"
