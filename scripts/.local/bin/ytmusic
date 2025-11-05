@@ -12,6 +12,7 @@ for url in "$@"; do
         -x --audio-format mp3 --audio-quality 0 \
         --embed-metadata \
         --embed-thumbnail \
+        --convert-thumbnails jpg \
         --ignore-errors \
         --no-overwrites \
         --no-warnings \

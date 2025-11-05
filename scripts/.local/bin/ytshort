@@ -1,77 +1,105 @@
 #!/usr/bin/env bash
-
 # ytauto - Automated YouTube download and WordPress conversion
 # Usage: ytauto <URL1> [URL2 ... URLn]
 
 # Check if any URL is provided
 if [ "$#" -eq 0 ]; then
-	echo "Usage: $0 <URL1> [URL2 ... URLn]"
-	echo "This script will download YouTube videos and automatically convert them to WordPress-compatible MP4 format"
-	exit 1
+    echo "Usage: $0 <URL1> [URL2 ... URLn]"
+    echo "This script will download YouTube videos and automatically convert them to WordPress-compatible MP4 format"
+    exit 1
 fi
 
 # Function to convert a single file
 convert_file() {
-	local input_file="$1"
+    local input_file="$1"
 
-	# Check if input file exists
-	if [ ! -f "$input_file" ]; then
-		echo "✗ File not found: $input_file"
-		return 1
-	fi
+    # Check if input file exists
+    if [ ! -f "$input_file" ]; then
+        echo "✗ File not found: $input_file"
+        return 1
+    fi
 
-	echo "Converting: $(basename "$input_file")"
+    echo "Converting: $(basename "$input_file")"
 
-	# Extract the directory and base name of the input file
-	local input_dir=$(dirname "$input_file")
-	local base_name=$(basename "$input_file" | sed 's/\.[^.]*$//')
+    # Extract the directory and base name of the input file
+    local input_dir=$(dirname "$input_file")
+    local base_name=$(basename "$input_file" | sed 's/\.[^.]*$//')
 
-	# Set the output file path
-	local output="${input_dir}/${base_name}.mp4"
+    # Set the output file path
+    local output="${input_dir}/${base_name}.mp4"
 
-	# Skip if output already exists
-	if [ -f "$output" ]; then
-		echo "⚠ Output file already exists: $(basename "$output")"
-		return 0
-	fi
+    # Skip if output already exists
+    if [ -f "$output" ]; then
+        echo "⚠ Output file already exists: $(basename "$output")"
+        return 0
+    fi
 
-	# Convert the file using ffmpeg
-	ffmpeg -i "$input_file" \
-		-c:v libx264 -profile:v baseline -level 3.0 \
-		-pix_fmt yuv420p \
-		-crf 23 \
-		-preset medium \
-		-movflags +faststart \
-		-threads 0 \
-		-loglevel error \
-		-stats \
-		"$output"
+    # Look for thumbnail file
+    local thumbnail="${input_dir}/${base_name}.jpg"
+    if [ ! -f "$thumbnail" ]; then
+        thumbnail="${input_dir}/${base_name}.webp"
+    fi
+    if [ ! -f "$thumbnail" ]; then
+        thumbnail="${input_dir}/${base_name}.png"
+    fi
 
-	# Check if the conversion was successful
-	if [ $? -eq 0 ]; then
-		echo "Successfully converted: $(basename "$output")"
+    # Convert the file using ffmpeg with thumbnail attachment
+    if [ -f "$thumbnail" ]; then
+        echo "Found thumbnail: $(basename "$thumbnail")"
+        ffmpeg -i "$input_file" -i "$thumbnail" \
+            -map 0:v -map 0:a -map 1 \
+            -c:v:0 libx264 -profile:v:0 baseline -level:v:0 3.0 \
+            -pix_fmt yuv420p \
+            -crf 23 \
+            -preset medium \
+            -movflags +faststart \
+            -c:a aac -b:a 128k \
+            -c:v:1 copy \
+            -disposition:v:1 attached_pic \
+            -metadata:s:v:1 title="Album cover" \
+            -metadata:s:v:1 comment="Cover (front)" \
+            -threads 0 \
+            -loglevel error \
+            -stats \
+            "$output"
+    else
+        echo "⚠ No thumbnail found, converting without thumbnail"
+        ffmpeg -i "$input_file" \
+            -c:v libx264 -profile:v baseline -level 3.0 \
+            -pix_fmt yuv420p \
+            -crf 23 \
+            -preset medium \
+            -movflags +faststart \
+            -c:a aac -b:a 128k \
+            -threads 0 \
+            -loglevel error \
+            -stats \
+            "$output"
+    fi
 
-		# Optionally remove the original file (uncomment if desired)
-		# echo "Removing original file: $(basename "$input_file")"
-		# rm "$input_file"
-
-		return 0
-	else
-		echo "Failed to convert: $(basename "$input_file")"
-		return 1
-	fi
+    # Check if the conversion was successful
+    if [ $? -eq 0 ]; then
+        echo "✓ Successfully converted: $(basename "$output")"
+        # Optionally remove the original file (uncomment if desired)
+        # echo "Removing original file: $(basename "$input_file")"
+        # rm "$input_file"
+        # rm -f "$thumbnail"
+        return 0
+    else
+        echo "✗ Failed to convert: $(basename "$input_file")"
+        return 1
+    fi
 }
 
 # Function to find and convert downloaded files
 process_downloads() {
-	local download_dir="$1"
+    local download_dir="$1"
+    echo "Looking for downloaded files in: $download_dir"
 
-	echo "Looking for downloaded files in: $download_dir"
-
-	# Find all video files (webm, mkv, mp4, etc.) that are not already MP4
-	find "$download_dir" -type f \( -name "*.webm" -o -name "*.mkv" -o -name "*.flv" -o -name "*.m4v" \) -print0 | while IFS= read -r -d '' file; do
-		convert_file "$file"
-	done
+    # Find all video files (webm, mkv, mp4, etc.) that are not already MP4
+    find "$download_dir" -type f \( -name "*.webm" -o -name "*.mkv" -o -name "*.flv" -o -name "*.m4v" \) -print0 | while IFS= read -r -d '' file; do
+        convert_file "$file"
+    done
 }
 
 echo "Starting automated YouTube download and conversion process..."
@@ -79,52 +107,52 @@ echo "=================================================="
 
 # Loop through all provided arguments (URLs)
 for url in "$@"; do
-	echo ""
-	echo "Processing URL: $url"
-	echo "---"
+    echo ""
+    echo "Processing URL: $url"
+    echo "---"
 
-	# Create a temporary directory for this download
-	temp_dir=$(mktemp -d -t ytauto.XXXXXX)
-	echo "Using temporary directory: $temp_dir"
+    # Create a temporary directory for this download
+    temp_dir=$(mktemp -d -t ytauto.XXXXXX)
+    echo "Using temporary directory: $temp_dir"
 
-	# Download the video
-	echo "Downloading..."
-	yt-dlp -f "bestvideo[height<=1080]+bestaudio/best[height<=1080]" \
-		--extractor-args "youtube:player_client=android,web" \
-		--extractor-args "youtube:player_skip=webpage,configs" \
-		--embed-metadata \
-		--concurrent-fragments 30 \
-		--no-overwrites \
-		--continue \
-		-o "$temp_dir/%(title)s.%(ext)s" \
-		"$url"
+    # Download the video
+    echo "Downloading..."
+    yt-dlp -f "bestvideo[height<=1080]+bestaudio/best[height<=1080]" \
+        --extractor-args "youtube:player_client=android,web" \
+        --extractor-args "youtube:player_skip=webpage,configs" \
+        --embed-metadata \
+        --write-thumbnail \
+        --convert-thumbnails jpg \
+        --concurrent-fragments 30 \
+        --no-overwrites \
+        --continue \
+        -o "$temp_dir/%(title)s.%(ext)s" \
+        "$url"
 
-	# Check if download was successful
-	if [ $? -eq 0 ]; then
-		echo "Download completed successfully"
+    # Check if download was successful
+    if [ $? -eq 0 ]; then
+        echo "✓ Download completed successfully"
 
-		# Convert all downloaded files
-		process_downloads "$temp_dir"
+        # Convert all downloaded files
+        process_downloads "$temp_dir"
 
-		# Move converted MP4 files to current directory
-		echo "Moving converted files to current directory..."
-		find "$temp_dir" -name "*.mp4" -exec mv {} . \;
+        # Move converted MP4 files to current directory
+        echo "Moving converted files to current directory..."
+        find "$temp_dir" -name "*.mp4" -exec mv {} . \;
 
-		# List the files that were created
-		echo "Files created:"
-		find . -maxdepth 1 -name "*.mp4" -newer "$temp_dir" 2>/dev/null | sed 's|^\./|  - |'
+        # List the files that were created
+        echo "Files created:"
+        find . -maxdepth 1 -name "*.mp4" -mmin -1 2>/dev/null | sed 's|^\./|  ✓ |'
+    else
+        echo "✗ Failed to download: $url"
+    fi
 
-	else
-		echo "Failed to download: $url"
-	fi
-
-	# Clean up temporary directory
-	echo "Cleaning up temporary files..."
-	rm -rf "$temp_dir"
-
-	echo "---"
+    # Clean up temporary directory
+    echo "Cleaning up temporary files..."
+    rm -rf "$temp_dir"
+    echo "---"
 done
 
 echo ""
-echo "Process completed!"
+echo "✓ Process completed!"
 echo "=================================================="

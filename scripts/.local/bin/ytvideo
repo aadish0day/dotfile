@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-
 # Check if any URL is provided
 if [ "$#" -eq 0 ]; then
     echo "Usage: $0 <URL1> [URL2 ... URLn]"
@@ -10,6 +9,8 @@ fi
 for url in "$@"; do
     yt-dlp -f "bestvideo[height<=1080]+bestaudio/best[height<=1080]" \
         --embed-metadata \
+        --embed-thumbnail \
+        --convert-thumbnails jpg \
         --concurrent-fragments 30 \
         -o "%(playlist)s/%(title)s.%(ext)s" \
         "$url"
