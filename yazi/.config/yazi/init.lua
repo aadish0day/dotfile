@@ -1,11 +1,13 @@
--- require("git"):setup()
+-- Starship prompt
 require("starship"):setup()
 
-require("zoxide"):setup({
-    update_db = true,
-})
-
+-- Full border
 require("full-border"):setup {
-	-- Available values: ui.Border.PLAIN, ui.Border.ROUNDED
-	type = ui.Border.ROUNDED,
+    -- Available values: ui.Border.PLAIN, ui.Border.ROUNDED
+    type = ui.Border.ROUNDED,
 }
+
+-- KDE Connect - always show device selection
+require("kdeconnect-send"):setup({
+    auto_select_single = false,
+})
