@@ -10,3 +10,5 @@ yazi/.config/yazi/plugins/*
 
 qalculate/.config/qalculate/qalc.history
 mpv/.config/mpv/watch_later/
+
+scripts/.local/bin/burpsuitepro
