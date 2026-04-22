@@ -9,7 +9,8 @@ fi
 for url in "$@"; do
     echo "Processing: $url"
     yt-dlp --extractor-args "youtube:player_client=android,ios" \
-        -x --audio-format mp3 --audio-quality 0 \
+        -f "bestaudio/best" \
+        -x --audio-format m4a \
         --embed-metadata \
         --embed-thumbnail \
         --convert-thumbnails jpg \
