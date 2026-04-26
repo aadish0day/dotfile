@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 BASE_DIR="$HOME/cybersec"
+PLUGIN_DIR="$HOME/dotfile/tmux/.config/tmux/plugins/tmux-logging/scripts"
 
 # Function to get existing projects
 get_existing_projects() {
@@ -21,9 +22,12 @@ project_popup() {
         "Create new project")
             PROJECT_NAME=$(echo "" | fzf-tmux -p 50%,30% --prompt="Enter new project name: " --border --layout=reverse --print-query | head -1)
             if [ -n "$PROJECT_NAME" ]; then
+                # Sanitize project name for tmux session compatibility
+                PROJECT_NAME=$(echo "$PROJECT_NAME" | tr ' .' '_')
                 echo "Creating new project: $PROJECT_NAME"
             else
-                echo "No project name entered. Using default."
+                echo "No project name entered. Exiting."
+                exit 1
             fi
             ;;
         "Use existing project")
@@ -33,19 +37,29 @@ project_popup() {
                 if [ -n "$PROJECT_NAME" ] && [ -d "$BASE_DIR/$PROJECT_NAME" ]; then
                     echo "Using existing project: $PROJECT_NAME"
                 else
-                    echo "No project selected. Using default."
-                    PROJECT_NAME=""
+                    echo "No project selected. Exiting."
+                    exit 1
                 fi
             else
-                echo "No existing projects found. Creating new project."
-                PROJECT_NAME=$(echo "" | fzf-tmux -p 50%,30% --prompt="Enter new project name: " --border --layout=reverse --print-query | head -1)
+                echo "No existing projects found. Please create one."
+                exit 1
             fi
             ;;
         *)
-            echo "No option selected. Using default."
-            PROJECT_NAME=""
+            echo "No option selected. Exiting."
+            exit 1
             ;;
     esac
+}
+
+# Start logging for a specific session/pane if not already logging
+start_logging() {
+    local session="$1"
+    # Wait a moment for the session to initialize
+    sleep 0.5
+    # Use the tmux-logging plugin script to start logging
+    # We use 'run-shell' to ensure it runs in the tmux context
+    tmux run-shell -t "$session" "$PLUGIN_DIR/toggle_logging.sh"
 }
 
 # Create both recon and exploit sessions
@@ -54,33 +68,38 @@ create_cybersec_sessions() {
         # Create project directories
         mkdir -p "$BASE_DIR/$PROJECT_NAME/recon"
         mkdir -p "$BASE_DIR/$PROJECT_NAME/exploits"
+        mkdir -p "$BASE_DIR/$PROJECT_NAME/logs"
         
-        RECON_SESSION="recon"
-        EXPLOIT_SESSION="exploit"
+        RECON_SESSION="${PROJECT_NAME}-recon"
+        EXPLOIT_SESSION="${PROJECT_NAME}-exploit"
         RECON_DIR="$BASE_DIR/$PROJECT_NAME/recon"
         EXPLOIT_DIR="$BASE_DIR/$PROJECT_NAME/exploits"
+        LOG_DIR="$BASE_DIR/$PROJECT_NAME/logs"
     else
         echo "No project selected. Exiting."
         exit 1
     fi
     
+    # Check and create Recon session
+    if ! tmux has-session -t "$RECON_SESSION" 2>/dev/null; then
+        tmux new-session -d -s "$RECON_SESSION" -c "$RECON_DIR"
+        # Set project-specific log path for this session
+        tmux set-option -t "$RECON_SESSION" "@logging-path" "$LOG_DIR"
+        start_logging "$RECON_SESSION"
+    fi
+
+    # Check and create Exploit session
+    if ! tmux has-session -t "$EXPLOIT_SESSION" 2>/dev/null; then
+        tmux new-session -d -s "$EXPLOIT_SESSION" -c "$EXPLOIT_DIR"
+        # Set project-specific log path for this session
+        tmux set-option -t "$EXPLOIT_SESSION" "@logging-path" "$LOG_DIR"
+        start_logging "$EXPLOIT_SESSION"
+    fi
+
+    # Switch to the recon session
     if [ -n "$TMUX" ]; then
-        # Already in tmux - create sessions and switch
-        if ! tmux has-session -t "$RECON_SESSION" 2>/dev/null; then
-            tmux new-session -d -s "$RECON_SESSION" -c "$RECON_DIR"
-        fi
-        if ! tmux has-session -t "$EXPLOIT_SESSION" 2>/dev/null; then
-            tmux new-session -d -s "$EXPLOIT_SESSION" -c "$EXPLOIT_DIR"
-        fi
         tmux switch-client -t "$RECON_SESSION"
     else
-        # Not in tmux - create sessions and attach
-        if ! tmux has-session -t "$RECON_SESSION" 2>/dev/null; then
-            tmux new-session -d -s "$RECON_SESSION" -c "$RECON_DIR"
-        fi
-        if ! tmux has-session -t "$EXPLOIT_SESSION" 2>/dev/null; then
-            tmux new-session -d -s "$EXPLOIT_SESSION" -c "$EXPLOIT_DIR"
-        fi
         tmux attach-session -t "$RECON_SESSION"
     fi
 }

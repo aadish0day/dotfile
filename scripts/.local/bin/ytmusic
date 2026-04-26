@@ -17,6 +17,7 @@ for url in "$@"; do
         --ignore-errors \
         --no-overwrites \
         --no-warnings \
+        --download-archive ~/.ytmusic_archive.txt \
         -o "%(playlist)s/%(title)s.%(ext)s" \
         "$url" || echo "⚠ Failed: $url"
 done
