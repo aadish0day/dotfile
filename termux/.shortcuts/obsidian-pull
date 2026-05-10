@@ -15,7 +15,7 @@ echo "Starting Pull..."
 
 # Pull changes from remote
 # Using rebase to maintain a linear history
-if git pull origin main --rebase; then
+if git pull origin main --rebase --autostash; then
     echo "Pull successful"
 else
     echo "Pull failed: Check for manual conflicts"
