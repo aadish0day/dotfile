@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Path to your vault on S23
+# Path to your Obsidian vault
 VAULT_DIR="$HOME/storage/documents/Obsidian"
 
 # Check if directory exists
@@ -19,7 +19,7 @@ echo "Starting Push..."
  # Only commit if changes exist
  if ! git diff-index --quiet HEAD; then
      echo "Committing local changes..."
-     git commit -m "S23 Push: $(date +'%Y-%m-%d %H:%M')"
+     git commit -m "Obsidian Sync: $(date +'%Y-%m-%d %H:%M')"
  else
      echo "No local changes to commit"
  fi

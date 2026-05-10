@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Path to your vault on S23
+# Path to your Obsidian vault
 VAULT_DIR="$HOME/storage/documents/Obsidian"
 
 # Check if directory exists
