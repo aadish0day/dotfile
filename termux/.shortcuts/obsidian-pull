@@ -1,0 +1,23 @@
+#!/bin/bash
+
+# Path to your vault on S23
+VAULT_DIR="$HOME/storage/documents/Obsidian"
+
+# Check if directory exists
+if [ ! -d "$VAULT_DIR" ]; then
+    echo "Error: Vault directory not found"
+    exit 1
+fi
+
+cd "$VAULT_DIR" || exit
+
+echo "Starting Pull..."
+
+# Pull changes from remote
+# Using rebase to maintain a linear history
+if git pull origin main --rebase; then
+    echo "Pull successful"
+else
+    echo "Pull failed: Check for manual conflicts"
+    exit 1
+fi
