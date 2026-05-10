@@ -14,20 +14,20 @@ cd "$VAULT_DIR" || exit
 echo "Starting Push..."
 
 # Add and Commit
- git add .
+git add .
 
- # Only commit if changes exist
- if ! git diff-index --quiet --cached HEAD; then
-     echo "Committing local changes..."
-     git commit -m "Obsidian Sync: $(date +'%Y-%m-%d %H:%M')"
- else
-     echo "No local changes to commit"
- fi
+# Only commit if changes exist
+if ! git diff-index --quiet --cached HEAD; then
+    echo "Committing local changes..."
+    git commit -m "Obsidian Sync: $(date +'%Y-%m-%d %H:%M')"
+else
+    echo "No local changes to commit"
+fi
 
- # Push to Remote
- if git push origin main; then
-     echo "Push successful: All synced"
- else
-     echo "Push failed"
-     exit 1
- fi
+# Push to Remote
+if git push origin main; then
+    echo "Push successful: All synced"
+else
+    echo "Push failed"
+    exit 1
+fi

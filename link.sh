@@ -93,7 +93,6 @@ directories=(
     "swappy"
     "hypr"
     "i3"
-    "kde"
     "kitty"
     "moc"
     "mpv"
