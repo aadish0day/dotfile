@@ -17,7 +17,7 @@ echo "Starting Push..."
  git add .
 
  # Only commit if changes exist
- if ! git diff-index --quiet HEAD; then
+ if ! git diff-index --quiet --cached HEAD; then
      echo "Committing local changes..."
      git commit -m "Obsidian Sync: $(date +'%Y-%m-%d %H:%M')"
  else
