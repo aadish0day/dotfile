@@ -87,6 +87,7 @@ directories=(
     "bspwm"
     "dunst"
     "fastfetch"
+    "gallery-dl"
     "gammastep"
     "git"
     "gtk-theme"

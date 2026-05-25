@@ -1,0 +1,16 @@
+{
+  "extractor": {
+    "base-directory": "~/Pictures/test/gallery-dl/",
+    "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+    "sleep-request": [2.0, 7.0],
+    "sleep": [1.0, 4.0],
+    "retries": 3,
+    "timeout": 30.0
+  },
+  "downloader": {
+    "http": {
+      "timeout": 30.0,
+      "retries": 3
+    }
+  }
+}
