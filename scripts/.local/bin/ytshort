@@ -118,6 +118,7 @@ for url in "$@"; do
     # Download the video
     echo "Downloading..."
     yt-dlp -f "bestvideo[height<=1080]+bestaudio/best[height<=1080]" \
+        --no-warnings \
         --extractor-args "youtube:player_client=android,web" \
         --extractor-args "youtube:player_skip=webpage,configs" \
         --embed-metadata \
