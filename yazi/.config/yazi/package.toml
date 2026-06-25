@@ -1,7 +1,7 @@
 [[plugin.deps]]
 use = "boydaihungst/mediainfo"
-rev = "49f5ab7"
-hash = "3b9ca58d8963d7213532d155340e0244"
+rev = "ef8105a"
+hash = "475bbd8ed59fff3ca0d695e44fa56112"
 
 [[plugin.deps]]
 use = "Rolv-Apneseth/starship"
@@ -10,18 +10,18 @@ hash = "635b0feb9215772d22020eb0abf0bb34"
 
 [[plugin.deps]]
 use = "yazi-rs/plugins:full-border"
-rev = "1db18bb"
-hash = "eff8ff12fa4e5f035a10d8aeeb4c258d"
+rev = "598cdb6"
+hash = "7b625412411be411153886894d9acaf"
 
 [[plugin.deps]]
 use = "yazi-rs/plugins:mount"
-rev = "1db18bb"
+rev = "598cdb6"
 hash = "e3260d0b1feded8c8e3ae3afa1169e30"
 
 [[plugin.deps]]
 use = "Deepak22903/kdeconnect-send"
-rev = "8a6936b"
-hash = "8d43ac149f5cf7b5eea4ce2ebbe8e1ba"
+rev = "06674d1"
+hash = "869884767c2ef592bfb7f5764f8fcae3"
 
 [flavor]
 deps = []

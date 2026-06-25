@@ -99,3 +99,4 @@ export TERM=xterm-256color
 export EDITOR='nvim'
 export BAT_THEME='Dracula'
 export PATH="$HOME/.local/bin:$PATH"
+export CHROME_EXECUTABLE=/usr/bin/chromium

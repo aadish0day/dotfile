@@ -1,12 +1,16 @@
 [Annotations]
+annotationToolType=7
 rectangleFillColor=255,0,0,0
 rectangleStrokeColor=255,0,0
 rectangleStrokeWidth=3
 
+[General]
+ocrLanguages=afr
+
 [ImageSave]
 imageFilenameTemplate=<yyyy>-<MM>-<dd>_<hh>-<mm>
 lastImageSaveAsLocation=file:///home/aadish/Pictures/Screenshots/2026-04-29_11-29.png
-lastImageSaveLocation=file:///home/aadish/Pictures/Screenshots/2026-05-14_01-11-1.png
+lastImageSaveLocation=file:///home/aadish/Pictures/Screenshots/2026-06-12_04-52-1.png
 translatedScreenshotsFolder=Screenshots
 
 [VideoSave]
