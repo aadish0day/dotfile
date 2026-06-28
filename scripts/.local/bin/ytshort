@@ -19,18 +19,20 @@ convert_file() {
         return 1
     fi
 
-    echo "Converting: $(basename "$input_file")"
+    local input_file_name="${input_file##*/}"
+    echo "Converting: $input_file_name"
 
-    # Extract the directory and base name of the input file
-    local input_dir=$(dirname "$input_file")
-    local base_name=$(basename "$input_file" | sed 's/\.[^.]*$//')
+    # Extract the directory and base name of the input file using native parameter expansion
+    local input_dir="${input_file%/*}"
+    local base_name="${input_file_name%.*}"
 
     # Set the output file path
-    local output="${input_dir}/${base_name}.mp4"
+    local output="${input_file%.*}.mp4"
+    local output_name="${output##*/}"
 
     # Skip if output already exists
     if [ -f "$output" ]; then
-        echo "⚠ Output file already exists: $(basename "$output")"
+        echo "⚠ Output file already exists: $output_name"
         return 0
     fi
 
@@ -45,7 +47,8 @@ convert_file() {
 
     # Convert the file using ffmpeg with thumbnail attachment
     if [ -f "$thumbnail" ]; then
-        echo "Found thumbnail: $(basename "$thumbnail")"
+        local thumbnail_name="${thumbnail##*/}"
+        echo "Found thumbnail: $thumbnail_name"
         ffmpeg -i "$input_file" -i "$thumbnail" \
             -map 0:v -map 0:a -map 1 \
             -c:v:0 libx264 -profile:v:0 baseline -level:v:0 3.0 \
@@ -79,14 +82,14 @@ convert_file() {
 
     # Check if the conversion was successful
     if [ $? -eq 0 ]; then
-        echo "✓ Successfully converted: $(basename "$output")"
+        echo "✓ Successfully converted: $output_name"
         # Optionally remove the original file (uncomment if desired)
-        # echo "Removing original file: $(basename "$input_file")"
+        # echo "Removing original file: $input_file_name"
         # rm "$input_file"
         # rm -f "$thumbnail"
         return 0
     else
-        echo "✗ Failed to convert: $(basename "$input_file")"
+        echo "✗ Failed to convert: $input_file_name"
         return 1
     fi
 }

@@ -16,12 +16,8 @@ for input_file in "$@"; do
 
 	echo "Converting: $input_file"
 
-	# Extract the directory and base name of the input file
-	input_dir=$(dirname "$input_file")
-	base_name=$(basename "$input_file" | sed 's/\.[^.]*$//')
-
 	# Set the output file path
-	output="${input_dir}/${base_name}.mp4"
+	output="${input_file%.*}.mp4"
 
 	# Skip if output already exists
 	if [ -f "$output" ]; then
