@@ -18,7 +18,7 @@ zinit light zsh-users/zsh-autosuggestions
 zinit light Aloxaf/fzf-tab
 # zsh-vi-mode config (must be before loading the plugin)
 ZVM_CURSOR_STYLE_ENABLED=false
-ZVM_VI_INSERT_ESCAPE_BINDKEY='^\'
+ZVM_VI_INSERT_ESCAPE_BINDKEY='^['
 function zvm_after_init() {
     eval "$(fzf --zsh)"
     bindkey '^w' autosuggest-accept
