@@ -86,7 +86,6 @@ keymap = [
 	{ on = "z",         run = "plugin fzf",                  desc = "Jump to a file/directory via fzf" },
 	{ on = "Z",         run = "plugin zoxide",               desc = "Jump to a directory via zoxide" },
 	{ on = "M",         run = "plugin mount",                desc = "Mount manager" },
-	{ on = "<C-k>",     run = "plugin kdeconnect-send",      desc = "Send via KDE Connect" },
 
 	# Linemode
 	{ on = [ "m", "s" ], run = "linemode size",        desc = "Linemode: size" },
