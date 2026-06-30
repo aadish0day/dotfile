@@ -16,23 +16,12 @@ zinit light zsh-users/zsh-syntax-highlighting
 zinit light zsh-users/zsh-completions
 zinit light zsh-users/zsh-autosuggestions
 zinit light Aloxaf/fzf-tab
-# zsh-vi-mode config (must be before loading the plugin)
-ZVM_CURSOR_STYLE_ENABLED=false
-ZVM_VI_INSERT_ESCAPE_BINDKEY='^['
-function zvm_after_init() {
-    eval "$(fzf --zsh)"
-    bindkey '^w' autosuggest-accept
-    bindkey '^p' history-search-backward
-    bindkey '^n' history-search-forward
-    bindkey '^F' fzf-cd-widget
-    bindkey -M vicmd '^F' fzf-cd-widget
-}
-zinit ice depth=1
-zinit light jeffreytse/zsh-vi-mode
-
 # Load completions
 autoload -Uz compinit && compinit
 zinit cdreplay -q
+
+# Add in snippets
+zinit snippet OMZP::vi-mode
 
 # Define aliases
 alias ls='lsd --color=auto --group-dirs=first --icon=always -v'
@@ -85,10 +74,24 @@ setopt hist_save_no_dups
 setopt hist_ignore_dups
 setopt hist_find_no_dups
 
+# vi mode
+bindkey -v
+KEYTIMEOUT=1
+
 # Completion styling
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls --color $realpath'
+
+# Keybindings
+bindkey -e
+bindkey '^w' autosuggest-accept
+bindkey '^p' history-search-backward
+bindkey '^n' history-search-forward
+bindkey '^F' fzf-cd-widget
+bindkey '^[' vi-cmd-mode
+
+eval "$(fzf --zsh)"
 
 # Shell integrations
 eval "$(starship init zsh)"
