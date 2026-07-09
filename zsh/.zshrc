@@ -98,7 +98,7 @@ eval "$(starship init zsh)"
 eval "$(zoxide init zsh)"
 eval "$(dircolors -b)"
 
-export TERM=xterm-256color
+# TERM is managed by tmux - do not override here
 export EDITOR='nvim'
 export BAT_THEME='Dracula'
 export PATH="$HOME/.local/bin:$PATH"
