@@ -8,8 +8,7 @@ fi
 # Loop through all URLs provided as arguments
 for url in "$@"; do
     echo "Processing: $url"
-    yt-dlp --extractor-args "youtube:player_client=android,ios" \
-        -f "bestaudio/best" \
+    yt-dlp -f "bestaudio/best" \
         -x --audio-format m4a \
         --embed-metadata \
         --embed-thumbnail \
