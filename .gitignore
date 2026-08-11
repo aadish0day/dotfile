@@ -12,3 +12,6 @@ qalculate/.config/qalculate/qalc.history
 mpv/.config/mpv/watch_later/
 
 scripts/.local/bin/burpsuitepro
+
+scripts/.local/share/
+scripts/.local/state/
