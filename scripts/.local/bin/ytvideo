@@ -2,13 +2,69 @@
 
 set -e
 
-if [ "$#" -eq 0 ]; then
-    echo "Usage: $0 <URL1> [URL2 ... URLn]"
+OPTS=()
+URLS=()
+HAS_OUTPUT=0
+HAS_PATH=0
+
+while (($# > 0)); do
+    case "$1" in
+        -o|--output)
+            HAS_OUTPUT=1
+            OPTS+=("$1")
+            if (($# > 1)); then OPTS+=("$2"); shift; fi
+            ;;
+        -P|--paths)
+            HAS_PATH=1
+            OPTS+=("$1")
+            if (($# > 1)); then OPTS+=("$2"); shift; fi
+            ;;
+        -*)
+            OPTS+=("$1")
+            case "$1" in
+                -f|--format|-S|--format-sort|-I|--playlist-items|--proxy|--download-archive|--match-filters|--sub-langs|--audio-format|-r|--limit-rate|--date|--datebefore|--dateafter|--cookies|--config-locations|--add-headers)
+                    if (($# > 1)); then OPTS+=("$2"); shift; fi
+                    ;;
+            esac
+            ;;
+        *)
+            URLS+=("$1")
+            ;;
+    esac
+    shift
+done
+
+if ((${#URLS[@]} == 0)); then
+    echo "Usage: $0 [yt-dlp options] <URL1> [URL2 ... URLn]"
     exit 1
 fi
 
-for url in "$@"; do
+# Detect Termux shared storage directory if no custom path was provided
+DOWNLOAD_DIR=""
+if ((HAS_PATH == 0)); then
+    if [ -d "$HOME/storage/movies" ]; then
+        DOWNLOAD_DIR="$HOME/storage/movies"
+    elif [ -d "$HOME/storage/shared/Movies" ]; then
+        DOWNLOAD_DIR="$HOME/storage/shared/Movies"
+    elif [ -d "$HOME/storage/downloads" ]; then
+        DOWNLOAD_DIR="$HOME/storage/downloads"
+    fi
+fi
+
+EXTRA_OPTS=()
+if [ -n "$DOWNLOAD_DIR" ]; then
+    EXTRA_OPTS+=(-P "$DOWNLOAD_DIR")
+fi
+
+if ((HAS_OUTPUT == 0)); then
+    # Use playlist title only if part of a playlist (avoids creating an "NA" folder)
+    EXTRA_OPTS+=(-o "%(playlist_title&{}/|)s%(title)s.%(ext)s")
+fi
+
+for url in "${URLS[@]}"; do
     yt-dlp \
+        "${OPTS[@]}" \
+        "${EXTRA_OPTS[@]}" \
         -f "bestvideo[height<=1080][ext=mp4]+bestaudio[ext=m4a]/best[height<=1080]" \
         --merge-output-format mkv \
         --embed-metadata \
@@ -18,6 +74,10 @@ for url in "$@"; do
         --retries infinite \
         --continue \
         --download-archive ~/.yt-dlp-archive.txt \
-        -o "%(playlist)s/%(title)s.%(ext)s" \
         "$url"
 done
+
+# Trigger Android media scanner if termux-media-scan is available
+if [ -n "$DOWNLOAD_DIR" ] && command -v termux-media-scan >/dev/null 2>&1; then
+    termux-media-scan "$DOWNLOAD_DIR" >/dev/null 2>&1 || true
+fi

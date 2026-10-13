@@ -105,3 +105,10 @@ export PATH="$HOME/.local/bin:$PATH"
 export CHROME_EXECUTABLE=/usr/bin/chromium
 export ANDROID_SDK_ROOT=$HOME/Android/Sdk
 export PATH=$PATH:$ANDROID_SDK_ROOT/emulator:$ANDROID_SDK_ROOT/platform-tools
+
+# Lazydocker alias
+alias lzd='lazydocker'
+
+export PATH="$HOME/development/flutter/bin:$PATH"
+
+. "$HOME/.local/share/../bin/env"

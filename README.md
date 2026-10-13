@@ -10,10 +10,11 @@ My personal configuration files for Linux systems, managed with GNU Stow.
 - [Prerequisites](#prerequisites)
 - [Installation](#installation)
 - [Configurations Included](#configurations-included)
+- [Scripts](#scripts)
 - [Usage](#usage)
 - [Structure](#structure)
 - [Customization](#customization)
-- [Contributing](#contributing)
+- [Notes](#notes)
 - [License](#license)
 
 ## Overview
@@ -67,15 +68,15 @@ sudo dnf install stow
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/yourusername/dotfiles.git ~/dotfiles
-   cd ~/dotfiles
+   git clone https://github.com/aadish0day/dotfile.git ~/dotfile
+   cd ~/dotfile
    ```
 
 2. **Install specific configurations:**
    ```bash
    stow zsh        # Install zsh configuration
    stow tmux       # Install tmux configuration
-   stow i3         # Install i3 window manager config
+   stow kitty      # Install kitty terminal config
    ```
 
 3. **Install all configurations:**
@@ -93,13 +94,14 @@ sudo dnf install stow
 ### Window Managers & Desktop Environments
 - **i3**: Tiling window manager with custom keybindings and scripts
 - **bspwm**: Binary space partitioning window manager
-- **Hyprland**: Dynamic tiling Wayland compositor
-- **KDE**: KDE Plasma desktop environment shortcuts
+- **hypr**: Hyprland dynamic tiling Wayland compositor
+- **kde**: KDE Plasma desktop environment shortcuts
 
 ### Terminal Emulators
 - **alacritty**: GPU-accelerated terminal emulator
-- **kitty**: Fast, feature-rich terminal
+- **kitty**: Fast, feature-rich terminal (JetBrainsMono Nerd Font)
 - **wezterm**: GPU-accelerated cross-platform terminal
+- **termux**: Android terminal emulator configuration
 
 ### Shells
 - **bash**: Bourne Again Shell configuration
@@ -127,26 +129,44 @@ sudo dnf install stow
 - **fastfetch**: System information tool
 - **spectacle**: Screenshot utility (KDE)
 - **swappy**: Wayland screenshot annotation tool
+- **xdg-desktop-portal**: Desktop integration portals
 
 ### Media
 - **mpv**: Media player configuration
 - **moc**: Music On Console player
+- **gallery-dl**: Gallery/image downloader configuration
 
 ### Theming
 - **gtk-theme**: GTK 2/3/4 theme settings
+- **theme**: Additional theme configurations
 - **xresources**: X11 resource configuration
 
 ### Package Managers
 - **paru**: AUR helper configuration
+- **aria2**: Download manager
 
 ### Document Viewers
 - **zathura**: Minimal document viewer
 - **qalculate**: Calculator application
 
-### Other
-- **aria2**: Download manager
-- **sxhkd**: Simple X hotkey daemon
-- **xdg-desktop-portal**: Desktop integration portals
+## Scripts
+
+Custom scripts in `scripts/.local/bin/`:
+
+| Script | Description |
+|---|---|
+| `ytvideo` | Download YouTube videos (1080p, MKV, with metadata/thumbnails) |
+| `ytmusic` | Download YouTube audio |
+| `ytshort` | Download YouTube Shorts |
+| `compiler` | Compile and run source files |
+| `conv4wp` | Convert images for wallpaper use |
+| `extract` | Universal archive extractor |
+| `mp4tomp4` | Re-encode MP4 files |
+| `cybersec-tmux` | Tmux layout for cybersecurity workflow |
+| `tmux-sessionizer` | Quick tmux session picker |
+| `tmux-fzf-switcher` | Fuzzy-find tmux sessions |
+| `waypad` | Wayland scratchpad |
+| `burpsuitepro` | Launch Burp Suite Pro |
 
 ## Usage
 
@@ -199,6 +219,8 @@ dotfile/
 │   └── .config/alacritty/
 ├── i3/                 # i3 window manager
 │   └── .config/i3/
+├── kitty/              # Kitty terminal
+│   └── .config/kitty/
 ├── zsh/                # Zsh shell
 │   └── .zshrc
 ├── tmux/               # Tmux multiplexer
@@ -215,7 +237,7 @@ Each package directory contains the files structured as they should appear in yo
 
 These dotfiles are highly personalized. You may want to modify:
 
-1. **Keybindings**: Check i3, bspwm, and sxhkd configs
+1. **Keybindings**: Check i3, bspwm, hypr, and sxhkd configs
 2. **Colors**: Theme files in rofi, polybar, and terminal configs
 3. **Fonts**: Update font families in terminal and bar configs
 4. **Monitors**: Adjust display settings in window manager configs
@@ -229,6 +251,21 @@ These dotfiles are highly personalized. You may want to modify:
 - `tmux/.config/tmux/tmux.conf` - Tmux keybindings
 - `scripts/.local/bin/` - Custom utility scripts
 
+## Notes
+
+### Apps not tracked here (configure manually)
+
+- **Okular**: Shift+I to invert PDF colors, `ChangeColors=true` for dark mode, annotation shortcuts 1–6 (highlighter, underline, typewriter, notes)
+
+### Tools to install separately
+
+```bash
+dart pub global activate flutterfire_cli
+pipx install gallery-dl
+uv tool install graphifyy
+pipx install markitdown
+```
+
 ## Security Note
 
 Before using these dotfiles, review all scripts and configurations, especially:
@@ -236,10 +273,6 @@ Before using these dotfiles, review all scripts and configurations, especially:
 - SSH configurations (if any)
 - API keys or tokens (should never be in dotfiles)
 - Personal paths and usernames
-
-## Contributing
-
-Feel free to fork this repository and adapt it to your needs. If you find improvements or fixes, pull requests are welcome!
 
 ## License
 
@@ -251,7 +284,6 @@ Inspired by the dotfiles community and various configurations from:
 - [r/unixporn](https://www.reddit.com/r/unixporn/)
 - Various GitHub dotfile repositories
 - The Arch Linux community
-
 
 ---
 
