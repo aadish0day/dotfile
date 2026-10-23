@@ -72,6 +72,7 @@ cdc() {
 export TERM=xterm-256color
 export EDITOR='nvim'
 export BAT_THEME=Dracula
+export FZF_DEFAULT_OPTS="--color=bg:-1,bg+:#313244,fg+:#cba6f7:bold,hl:#89b4fa,hl+:#cba6f7:bold,prompt:#cba6f7:bold,marker:#f38ba8,gutter:-1"
 export PATH="$HOME/.local/bin:$PATH"
 
 eval "$(starship init bash)"

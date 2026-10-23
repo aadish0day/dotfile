@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+export FZF_DEFAULT_OPTS="--color=bg:-1,bg+:#313244,fg+:#cba6f7:bold,hl:#89b4fa,hl+:#cba6f7:bold,prompt:#cba6f7:bold,marker:#f38ba8,gutter:-1 ${FZF_DEFAULT_OPTS:-}"
+
 if [[ $# -eq 1 ]]; then
     selected=$1
 else

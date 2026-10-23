@@ -12,6 +12,13 @@ qalculate/.config/qalculate/qalc.history
 mpv/.config/mpv/watch_later/
 
 scripts/.local/bin/burpsuitepro
+scripts/.local/bin/uv
+scripts/.local/bin/uvx
+scripts/.local/bin/env
+scripts/.local/bin/env.fish
+scripts/.local/bin/graphify
+scripts/.local/bin/graphify-mcp
+scripts/.local/bin/shellcheck
 
 scripts/.local/share/
 scripts/.local/state/
