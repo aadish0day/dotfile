@@ -112,4 +112,5 @@ alias lzd='lazydocker'
 
 export PATH="$HOME/development/flutter/bin:$PATH"
 
-. "$HOME/.local/share/../bin/env"
+alias cp='/usr/bin/advcp -g'
+alias mv='/usr/bin/advmv -g'
