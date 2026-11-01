@@ -41,8 +41,8 @@ fi
 
 EXTRA_OPTS=()
 if ((HAS_OUTPUT == 0)); then
-    # Use playlist title only if part of a playlist (avoids creating an "NA" folder)
-    EXTRA_OPTS+=(-o "%(playlist_title&{}/|)s%(title)s.%(ext)s")
+    # Group playlists by title, otherwise put individual videos in NA/
+    EXTRA_OPTS+=(-o "%(playlist_title)s/%(title)s.%(ext)s")
 fi
 
 for url in "${URLS[@]}"; do
