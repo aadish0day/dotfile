@@ -114,3 +114,6 @@ export PATH="$HOME/development/flutter/bin:$PATH"
 
 alias cp='/usr/bin/advcp -g'
 alias mv='/usr/bin/advmv -g'
+autoload bashcompinit
+bashcompinit
+source "/home/aadish/.local/share/bash-completion/completions/appman"

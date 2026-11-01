@@ -22,3 +22,13 @@ scripts/.local/bin/shellcheck
 
 scripts/.local/share/
 scripts/.local/state/
+
+scripts/.local/bin/appman
+scripts/.local/bin/deckcraft
+scripts/.local/bin/fetch-iso
+scripts/.local/bin/filmcraft
+scripts/.local/bin/gridcraft
+scripts/.local/bin/phantomjs
+scripts/.local/bin/photocraft
+scripts/.local/bin/wordcraft
+
