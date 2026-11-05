@@ -1,23 +1,44 @@
 #!/bin/bash
 
-if ! command -v stow &> /dev/null; then
-    echo "stow not found. Attempting automatic installation..."
-    if command -v apt-get &> /dev/null; then
-        sudo apt-get update && sudo apt-get install -y stow
-    elif command -v dnf &> /dev/null; then
-        sudo dnf install -y stow
-    elif command -v pacman &> /dev/null; then
-        sudo pacman -S --noconfirm stow
-    elif command -v zypper &> /dev/null; then
-        sudo zypper install -y stow
-    elif command -v apk &> /dev/null; then
-        sudo apk add stow
-    elif command -v pkg &> /dev/null; then
-        pkg install -y stow
+install_stow() {
+    echo "stow not found. Detecting distribution..."
+    if [ -f /etc/os-release ]; then
+        . /etc/os-release
+        case "$ID" in
+            arch|manjaro|endeavouros)
+                sudo pacman -S --noconfirm stow ;;
+            debian|ubuntu|pop|mint)
+                sudo apt-get update && sudo apt-get install -y stow ;;
+            fedora|rhel|centos)
+                sudo dnf install -y stow ;;
+            opensuse*|suse)
+                sudo zypper install -y stow ;;
+            alpine)
+                sudo apk add stow ;;
+            void)
+                sudo xbps-install -y stow ;;
+            *)
+                case "$ID_LIKE" in
+                    *arch*)
+                        sudo pacman -S --noconfirm stow ;;
+                    *debian*|*ubuntu*)
+                        sudo apt-get update && sudo apt-get install -y stow ;;
+                    *rhel*|*fedora*)
+                        sudo dnf install -y stow ;;
+                    *)
+                        echo "Unsupported distribution: $ID ($ID_LIKE). Please install GNU stow manually."
+                        exit 1 ;;
+                esac
+                ;;
+        esac
     else
-        echo "Error: GNU stow is not installed. Please install it manually."
+        echo "Unable to detect OS (/etc/os-release not found). Please install GNU stow manually."
         exit 1
     fi
+}
+
+if ! command -v stow &> /dev/null; then
+    install_stow
 fi
 
 # Base directory for dotfiles
