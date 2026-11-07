@@ -31,4 +31,10 @@ scripts/.local/bin/gridcraft
 scripts/.local/bin/phantomjs
 scripts/.local/bin/photocraft
 scripts/.local/bin/wordcraft
+scripts/.local/bin/uscreen
+scripts/.local/bin/uscreen-gui
+scripts/.local/bin/evdi_helper
+scripts/.local/bin/libevdi.so*
+scripts/.local/bin/vmware
+
 
