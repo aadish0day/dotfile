@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# Run VMware Workstation using modern system GTK theme via XWayland
+export GDK_BACKEND=x11
+exec /usr/bin/vmware "$@"
