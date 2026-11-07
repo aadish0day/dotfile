@@ -1,6 +1,6 @@
 encoder = "h264_vaapi"
-fps = 60
-bitrate = 20000
+fps = 90
+bitrate = 25000
 width = 1920
 height = 1200
 quality = 20
