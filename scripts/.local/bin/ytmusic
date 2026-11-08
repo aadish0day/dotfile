@@ -1,24 +1,85 @@
 #!/usr/bin/env bash
-# Check if at least one URL is provided
-if [ "$#" -eq 0 ]; then
-    echo "Usage: $0 <URL1> [URL2 ... URLn]"
-    exit 1
-fi
+# ytmusic — download audio from YouTube / YT Music URLs
+# Usage: ytmusic [-f m4a|opus|mp3] [-d DIR] [-F urls.txt] [-s] URL...
+#   -f  format (default m4a)
+#   -d  output dir (default $MUSIC_DIR or ~/Music/ytmusic)
+#   -F  file with URLs, one per line (# comments ok)
+#   -s  cut non-music parts (SponsorBlock music_offtopic)
+# Env: COOKIES=firefox|chromium|...  -> use browser cookies (Premium 256k, age-gated)
+set -uo pipefail
 
-# Loop through all URLs provided as arguments
-for url in "$@"; do
-    echo "Processing: $url"
-    yt-dlp -f "bestaudio/best" \
-        -x --audio-format m4a \
-        --embed-metadata \
-        --embed-thumbnail \
-        --convert-thumbnails jpg \
-        --ignore-errors \
-        --no-overwrites \
-        --no-warnings \
-        --download-archive ~/.ytmusic_archive.txt \
-        -o "%(playlist)s/%(title)s.%(ext)s" \
-        "$url" || echo "⚠ Failed: $url"
+FMT="m4a"
+DIR="${MUSIC_DIR:-$HOME/Music/ytmusic}"
+ARCHIVE="$HOME/.ytmusic_archive.txt"
+LIST=""
+SB=0
+
+usage() {
+    sed -n '2,8p' "$0"
+    exit 1
+}
+
+while getopts "f:d:F:sh" o; do
+    case $o in
+    f) FMT=$OPTARG ;;
+    d) DIR=$OPTARG ;;
+    F) LIST=$OPTARG ;;
+    s) SB=1 ;;
+    *) usage ;;
+    esac
+done
+shift $((OPTIND - 1))
+
+urls=("$@")
+if [[ -n $LIST ]]; then
+    while IFS= read -r l; do
+        [[ $l =~ ^[[:space:]]*(#|$) ]] || urls+=("$l")
+    done <"$LIST"
+fi
+((${#urls[@]})) || usage
+
+for dep in yt-dlp ffmpeg; do
+    command -v "$dep" >/dev/null || {
+        echo "missing dependency: $dep"
+        exit 1
+    }
 done
 
-echo "✓ Download batch complete"
+# m4a: prefer native AAC stream -> remux only, no quality loss.
+# opus: native YouTube codec, best quality per bitrate.
+case $FMT in
+m4a) SEL='bestaudio[ext=m4a]/bestaudio' ;;
+opus) SEL='bestaudio[acodec=opus]/bestaudio' ;;
+mp3) SEL='bestaudio' ;;
+*)
+    echo "bad format: $FMT (m4a|opus|mp3)"
+    exit 1
+    ;;
+esac
+
+args=(
+    -f "$SEL"
+    -x --audio-format "$FMT" --audio-quality 0
+    --embed-metadata --embed-thumbnail --convert-thumbnails jpg
+    --parse-metadata "playlist_title:%(meta_album)s"
+    -N 4
+    --no-overwrites
+    --download-archive "$ARCHIVE"
+    --no-warnings
+    -o "$DIR/%(playlist_title|Singles)s/%(playlist_index&{} - |)s%(title)s.%(ext)s"
+)
+((SB)) && args+=(--sponsorblock-remove music_offtopic)
+[[ -n ${COOKIES:-} ]] && args+=(--cookies-from-browser "$COOKIES")
+
+failed=()
+for url in "${urls[@]}"; do
+    echo "→ $url"
+    yt-dlp "${args[@]}" "$url" || failed+=("$url")
+done
+
+if ((${#failed[@]})); then
+    echo "⚠ failed (${#failed[@]}):"
+    printf '  %s\n' "${failed[@]}"
+    exit 1
+fi
+echo "✓ done → $DIR"

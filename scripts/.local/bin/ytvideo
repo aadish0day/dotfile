@@ -9,27 +9,36 @@ HAS_PATH=0
 
 while (($# > 0)); do
     case "$1" in
-        -o|--output)
-            HAS_OUTPUT=1
-            OPTS+=("$1")
-            if (($# > 1)); then OPTS+=("$2"); shift; fi
+    -o | --output)
+        HAS_OUTPUT=1
+        OPTS+=("$1")
+        if (($# > 1)); then
+            OPTS+=("$2")
+            shift
+        fi
+        ;;
+    -P | --paths)
+        HAS_PATH=1
+        OPTS+=("$1")
+        if (($# > 1)); then
+            OPTS+=("$2")
+            shift
+        fi
+        ;;
+    -*)
+        OPTS+=("$1")
+        case "$1" in
+        -f | --format | -S | --format-sort | -I | --playlist-items | --proxy | --download-archive | --match-filters | --sub-langs | --audio-format | -r | --limit-rate | --date | --datebefore | --dateafter | --cookies | --config-locations | --add-headers)
+            if (($# > 1)); then
+                OPTS+=("$2")
+                shift
+            fi
             ;;
-        -P|--paths)
-            HAS_PATH=1
-            OPTS+=("$1")
-            if (($# > 1)); then OPTS+=("$2"); shift; fi
-            ;;
-        -*)
-            OPTS+=("$1")
-            case "$1" in
-                -f|--format|-S|--format-sort|-I|--playlist-items|--proxy|--download-archive|--match-filters|--sub-langs|--audio-format|-r|--limit-rate|--date|--datebefore|--dateafter|--cookies|--config-locations|--add-headers)
-                    if (($# > 1)); then OPTS+=("$2"); shift; fi
-                    ;;
-            esac
-            ;;
-        *)
-            URLS+=("$1")
-            ;;
+        esac
+        ;;
+    *)
+        URLS+=("$1")
+        ;;
     esac
     shift
 done

@@ -14,41 +14,41 @@ get_existing_projects() {
 project_popup() {
     # Create options for fzf
     options="Create new project\nUse existing project"
-    
+
     # Use fzf to select option
     choice=$(echo -e "$options" | fzf-tmux -p 50%,30% --prompt="Choose option: " --border --layout=reverse)
-    
+
     case "$choice" in
-        "Create new project")
-            PROJECT_NAME=$(echo "" | fzf-tmux -p 50%,30% --prompt="Enter new project name: " --border --layout=reverse --print-query | head -1)
-            if [ -n "$PROJECT_NAME" ]; then
-                # Sanitize project name for tmux session compatibility
-                PROJECT_NAME=$(echo "$PROJECT_NAME" | tr ' .' '_')
-                echo "Creating new project: $PROJECT_NAME"
-            else
-                echo "No project name entered. Exiting."
-                exit 1
-            fi
-            ;;
-        "Use existing project")
-            existing_projects=$(get_existing_projects)
-            if [[ -n "$existing_projects" ]]; then
-                PROJECT_NAME=$(echo "$existing_projects" | fzf-tmux -p 50%,50% --prompt="Select existing project: " --border --layout=reverse)
-                if [ -n "$PROJECT_NAME" ] && [ -d "$BASE_DIR/$PROJECT_NAME" ]; then
-                    echo "Using existing project: $PROJECT_NAME"
-                else
-                    echo "No project selected. Exiting."
-                    exit 1
-                fi
-            else
-                echo "No existing projects found. Please create one."
-                exit 1
-            fi
-            ;;
-        *)
-            echo "No option selected. Exiting."
+    "Create new project")
+        PROJECT_NAME=$(echo "" | fzf-tmux -p 50%,30% --prompt="Enter new project name: " --border --layout=reverse --print-query | head -1)
+        if [ -n "$PROJECT_NAME" ]; then
+            # Sanitize project name for tmux session compatibility
+            PROJECT_NAME=$(echo "$PROJECT_NAME" | tr ' .' '_')
+            echo "Creating new project: $PROJECT_NAME"
+        else
+            echo "No project name entered. Exiting."
             exit 1
-            ;;
+        fi
+        ;;
+    "Use existing project")
+        existing_projects=$(get_existing_projects)
+        if [[ -n "$existing_projects" ]]; then
+            PROJECT_NAME=$(echo "$existing_projects" | fzf-tmux -p 50%,50% --prompt="Select existing project: " --border --layout=reverse)
+            if [ -n "$PROJECT_NAME" ] && [ -d "$BASE_DIR/$PROJECT_NAME" ]; then
+                echo "Using existing project: $PROJECT_NAME"
+            else
+                echo "No project selected. Exiting."
+                exit 1
+            fi
+        else
+            echo "No existing projects found. Please create one."
+            exit 1
+        fi
+        ;;
+    *)
+        echo "No option selected. Exiting."
+        exit 1
+        ;;
     esac
 }
 
@@ -69,7 +69,7 @@ create_cybersec_sessions() {
         mkdir -p "$BASE_DIR/$PROJECT_NAME/recon"
         mkdir -p "$BASE_DIR/$PROJECT_NAME/exploits"
         mkdir -p "$BASE_DIR/$PROJECT_NAME/logs"
-        
+
         RECON_SESSION="${PROJECT_NAME}-recon"
         EXPLOIT_SESSION="${PROJECT_NAME}-exploit"
         RECON_DIR="$BASE_DIR/$PROJECT_NAME/recon"
@@ -79,7 +79,7 @@ create_cybersec_sessions() {
         echo "No project selected. Exiting."
         exit 1
     fi
-    
+
     # Check and create Recon session
     if ! tmux has-session -t "$RECON_SESSION" 2>/dev/null; then
         tmux new-session -d -s "$RECON_SESSION" -c "$RECON_DIR"
