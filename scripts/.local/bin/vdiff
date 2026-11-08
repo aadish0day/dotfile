@@ -1,0 +1,74 @@
+#!/usr/bin/env bash
+# Quick and easy file diffing tool (fzf-powered or direct arguments)
+set -euo pipefail
+
+show_help() {
+    cat << 'EOF'
+Usage:
+  vdiff <file1> <file2>   Compare two files directly using Neovim/Vim diff
+  vdiff [file1]           Interactive fzf mode (selects remaining file(s) with live diff preview)
+  vdiff -h | --help       Show this help message
+
+Tools used:
+  - Viewer: nvim -d, vimdiff, code --diff, or bat/diff
+  - Selector: fzf (with live preview)
+EOF
+}
+
+if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
+    show_help
+    exit 0
+fi
+
+# Pick viewer: prefer nvimdiff, then vimdiff, then code --diff, then diff -u | bat/less
+open_diff() {
+    local file1="$1"
+    local file2="$2"
+
+    if command -v nvim >/dev/null 2>&1; then
+        nvim -d "$file1" "$file2"
+    elif command -v vim >/dev/null 2>&1; then
+        vimdiff "$file1" "$file2"
+    elif command -v code >/dev/null 2>&1 && [[ -n "${DISPLAY:-${WAYLAND_DISPLAY:-}}" ]]; then
+        code --diff "$file1" "$file2"
+    elif command -v bat >/dev/null 2>&1; then
+        diff -u --color=always "$file1" "$file2" | bat -p -l diff
+    else
+        diff -u --color=always "$file1" "$file2" | less -R
+    fi
+}
+
+# If two arguments are provided directly: `vdiff file1 file2`
+if [[ $# -eq 2 ]]; then
+    if [[ ! -e "$1" ]]; then
+        echo "Error: '$1' does not exist." >&2
+        exit 1
+    fi
+    if [[ ! -e "$2" ]]; then
+        echo "Error: '$2' does not exist." >&2
+        exit 1
+    fi
+    open_diff "$1" "$2"
+    exit 0
+fi
+
+# Interactive selection using fzf
+if command -v fzf >/dev/null 2>&1; then
+    file1="${1:-}"
+    if [[ -z "$file1" ]]; then
+        file1=$(fzf --prompt="Select first file: " \
+                    --preview='bat --color=always --style=numbers --line-range=:200 {} 2>/dev/null || cat {} 2>/dev/null')
+    fi
+
+    [[ -z "$file1" ]] && exit 0
+
+    file2=$(fzf --prompt="Select second file (diff with $(basename "$file1")): " \
+                --preview="diff -u --color=always '$file1' {} 2>/dev/null | (bat -p -l diff 2>/dev/null || cat)")
+
+    [[ -z "$file2" ]] && exit 0
+
+    open_diff "$file1" "$file2"
+else
+    echo "Usage: vdiff <file1> <file2>"
+    exit 1
+fi
