@@ -10,13 +10,13 @@ hash = "9776f378459072b6c2875eae5addc49d"
 
 [[plugin.deps]]
 use = "yazi-rs/plugins:full-border"
-rev = "896fa5a"
+rev = "c0529fc"
 hash = "17ebde15c4349f90aedbc45984b98db2"
 
 [[plugin.deps]]
 use = "yazi-rs/plugins:mount"
-rev = "896fa5a"
-hash = "ba1a606728adb75b091b6eaf3fd60372"
+rev = "c0529fc"
+hash = "dbfc342600993eefbb055bff145fa22a"
 
 [flavor]
 deps = []
