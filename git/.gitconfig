@@ -13,6 +13,14 @@
 	sshCommand = ssh -C
 [color]
 	ui = auto
+[diff]
+	tool = nvimdiff
+[difftool]
+	prompt = false
+[difftool "nvimdiff"]
+	cmd = "nvim -d \"$LOCAL\" \"$REMOTE\""
+[alias]
+	dt = difftool
 [credential "https://github.com"]
 	helper = 
 	helper = !/usr/bin/gh auth git-credential
