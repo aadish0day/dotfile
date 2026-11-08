@@ -1,0 +1,655 @@
+#!/usr/bin/env bash
+
+# ==============================================================================
+# ADB Screen Brightness Controller (Pure Bash TUI)
+# Interactive terminal interface with live slider, presets & device status.
+# ==============================================================================
+
+set -u
+
+# --- Terminal Setup & Cleanup ---
+cleanup() {
+    # Re-disable mouse reporting modes in case terminal left them on
+    printf "\033[?1000l\033[?1002l\033[?1003l\033[?1006l" 2>/dev/null || true
+    # Restore cursor, normal screen buffer, and echo
+    tput cnorm 2>/dev/null || true
+    tput rmcup 2>/dev/null || true
+    stty echo 2>/dev/null || true
+    echo ""
+}
+trap cleanup EXIT INT TERM
+
+# Explicitly disable mouse reporting modes to eliminate mouse-movement jitter
+printf "\033[?1000l\033[?1002l\033[?1003l\033[?1006l" 2>/dev/null || true
+
+# Switch to alternate screen buffer, hide cursor, and disable input echo
+tput smcup 2>/dev/null || true
+tput civis 2>/dev/null || true
+stty -echo 2>/dev/null || true
+
+# --- ANSI Styles & Colors ---
+ESC=$'\033'
+NC="${ESC}[0m"
+BOLD="${ESC}[1m"
+DIM="${ESC}[2m"
+REVERSE="${ESC}[7m"
+
+# Colors
+RED="${ESC}[31m"
+GREEN="${ESC}[32m"
+YELLOW="${ESC}[33m"
+BLUE="${ESC}[34m"
+MAGENTA="${ESC}[35m"
+CYAN="${ESC}[36m"
+WHITE="${ESC}[37m"
+
+# Bright Colors
+B_CYAN="${ESC}[1;36m"
+B_GREEN="${ESC}[1;32m"
+B_YELLOW="${ESC}[1;33m"
+B_WHITE="${ESC}[1;37m"
+
+# --- State Variables ---
+DEVICE_ID=""
+DEVICE_MODEL="Unknown"
+BATTERY_LEVEL="--"
+IS_CHARGING=false
+CURRENT_VAL=128
+AUTO_MODE=0
+LAST_MSG="Ready. Use arrow keys or presets to adjust."
+SELECTED_INDEX=0
+
+# Presets Table: (Percent, Label <= 13 chars, Value)
+PRESETS_PCT=(100 95 90 85 80 75 70 65 60 55 50 45 40 35 30 20 10 5 2 0)
+PRESETS_NAME=(
+    "Maximum"
+    "Ultra High"
+    "Very High"
+    "Outdoor High"
+    "High"
+    "Optimal High"
+    "Above Medium"
+    "Medium-High"
+    "Balanced High"
+    "Balanced"
+    "Half / Medium"
+    "Balanced Low"
+    "Low-Medium"
+    "Comfort High"
+    "Comfort"
+    "Low"
+    "Dim / Reading"
+    "Bedtime"
+    "Ultra Low"
+    "Pitch Dark"
+)
+PRESETS_VAL=(255 242 230 217 204 191 179 166 153 140 128 115 102 89 76 51 26 13 5 1)
+TOTAL_PRESETS=${#PRESETS_VAL[@]}
+
+# --- Hardware / ADB Interaction Functions ---
+
+check_adb() {
+    if ! command -v adb &>/dev/null; then
+        cleanup
+        echo -e "${RED}[ERROR] 'adb' command not found.${NC}"
+        echo "Please install adb and make sure it is in your PATH."
+        exit 1
+    fi
+
+    DEVICE_ID=$(adb devices 2>/dev/null | awk 'NR>1 && $2=="device" {print $1; exit}')
+    if [ -z "$DEVICE_ID" ]; then
+        cleanup
+        echo -e "${YELLOW}[!] No authorized Android device detected via ADB.${NC}"
+        echo "Ensure USB Debugging is enabled on your phone/tablet and authorize the connection."
+        exit 1
+    fi
+}
+
+fetch_device_info() {
+    DEVICE_MODEL=$(adb shell getprop ro.product.model 2>/dev/null | tr -d '\r')
+    [ -z "$DEVICE_MODEL" ] && DEVICE_MODEL="Android Device"
+
+    # Battery info
+    local bat_out
+    bat_out=$(adb shell dumpsys battery 2>/dev/null)
+    BATTERY_LEVEL=$(echo "$bat_out" | awk '/level:/ {print $2; exit}' | tr -d '\r')
+    [ -z "$BATTERY_LEVEL" ] && BATTERY_LEVEL="??"
+
+    if echo "$bat_out" | grep -qE "AC powered: true|USB powered: true|Wireless powered: true"; then
+        IS_CHARGING=true
+    else
+        IS_CHARGING=false
+    fi
+
+    # Brightness value & mode
+    local cur_val cur_mode
+    cur_val=$(adb shell settings get system screen_brightness 2>/dev/null | tr -d '\r')
+    cur_mode=$(adb shell settings get system screen_brightness_mode 2>/dev/null | tr -d '\r')
+
+    if [[ "$cur_val" =~ ^[0-9]+$ ]]; then
+        CURRENT_VAL="$cur_val"
+    fi
+    if [ "$cur_mode" = "1" ]; then
+        AUTO_MODE=1
+    else
+        AUTO_MODE=0
+    fi
+
+    # Find closest preset for initial selection
+    local min_diff=999
+    local best_idx=0
+    for ((i = 0; i < TOTAL_PRESETS; i++)); do
+        local diff=$((CURRENT_VAL - PRESETS_VAL[i]))
+        diff=${diff#-} # absolute value
+        if ((diff < min_diff)); then
+            min_diff=$diff
+            best_idx=$i
+        fi
+    done
+    SELECTED_INDEX=$best_idx
+}
+
+apply_brightness() {
+    local target="$1"
+    local label="${2:-}"
+
+    if ((target < 1)); then target=1; fi
+    if ((target > 255)); then target=255; fi
+
+    CURRENT_VAL=$target
+    AUTO_MODE=0
+
+    # Execute ADB
+    adb shell settings put system screen_brightness_mode 0 2>/dev/null
+    adb shell settings put system screen_brightness "$target" 2>/dev/null
+
+    local pct=$((target * 100 / 255))
+    if [ -n "$label" ]; then
+        LAST_MSG="Set: ${label} -> ${target}/255 (${pct}%)"
+    else
+        LAST_MSG="Adjusted to ${target}/255 (${pct}%)"
+    fi
+}
+
+toggle_auto_mode() {
+    if [ "$AUTO_MODE" -eq 1 ]; then
+        adb shell settings put system screen_brightness_mode 0 2>/dev/null
+        AUTO_MODE=0
+        LAST_MSG="Auto-brightness DISABLED (Manual Mode)"
+    else
+        adb shell settings put system screen_brightness_mode 1 2>/dev/null
+        AUTO_MODE=1
+        LAST_MSG="Auto-brightness ENABLED (Adaptive)"
+    fi
+}
+
+prompt_custom_value() {
+    tput cnorm 2>/dev/null || true
+    stty echo 2>/dev/null || true
+
+    # Move cursor to notification row
+    tput cup 20 0 2>/dev/null || true
+    printf "\r${B_CYAN}│ %-63s │${NC}\n" " "
+    tput cup 20 2 2>/dev/null || true
+
+    local input=""
+    read -r -p "Enter custom value (1 - 255): " input
+
+    tput civis 2>/dev/null || true
+    stty -echo 2>/dev/null || true
+
+    if [[ "$input" =~ ^[0-9]+$ ]] && ((input >= 1 && input <= 255)); then
+        apply_brightness "$input" "Custom Value"
+    else
+        LAST_MSG="Invalid input! Value must be 1 - 255."
+    fi
+}
+
+# --- TUI Drawing Functions (Atomic Fast Double-Buffering) ---
+
+render_tui() {
+    local inner_w=65
+    local col_w=32
+    local buf=""
+
+    append() {
+        local tmp
+        printf -v tmp "$@"
+        buf+="${tmp}\n"
+    }
+
+    # Home cursor (no clear screen = zero flicker)
+    buf+="${ESC}[H"
+
+    # Top border
+    append "${B_CYAN}╭─────────────────────────────────────────────────────────────────╮${NC}"
+
+    # Title row (len 38, centered in 65 cols -> pad 13 left, 14 right)
+    local title="ADB SCREEN BRIGHTNESS CONTROLLER (TUI)"
+    append "${B_CYAN}│${NC}%*s${B_WHITE}%s${NC}%*s${B_CYAN}│${NC}" 13 "" "$title" 14 ""
+    append "${B_CYAN}├─────────────────────────────────────────────────────────────────┤${NC}"
+
+    # Device & Battery row
+    local dev_plain=" Device: ${DEVICE_MODEL}"
+    if ((${#dev_plain} > 30)); then dev_plain="${dev_plain:0:30}"; fi
+
+    local chg_tag="[Battery]"
+    if [ "$IS_CHARGING" = true ]; then chg_tag="[Charging]"; fi
+
+    local bat_plain="Battery: ${BATTERY_LEVEL}% ${chg_tag} "
+    local pad1=$((inner_w - ${#dev_plain} - ${#bat_plain}))
+    if ((pad1 < 1)); then pad1=1; fi
+
+    local bat_color="${B_GREEN}"
+    if [[ "$BATTERY_LEVEL" =~ ^[0-9]+$ ]]; then
+        if ((BATTERY_LEVEL < 20)); then
+            bat_color="${RED}"
+        elif ((BATTERY_LEVEL < 45)); then
+            bat_color="${YELLOW}"
+        fi
+    fi
+
+    append "${B_CYAN}│${NC}%s%*sBattery: %s%s%%%s %s ${B_CYAN}│${NC}" \
+        "$dev_plain" "$pad1" "" "$bat_color" "$BATTERY_LEVEL" "$NC" "$chg_tag"
+
+    # Slider row (26 character visual bar)
+    local bar_len=26
+    local filled=$((CURRENT_VAL * bar_len / 255))
+    local empty=$((bar_len - filled))
+    local pct=$((CURRENT_VAL * 100 / 255))
+
+    local bar_str=""
+    for ((b = 0; b < filled; b++)); do bar_str+="█"; done
+    local empty_str=""
+    for ((b = 0; b < empty; b++)); do empty_str+="░"; done
+
+    local slider_plain
+    printf -v slider_plain " Brightness: [%s%s] %3d%% (%3d/255) " "$bar_str" "$empty_str" "$pct" "$CURRENT_VAL"
+    local pad_s=$((inner_w - ${#slider_plain}))
+    if ((pad_s < 0)); then pad_s=0; fi
+
+    append "${B_CYAN}│${NC} Brightness: [${B_GREEN}%s${NC}${DIM}%s${NC}] ${B_WHITE}%3d%%${NC} (${CYAN}%3d${NC}/255) %*s${B_CYAN}│${NC}" \
+        "$bar_str" "$empty_str" "$pct" "$CURRENT_VAL" "$pad_s" ""
+
+    # Mode & Device ID row
+    local mode_plain=" Mode: [Manual Mode]"
+    local mode_styled=" Mode: ${B_YELLOW}[Manual Mode]${NC}"
+    if [ "$AUTO_MODE" -eq 1 ]; then
+        mode_plain=" Mode: [Auto/Adaptive ON]"
+        mode_styled=" Mode: ${B_CYAN}[Auto/Adaptive ON]${NC}"
+    fi
+
+    local dev_id_plain="Device ID: ${DEVICE_ID} "
+    if ((${#dev_id_plain} > 28)); then dev_id_plain="${dev_id_plain:0:28}"; fi
+
+    local pad2=$((inner_w - ${#mode_plain} - ${#dev_id_plain}))
+    if ((pad2 < 1)); then pad2=1; fi
+
+    append "${B_CYAN}│${NC}%s%*s${DIM}%s${NC}${B_CYAN}│${NC}" "$mode_styled" "$pad2" "" "$dev_id_plain"
+
+    # Presets Header
+    append "${B_CYAN}├────────────────────────────────┬────────────────────────────────┤${NC}"
+    local h_l="     PRESETS (100% - 55%)       "
+    local h_r="      PRESETS (50% - 0%)        "
+    append "${B_CYAN}│${NC}${BOLD}%s${NC}${B_CYAN}│${NC}${BOLD}%s${NC}${B_CYAN}│${NC}" "$h_l" "$h_r"
+    append "${B_CYAN}├────────────────────────────────┼────────────────────────────────┤${NC}"
+
+    # Presets Rows (10 rows for 20 presets, each exactly 32 chars per column)
+    for row in {0..9}; do
+        local left_i=$row
+        local right_i=$((row + 10))
+
+        # --- Left Column ---
+        local lpct=${PRESETS_PCT[left_i]}
+        local lname=${PRESETS_NAME[left_i]}
+        local lval=${PRESETS_VAL[left_i]}
+        local l_sel=false
+        [ "$left_i" -eq "$SELECTED_INDEX" ] && l_sel=true
+        local l_act=false
+        [ "$lval" -eq "$CURRENT_VAL" ] && l_act=true
+
+        local l_mark="  "
+        if [ "$l_sel" = true ]; then l_mark="> "; fi
+        local l_stat="  "
+        if [ "$l_act" = true ]; then l_stat="* "; fi
+
+        local l_plain
+        printf -v l_plain "%s[%3d%%] %-13s [%3d]  %s" "$l_mark" "$lpct" "$lname" "$lval" "$l_stat"
+
+        local l_styled
+        if [ "$l_sel" = true ]; then
+            l_styled="${REVERSE}${BOLD}${B_CYAN}${l_plain}${NC}"
+        elif [ "$l_act" = true ]; then
+            l_styled="${B_GREEN}${l_plain}${NC}"
+        else
+            l_styled="${l_plain}"
+        fi
+
+        # --- Right Column ---
+        local rpct=${PRESETS_PCT[right_i]}
+        local rname=${PRESETS_NAME[right_i]}
+        local rval=${PRESETS_VAL[right_i]}
+        local r_sel=false
+        [ "$right_i" -eq "$SELECTED_INDEX" ] && r_sel=true
+        local r_act=false
+        [ "$rval" -eq "$CURRENT_VAL" ] && r_act=true
+
+        local r_mark="  "
+        if [ "$r_sel" = true ]; then r_mark="> "; fi
+        local r_stat="  "
+        if [ "$r_act" = true ]; then r_stat="* "; fi
+
+        local r_plain
+        printf -v r_plain "%s[%3d%%] %-13s [%3d]  %s" "$r_mark" "$rpct" "$rname" "$rval" "$r_stat"
+
+        local r_styled
+        if [ "$r_sel" = true ]; then
+            r_styled="${REVERSE}${BOLD}${B_CYAN}${r_plain}${NC}"
+        elif [ "$r_act" = true ]; then
+            r_styled="${B_GREEN}${r_plain}${NC}"
+        else
+            r_styled="${r_plain}"
+        fi
+
+        append "${B_CYAN}│${NC}%s${B_CYAN}│${NC}%s${B_CYAN}│${NC}" "$l_styled" "$r_styled"
+    done
+
+    # Notification Row (max 63 chars, padded to 65)
+    append "${B_CYAN}├─────────────────────────────────────────────────────────────────┤${NC}"
+    local msg=" > ${LAST_MSG}"
+    local msg_plain="${msg:0:63}"
+    local pad_m=$((inner_w - ${#msg_plain}))
+    if ((pad_m < 0)); then pad_m=0; fi
+    append "${B_CYAN}│${NC}%s%*s${B_CYAN}│${NC}" "$msg_plain" "$pad_m" ""
+
+    # Keybindings Footer Rows
+    append "${B_CYAN}├─────────────────────────────────────────────────────────────────┤${NC}"
+    local k1=" ↑/↓, j/k: Nav    Enter/Space: Apply Preset    Tab: Switch Col   "
+    local k2=" ←/→, h/l: Step ±5   [/]: ±20   a: Auto   c: Custom   q: Quit    "
+    append "${B_CYAN}│${NC}${DIM}%s${NC}${B_CYAN}│${NC}" "$k1"
+    append "${B_CYAN}│${NC}${DIM}%s${NC}${B_CYAN}│${NC}" "$k2"
+    append "${B_CYAN}╰─────────────────────────────────────────────────────────────────╯${NC}"
+
+    # Atomic write to screen in one single buffer flush
+    printf "%b" "$buf"
+}
+
+# --- Input Reading (Filter Mouse Motion & Parse Keys) ---
+read_key() {
+    local key rest rest2
+    if ! IFS= read -rsn1 key 2>/dev/null; then
+        echo "EOF"
+        return
+    fi
+    if [[ "$key" == $'\x1b' ]]; then
+        # Read the next character with a small timeout
+        if ! read -rsn1 -t 0.02 rest 2>/dev/null; then
+            echo "ESC"
+            return
+        fi
+        if [[ "$rest" == "[" || "$rest" == "O" ]]; then
+            if ! read -rsn1 -t 0.02 rest2 2>/dev/null; then
+                echo "IGNORE"
+                return
+            fi
+
+            # Mouse tracking sequences (drop completely)
+            if [[ "$rest2" == "<" ]]; then
+                # SGR mouse sequence: consume until M or m
+                local mouse_char=""
+                while read -rsn1 -t 0.02 mouse_char 2>/dev/null; do
+                    if [[ "$mouse_char" == "M" || "$mouse_char" == "m" ]]; then
+                        break
+                    fi
+                done
+                echo "IGNORE"
+                return
+            elif [[ "$rest2" == "M" ]]; then
+                # X10 mouse sequence: consume 3 bytes
+                read -rsn3 -t 0.02 2>/dev/null
+                echo "IGNORE"
+                return
+            fi
+
+            case "$rest2" in
+            'A') echo "UP" ;;
+            'B') echo "DOWN" ;;
+            'C') echo "RIGHT" ;;
+            'D') echo "LEFT" ;;
+            'H') echo "HOME" ;;
+            'F') echo "END" ;;
+            'Z') echo "BTAB" ;; # Shift-Tab
+            *) echo "IGNORE" ;;
+            esac
+        else
+            echo "ESC"
+        fi
+    elif [[ "$key" == $'\t' ]]; then
+        echo "TAB"
+    elif [[ -z "$key" ]]; then
+        echo "ENTER"
+    else
+        echo "$key"
+    fi
+}
+
+# --- Main Controller Loop ---
+
+main() {
+    # Subcommands (CLI & Tmux integrations)
+    case "${1:-}" in
+    "popup")
+        if [ -n "${TMUX:-}" ]; then
+            exec tmux display-popup -b rounded -w 71 -h 27 -E "$0"
+        else
+            echo "Not running inside tmux. Launching TUI directly..."
+        fi
+        ;;
+    "status" | "-s")
+        local cur mode
+        cur=$(adb shell settings get system screen_brightness 2>/dev/null | tr -d '\r')
+        mode=$(adb shell settings get system screen_brightness_mode 2>/dev/null | tr -d '\r')
+        if [[ "$cur" =~ ^[0-9]+$ ]]; then
+            local pct=$((cur * 100 / 255))
+            if [ "$mode" = "1" ]; then
+                echo "☀ ${pct}% (Auto)"
+            else
+                echo "☀ ${pct}%"
+            fi
+        else
+            echo "☀ --"
+        fi
+        exit 0
+        ;;
+    "up" | "+")
+        local step="${2:-15}"
+        local cur
+        cur=$(adb shell settings get system screen_brightness 2>/dev/null | tr -d '\r')
+        [[ ! "$cur" =~ ^[0-9]+$ ]] && cur=128
+        local target=$((cur + step))
+        ((target > 255)) && target=255
+        adb shell settings put system screen_brightness_mode 0 2>/dev/null
+        adb shell settings put system screen_brightness "$target" 2>/dev/null
+        echo "Brightness: $target ($((target * 100 / 255))%)"
+        exit 0
+        ;;
+    "down" | "-")
+        local step="${2:-15}"
+        local cur
+        cur=$(adb shell settings get system screen_brightness 2>/dev/null | tr -d '\r')
+        [[ ! "$cur" =~ ^[0-9]+$ ]] && cur=128
+        local target=$((cur - step))
+        ((target < 1)) && target=1
+        adb shell settings put system screen_brightness_mode 0 2>/dev/null
+        adb shell settings put system screen_brightness "$target" 2>/dev/null
+        echo "Brightness: $target ($((target * 100 / 255))%)"
+        exit 0
+        ;;
+    "set")
+        local target="${2:-128}"
+        if [[ "$target" =~ ^[0-9]+$ ]] && ((target >= 1 && target <= 255)); then
+            adb shell settings put system screen_brightness_mode 0 2>/dev/null
+            adb shell settings put system screen_brightness "$target" 2>/dev/null
+            echo "Brightness: $target ($((target * 100 / 255))%)"
+        else
+            echo "Usage: adb_brightness set <1-255>"
+            exit 1
+        fi
+        exit 0
+        ;;
+    "toggle" | "auto")
+        local mode
+        mode=$(adb shell settings get system screen_brightness_mode 2>/dev/null | tr -d '\r')
+        if [ "$mode" = "1" ]; then
+            adb shell settings put system screen_brightness_mode 0 2>/dev/null
+            echo "Auto-brightness disabled (Manual Mode)"
+        else
+            adb shell settings put system screen_brightness_mode 1 2>/dev/null
+            echo "Auto-brightness enabled (Adaptive)"
+        fi
+        exit 0
+        ;;
+    "-h" | "--help" | "help")
+        echo "Usage: adb_brightness [COMMAND]"
+        echo ""
+        echo "Commands:"
+        echo "  (none)      Open full interactive TUI"
+        echo "  popup       Open floating popup in tmux"
+        echo "  status, -s  Print one-line brightness for status bar"
+        echo "  up, + [N]   Increase brightness by N (default: 15)"
+        echo "  down, - [N] Decrease brightness by N (default: 15)"
+        echo "  set <val>   Set brightness to specific value (1-255)"
+        echo "  toggle      Toggle auto/adaptive brightness"
+        exit 0
+        ;;
+    esac
+
+    check_adb
+    fetch_device_info
+
+    # Clear once at startup
+    clear
+
+    local need_render=1
+
+    while true; do
+        if [ "$need_render" -eq 1 ]; then
+            render_tui
+            need_render=0
+        fi
+
+        local key
+        key=$(read_key)
+
+        case "$key" in
+        # Filter mouse motion: do nothing and do NOT redraw
+        "IGNORE")
+            ;;
+
+        # Navigation: Up
+        "UP" | [kK])
+            if [ "$SELECTED_INDEX" -gt 0 ]; then
+                SELECTED_INDEX=$((SELECTED_INDEX - 1))
+            else
+                SELECTED_INDEX=$((TOTAL_PRESETS - 1))
+            fi
+            need_render=1
+            ;;
+
+        # Navigation: Down
+        "DOWN" | [jJ])
+            if [ "$SELECTED_INDEX" -lt $((TOTAL_PRESETS - 1)) ]; then
+                SELECTED_INDEX=$((SELECTED_INDEX + 1))
+            else
+                SELECTED_INDEX=0
+            fi
+            need_render=1
+            ;;
+
+        # Switch Column
+        "TAB" | "BTAB")
+            if [ "$SELECTED_INDEX" -lt 10 ]; then
+                SELECTED_INDEX=$((SELECTED_INDEX + 10))
+                if [ "$SELECTED_INDEX" -ge "$TOTAL_PRESETS" ]; then
+                    SELECTED_INDEX=$((TOTAL_PRESETS - 1))
+                fi
+            else
+                SELECTED_INDEX=$((SELECTED_INDEX - 10))
+            fi
+            need_render=1
+            ;;
+
+        # Step Slider: Left (Decrease)
+        "LEFT" | [hH] | "-")
+            apply_brightness $((CURRENT_VAL - 5)) ""
+            need_render=1
+            ;;
+
+        # Step Slider: Right (Increase)
+        "RIGHT" | [lL] | "+")
+            apply_brightness $((CURRENT_VAL + 5)) ""
+            need_render=1
+            ;;
+
+        # Coarse Step Slider: [ or ]
+        "[")
+            apply_brightness $((CURRENT_VAL - 20)) ""
+            need_render=1
+            ;;
+        "]")
+            apply_brightness $((CURRENT_VAL + 20)) ""
+            need_render=1
+            ;;
+
+        # Apply Selected Preset
+        "ENTER" | " ")
+            local sel_val=${PRESETS_VAL[SELECTED_INDEX]}
+            local sel_name=${PRESETS_NAME[SELECTED_INDEX]}
+            apply_brightness "$sel_val" "$sel_name"
+            need_render=1
+            ;;
+
+        # Quick Shortcuts
+        "0" | [mM])
+            # Pitch Dark / Minimum
+            apply_brightness 1 "Pitch Dark / Minimum"
+            need_render=1
+            ;;
+        "9" | "$" | [xX])
+            # 100% Maximum
+            apply_brightness 255 "Maximum"
+            need_render=1
+            ;;
+
+        # Auto-Brightness Toggle
+        [aA])
+            toggle_auto_mode
+            need_render=1
+            ;;
+
+        # Custom Value Prompt
+        [cC])
+            prompt_custom_value
+            need_render=1
+            ;;
+
+        # Refresh Device Info
+        [rR])
+            fetch_device_info
+            LAST_MSG="Status refreshed from device."
+            need_render=1
+            ;;
+
+        # Exit
+        "EOF" | "ESC" | [qQ])
+            break
+            ;;
+
+        *)
+            # Unknown key: do nothing, do NOT re-render
+            ;;
+        esac
+    done
+}
+
+main "$@"
