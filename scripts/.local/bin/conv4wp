@@ -1,44 +1,85 @@
 #!/usr/bin/env bash
+# conv4wp — convert videos to web/WordPress-friendly MP4 (H.264 + AAC, faststart)
+# Usage: conv4wp [-t] FILE...
+#   -t  attach sibling <name>.jpg/.png as cover art
+# Inputs that are already .mp4 are written to <name>_converted.mp4.
+set -uo pipefail
 
-# Check if any file is provided
-if [ "$#" -eq 0 ]; then
-    echo "Usage: $0 <file1> [file2 ... filen]"
+usage() {
+    sed -n '2,5p' "$0"
     exit 1
-fi
+}
 
-# Loop through all the files passed as arguments
-for input_file in "$@"; do
-    # Check if input file exists
-    if [ ! -f "$input_file" ]; then
-        echo "✗ File not found: $input_file"
-        continue
-    fi
-
-    echo "Converting: $input_file"
-
-    # Set the output file path
-    output="${input_file%.*}.mp4"
-
-    # Skip if output already exists
-    if [ -f "$output" ]; then
-        echo "⚠ Output file already exists: $output"
-        continue
-    fi
-
-    # Convert the file using ffmpeg
-    ffmpeg -i "$input_file" \
-        -c:v libx264 -profile:v baseline -level 3.0 \
-        -pix_fmt yuv420p \
-        -crf 23 \
-        -preset medium \
-        -movflags +faststart \
-        -threads 0 \
-        "$output"
-
-    # Check if the conversion was successful
-    if [ $? -eq 0 ]; then
-        echo "✓ Successfully converted $input_file to $output"
-    else
-        echo "✗ Failed to convert $input_file"
-    fi
+THUMB=0
+while getopts "th" o; do
+    case $o in
+    t) THUMB=1 ;;
+    *) usage ;;
+    esac
 done
+shift $((OPTIND - 1))
+(($#)) || usage
+command -v ffmpeg >/dev/null || {
+    echo "missing dependency: ffmpeg" >&2
+    exit 1
+}
+
+tmp=""
+trap '[[ -n $tmp ]] && rm -f -- "$tmp"' EXIT
+trap 'exit 130' INT TERM
+
+convert() {
+    local in=$1 base out thumb="" t
+    [[ -f $in ]] || {
+        echo "✗ File not found: $in"
+        return 1
+    }
+    base=${in%.*}
+    if [[ ${in##*.} == [mM][pP]4 ]]; then
+        out="${base}_converted.mp4"
+    else
+        out="${base}.mp4"
+    fi
+    if [[ -e $out ]]; then
+        echo "⚠ Output already exists: $out"
+        return 0
+    fi
+
+    if ((THUMB)); then
+        for t in jpg jpeg png; do
+            if [[ -f ${base}.$t ]]; then
+                thumb="${base}.$t"
+                break
+            fi
+        done
+    fi
+
+    echo "Converting: $in"
+    # Write to a .part file so an interrupted run never leaves a "finished" file
+    tmp="${out%.mp4}.part.mp4"
+    local args=(-nostdin -hide_banner -loglevel error -stats -i "$in")
+    if [[ -n $thumb ]]; then
+        args+=(-i "$thumb" -map '0:V:0' -map '0:a:0?' -map 1
+            -c:v:1 copy -disposition:v:1 attached_pic)
+    else
+        args+=(-map '0:V:0' -map '0:a:0?')
+    fi
+    args+=(-c:v:0 libx264 -profile:v:0 high -pix_fmt:v:0 yuv420p -crf 23 -preset medium
+        -c:a aac -b:a 128k -movflags +faststart "$tmp")
+
+    if ffmpeg "${args[@]}" && mv -- "$tmp" "$out"; then
+        echo "✓ $out"
+        tmp=""
+    else
+        echo "✗ Failed: $in"
+        rm -f -- "$tmp"
+        tmp=""
+        return 1
+    fi
+}
+
+fail=0
+for f in "$@"; do
+    convert "$f" || fail=1
+done
+exit "$fail"

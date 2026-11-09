@@ -1,45 +1,70 @@
 #!/usr/bin/env bash
+# extract — unpack an archive into a folder named after it
+# Usage: extract <archive>
+set -u
+shopt -s nocasematch
 
-extract() {
-    if [ -z "$1" ]; then
-        echo "Usage: extract <file>"
-        return 1
-    elif [ ! -f "$1" ]; then
-        echo "'$1' is not a valid file."
-        return 1
-    fi
-    FILENAME=$(basename "$1")
-    EXT="${FILENAME##*.}"
-    DEST_DIR="${FILENAME%.*}" # Strip the extension from the file name
-
-    # Ensure the destination directory doesn't already exist
-    if [ -e "$DEST_DIR" ]; then
-        echo "Directory '$DEST_DIR' already exists. Extracting into it."
-    else
-        mkdir -p "$DEST_DIR"
-    fi
-
-    case "$1" in
-    *.tar.gz | *.tgz) pv "$1" | tar -xzf - -C "$DEST_DIR" ;;
-    *.tar.bz2) pv "$1" | tar -xjf - -C "$DEST_DIR" ;;
-    *.tar.xz) pv "$1" | tar -xJf - -C "$DEST_DIR" ;;
-    *.tar) pv "$1" | tar -xf - -C "$DEST_DIR" ;;
-    *.gz) gunzip -c "$1" >"$DEST_DIR/${FILENAME%.gz}" ;;
-    *.bz2) bunzip2 -c "$1" >"$DEST_DIR/${FILENAME%.bz2}" ;;
-    *.xz) unxz -c "$1" >"$DEST_DIR/${FILENAME%.xz}" ;;
-    *.zip) unzip "$1" -d "$DEST_DIR" ;;
-    *.7z) 7z x "$1" -o"$DEST_DIR" ;;
-    *.iso) 7z x "$1" -o"$DEST_DIR" ;;
-    *.rar) unrar x "$1" "$DEST_DIR" ;;
-    # *.zst) unzstd -c "$1" > "$DEST_DIR/${FILENAME%.zst}" ;;
-    # *.lz4) unlz4 -c "$1" > "$DEST_DIR/${FILENAME%.lz4}" ;;
-    # *.lzma) unlzma -c "$1" > "$DEST_DIR/${FILENAME%.lzma}" ;;
-    *)
-        echo "Unsupported file format: '$1'"
-        return 1
-        ;;
-    esac
+[ $# -eq 1 ] || {
+    echo "Usage: extract <archive>" >&2
+    exit 1
 }
+f=$1
+[ -f "$f" ] || {
+    echo "'$f' is not a valid file." >&2
+    exit 1
+}
+name=$(basename "$f")
 
-# Example usage:
-extract "$1"
+# Decide the format BEFORE touching the filesystem (.tar.* must come before .gz etc.)
+case $name in
+*.tar.gz | *.tgz) kind=tgz ;;
+*.tar.bz2 | *.tbz2 | *.tbz) kind=tbz ;;
+*.tar.xz | *.txz) kind=txz ;;
+*.tar.zst | *.tzst) kind=tzst ;;
+*.tar) kind=tar ;;
+*.gz) kind=gz ;;
+*.bz2) kind=bz2 ;;
+*.xz) kind=xz ;;
+*.zst) kind=zst ;;
+*.zip) kind=zip ;;
+*.7z | *.iso) kind=7z ;;
+*.rar) kind=rar ;;
+*)
+    echo "Unsupported file format: '$f'" >&2
+    exit 1
+    ;;
+esac
+
+# Folder name = archive name minus its (possibly double) extension: foo.tar.gz -> foo
+dest=$(sed -E 's/\.(tar\.[a-z0-9]+|tgz|tbz2?|txz|tzst|[a-z0-9]+)$//I' <<<"$name")
+[ "$dest" != "$name" ] || dest="${name}_extracted"
+
+created=0
+if [ -e "$dest" ]; then
+    echo "Directory '$dest' already exists. Extracting into it."
+else
+    mkdir -p -- "$dest" && created=1
+fi
+
+feed() { if command -v pv >/dev/null 2>&1; then pv -- "$f"; else cat -- "$f"; fi; }
+single="${name%.*}"
+
+case $kind in
+tgz) feed | tar -xzf - -C "$dest" ;;
+tbz) feed | tar -xjf - -C "$dest" ;;
+txz) feed | tar -xJf - -C "$dest" ;;
+tzst) feed | tar --zstd -xf - -C "$dest" ;;
+tar) feed | tar -xf - -C "$dest" ;;
+gz) gunzip -c -- "$f" >"$dest/$single" ;;
+bz2) bunzip2 -c -- "$f" >"$dest/$single" ;;
+xz) unxz -c -- "$f" >"$dest/$single" ;;
+zst) unzstd -c -- "$f" >"$dest/$single" ;;
+zip) unzip -- "$f" -d "$dest" ;;
+7z) 7z x -- "$f" -o"$dest" ;;
+rar) unrar x -- "$f" "$dest/" ;;
+esac
+rc=$?
+
+# Don't leave an empty folder behind on failure
+((rc != 0 && created)) && rmdir -- "$dest" 2>/dev/null
+exit "$rc"

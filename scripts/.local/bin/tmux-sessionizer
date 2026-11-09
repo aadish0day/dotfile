@@ -2,10 +2,17 @@
 
 export FZF_DEFAULT_OPTS="--color=bg:-1,bg+:#313244,fg+:#cba6f7:bold,hl:#89b4fa,hl+:#cba6f7:bold,prompt:#cba6f7:bold,marker:#f38ba8,gutter:-1 ${FZF_DEFAULT_OPTS:-}"
 
+# Search roots. Override with SESSIONIZER_DIRS="/a:/b:/c"
+if [[ -n ${SESSIONIZER_DIRS:-} ]]; then
+    IFS=: read -ra roots <<<"$SESSIONIZER_DIRS"
+else
+    roots=("$HOME/Documents/Github" "$HOME/Documents" "$HOME/Documents/Study" "$HOME/.config" "$HOME")
+fi
+
 if [[ $# -eq 1 ]]; then
     selected=$1
 else
-    selected=$(find ~/Documents/Github/ ~/Documents/ ~/Documents/Study/ ~/.config/ ~/ -mindepth 1 -maxdepth 1 -type d | fzf)
+    selected=$(find "${roots[@]}" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | fzf)
 fi
 
 if [[ -z $selected ]]; then
@@ -13,16 +20,15 @@ if [[ -z $selected ]]; then
 fi
 
 selected_name="${selected##*/}"
-selected_name="${selected_name//./_}"
-tmux_running=$(pgrep tmux)
+selected_name="${selected_name//[.:]/_}"
 
-if [[ -z $TMUX ]] && [[ -z $tmux_running ]]; then
-    tmux new-session -s $selected_name -c $selected
-    exit 0
+# new-session -d also starts the server if none is running
+if ! tmux has-session -t="$selected_name" 2>/dev/null; then
+    tmux new-session -ds "$selected_name" -c "$selected"
 fi
 
-if ! tmux has-session -t=$selected_name 2>/dev/null; then
-    tmux new-session -ds $selected_name -c $selected
+if [[ -z ${TMUX:-} ]]; then
+    tmux attach-session -t "=$selected_name"
+else
+    tmux switch-client -t "=$selected_name"
 fi
-
-tmux switch-client -t $selected_name

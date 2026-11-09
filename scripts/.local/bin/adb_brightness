@@ -7,8 +7,11 @@
 
 set -u
 
-# --- Terminal Setup & Cleanup ---
+# --- Terminal Setup & Cleanup (TUI mode only) ---
+TUI=0
 cleanup() {
+    ((TUI)) || return 0
+    TUI=0
     # Re-disable mouse reporting modes in case terminal left them on
     printf "\033[?1000l\033[?1002l\033[?1003l\033[?1006l" 2>/dev/null || true
     # Restore cursor, normal screen buffer, and echo
@@ -17,15 +20,18 @@ cleanup() {
     stty echo 2>/dev/null || true
     echo ""
 }
-trap cleanup EXIT INT TERM
+trap cleanup EXIT
+trap 'exit 130' INT TERM # exit (so EXIT trap restores the terminal) instead of carrying on
 
-# Explicitly disable mouse reporting modes to eliminate mouse-movement jitter
-printf "\033[?1000l\033[?1002l\033[?1003l\033[?1006l" 2>/dev/null || true
-
-# Switch to alternate screen buffer, hide cursor, and disable input echo
-tput smcup 2>/dev/null || true
-tput civis 2>/dev/null || true
-stty -echo 2>/dev/null || true
+tui_setup() {
+    TUI=1
+    # Explicitly disable mouse reporting modes to eliminate mouse-movement jitter
+    printf "\033[?1000l\033[?1002l\033[?1003l\033[?1006l" 2>/dev/null || true
+    # Alternate screen buffer, hide cursor, no input echo
+    tput smcup 2>/dev/null || true
+    tput civis 2>/dev/null || true
+    stty -echo 2>/dev/null || true
+}
 
 # --- ANSI Styles & Colors ---
 ESC=$'\033'
@@ -36,12 +42,8 @@ REVERSE="${ESC}[7m"
 
 # Colors
 RED="${ESC}[31m"
-GREEN="${ESC}[32m"
 YELLOW="${ESC}[33m"
-BLUE="${ESC}[34m"
-MAGENTA="${ESC}[35m"
 CYAN="${ESC}[36m"
-WHITE="${ESC}[37m"
 
 # Bright Colors
 B_CYAN="${ESC}[1;36m"
@@ -55,6 +57,10 @@ DEVICE_MODEL="Unknown"
 BATTERY_LEVEL="--"
 IS_CHARGING=false
 CURRENT_VAL=128
+MAX_VAL=255 # auto-detected from the device (dumpsys power)
+STEP=5
+COARSE=20
+ADB=(adb)
 AUTO_MODE=0
 LAST_MSG="Ready. Use arrow keys or presets to adjust."
 SELECTED_INDEX=0
@@ -83,60 +89,82 @@ PRESETS_NAME=(
     "Ultra Low"
     "Pitch Dark"
 )
-PRESETS_VAL=(255 242 230 217 204 191 179 166 153 140 128 115 102 89 76 51 26 13 5 1)
-TOTAL_PRESETS=${#PRESETS_VAL[@]}
+PRESETS_VAL=() # filled by init_presets once MAX_VAL is known
+TOTAL_PRESETS=${#PRESETS_PCT[@]}
 
 # --- Hardware / ADB Interaction Functions ---
 
-check_adb() {
-    if ! command -v adb &>/dev/null; then
-        cleanup
-        echo -e "${RED}[ERROR] 'adb' command not found.${NC}"
-        echo "Please install adb and make sure it is in your PATH."
-        exit 1
-    fi
+# adb with a timeout, so an offline device can't hang the UI or a status bar
+adbx() { timeout 5 "${ADB[@]}" "$@"; }
 
-    DEVICE_ID=$(adb devices 2>/dev/null | awk 'NR>1 && $2=="device" {print $1; exit}')
-    if [ -z "$DEVICE_ID" ]; then
-        cleanup
-        echo -e "${YELLOW}[!] No authorized Android device detected via ADB.${NC}"
-        echo "Ensure USB Debugging is enabled on your phone/tablet and authorize the connection."
-        exit 1
+# Pick the device (ANDROID_SERIAL, else first authorized one) and pin adb to it
+require_device() {
+    if ! command -v adb &>/dev/null; then
+        echo "adb not found. Install it and make sure it is in PATH." >&2
+        return 1
     fi
+    DEVICE_ID="${ANDROID_SERIAL:-$(adb devices 2>/dev/null | awk 'NR>1 && $2=="device" {print $1; exit}')}"
+    if [ -z "$DEVICE_ID" ]; then
+        echo "No authorized Android device found via adb (enable USB debugging and authorize this PC)." >&2
+        return 1
+    fi
+    ADB=(adb -s "$DEVICE_ID")
+}
+
+# One adb round-trip for everything we need. Returns 1 if brightness couldn't be read.
+read_state() {
+    local out line cur_val="" cur_mode="" max=""
+    # shellcheck disable=SC2016 # expansion must happen on the device
+    out=$(adbx shell 'echo "model=$(getprop ro.product.model)"; echo "val=$(settings get system screen_brightness)"; echo "mode=$(settings get system screen_brightness_mode)"; echo "max=$(dumpsys power | grep -m1 mMaximumScreenBrightnessSetting | cut -d= -f2)"; dumpsys battery' 2>/dev/null | tr -d '\r') || true
+
+    IS_CHARGING=false
+    while IFS= read -r line; do
+        case $line in
+        model=*) DEVICE_MODEL=${line#model=} ;;
+        val=*) cur_val=${line#val=} ;;
+        mode=*) cur_mode=${line#mode=} ;;
+        max=*) max=${line#max=} ;;
+        *"AC powered: true"* | *"USB powered: true"* | *"Wireless powered: true"*) IS_CHARGING=true ;;
+        *)
+            if [[ $line =~ ^[[:space:]]+level:[[:space:]]*([0-9]+) ]]; then
+                BATTERY_LEVEL=${BASH_REMATCH[1]}
+            fi
+            ;;
+        esac
+    done <<<"$out"
+
+    [ -z "$DEVICE_MODEL" ] && DEVICE_MODEL="Android Device"
+    [ "$BATTERY_LEVEL" = "--" ] && BATTERY_LEVEL="??"
+    if [[ $max =~ ^[0-9]+$ ]] && ((max > 1)); then MAX_VAL=$max; fi
+    if [ "$cur_mode" = "1" ]; then AUTO_MODE=1; else AUTO_MODE=0; fi
+    if [[ $cur_val =~ ^[0-9]+$ ]]; then
+        CURRENT_VAL=$cur_val
+        return 0
+    fi
+    return 1
+}
+
+# Preset values and step sizes scale with the device's brightness range
+init_presets() {
+    local p v
+    STEP=$((MAX_VAL * 2 / 100))
+    ((STEP < 1)) && STEP=1
+    COARSE=$((MAX_VAL * 8 / 100))
+    ((COARSE < 1)) && COARSE=1
+    PRESETS_VAL=()
+    for p in "${PRESETS_PCT[@]}"; do
+        v=$((p * MAX_VAL / 100))
+        ((v < 1)) && v=1
+        PRESETS_VAL+=("$v")
+    done
 }
 
 fetch_device_info() {
-    DEVICE_MODEL=$(adb shell getprop ro.product.model 2>/dev/null | tr -d '\r')
-    [ -z "$DEVICE_MODEL" ] && DEVICE_MODEL="Android Device"
-
-    # Battery info
-    local bat_out
-    bat_out=$(adb shell dumpsys battery 2>/dev/null)
-    BATTERY_LEVEL=$(echo "$bat_out" | awk '/level:/ {print $2; exit}' | tr -d '\r')
-    [ -z "$BATTERY_LEVEL" ] && BATTERY_LEVEL="??"
-
-    if echo "$bat_out" | grep -qE "AC powered: true|USB powered: true|Wireless powered: true"; then
-        IS_CHARGING=true
-    else
-        IS_CHARGING=false
-    fi
-
-    # Brightness value & mode
-    local cur_val cur_mode
-    cur_val=$(adb shell settings get system screen_brightness 2>/dev/null | tr -d '\r')
-    cur_mode=$(adb shell settings get system screen_brightness_mode 2>/dev/null | tr -d '\r')
-
-    if [[ "$cur_val" =~ ^[0-9]+$ ]]; then
-        CURRENT_VAL="$cur_val"
-    fi
-    if [ "$cur_mode" = "1" ]; then
-        AUTO_MODE=1
-    else
-        AUTO_MODE=0
-    fi
+    read_state || true
+    init_presets
 
     # Find closest preset for initial selection
-    local min_diff=999
+    local min_diff=$((MAX_VAL + 1))
     local best_idx=0
     for ((i = 0; i < TOTAL_PRESETS; i++)); do
         local diff=$((CURRENT_VAL - PRESETS_VAL[i]))
@@ -149,37 +177,44 @@ fetch_device_info() {
     SELECTED_INDEX=$best_idx
 }
 
+# set_brightness <1..MAX_VAL>: manual mode + value in a single adb call
+set_brightness() {
+    adbx shell "settings put system screen_brightness_mode 0; settings put system screen_brightness $1" 2>/dev/null
+}
+
 apply_brightness() {
     local target="$1"
     local label="${2:-}"
 
     if ((target < 1)); then target=1; fi
-    if ((target > 255)); then target=255; fi
+    if ((target > MAX_VAL)); then target=$MAX_VAL; fi
 
+    if ! set_brightness "$target"; then
+        LAST_MSG="adb command failed - is the device still connected?"
+        return
+    fi
     CURRENT_VAL=$target
     AUTO_MODE=0
 
-    # Execute ADB
-    adb shell settings put system screen_brightness_mode 0 2>/dev/null
-    adb shell settings put system screen_brightness "$target" 2>/dev/null
-
-    local pct=$((target * 100 / 255))
+    local pct=$((target * 100 / MAX_VAL))
     if [ -n "$label" ]; then
-        LAST_MSG="Set: ${label} -> ${target}/255 (${pct}%)"
+        LAST_MSG="Set: ${label} -> ${target}/${MAX_VAL} (${pct}%)"
     else
-        LAST_MSG="Adjusted to ${target}/255 (${pct}%)"
+        LAST_MSG="Adjusted to ${target}/${MAX_VAL} (${pct}%)"
     fi
 }
 
 toggle_auto_mode() {
+    local new=1 msg="Auto-brightness ENABLED (Adaptive)"
     if [ "$AUTO_MODE" -eq 1 ]; then
-        adb shell settings put system screen_brightness_mode 0 2>/dev/null
-        AUTO_MODE=0
-        LAST_MSG="Auto-brightness DISABLED (Manual Mode)"
+        new=0
+        msg="Auto-brightness DISABLED (Manual Mode)"
+    fi
+    if adbx shell settings put system screen_brightness_mode "$new" 2>/dev/null; then
+        AUTO_MODE=$new
+        LAST_MSG=$msg
     else
-        adb shell settings put system screen_brightness_mode 1 2>/dev/null
-        AUTO_MODE=1
-        LAST_MSG="Auto-brightness ENABLED (Adaptive)"
+        LAST_MSG="adb command failed - is the device still connected?"
     fi
 }
 
@@ -193,15 +228,15 @@ prompt_custom_value() {
     tput cup 20 2 2>/dev/null || true
 
     local input=""
-    read -r -p "Enter custom value (1 - 255): " input
+    read -r -p "Enter custom value (1 - $MAX_VAL): " input
 
     tput civis 2>/dev/null || true
     stty -echo 2>/dev/null || true
 
-    if [[ "$input" =~ ^[0-9]+$ ]] && ((input >= 1 && input <= 255)); then
+    if [[ "$input" =~ ^[0-9]+$ ]] && ((input >= 1 && input <= MAX_VAL)); then
         apply_brightness "$input" "Custom Value"
     else
-        LAST_MSG="Invalid input! Value must be 1 - 255."
+        LAST_MSG="Invalid input! Value must be 1 - ${MAX_VAL}."
     fi
 }
 
@@ -209,11 +244,11 @@ prompt_custom_value() {
 
 render_tui() {
     local inner_w=65
-    local col_w=32
     local buf=""
 
     append() {
         local tmp
+        # shellcheck disable=SC2059 # callers pass the format as $1 on purpose
         printf -v tmp "$@"
         buf+="${tmp}\n"
     }
@@ -254,9 +289,9 @@ render_tui() {
 
     # Slider row (26 character visual bar)
     local bar_len=26
-    local filled=$((CURRENT_VAL * bar_len / 255))
+    local filled=$((CURRENT_VAL * bar_len / MAX_VAL))
     local empty=$((bar_len - filled))
-    local pct=$((CURRENT_VAL * 100 / 255))
+    local pct=$((CURRENT_VAL * 100 / MAX_VAL))
 
     local bar_str=""
     for ((b = 0; b < filled; b++)); do bar_str+="█"; done
@@ -264,12 +299,12 @@ render_tui() {
     for ((b = 0; b < empty; b++)); do empty_str+="░"; done
 
     local slider_plain
-    printf -v slider_plain " Brightness: [%s%s] %3d%% (%3d/255) " "$bar_str" "$empty_str" "$pct" "$CURRENT_VAL"
+    printf -v slider_plain " Brightness: [%s%s] %3d%% (%3d/%d) " "$bar_str" "$empty_str" "$pct" "$CURRENT_VAL" "$MAX_VAL"
     local pad_s=$((inner_w - ${#slider_plain}))
     if ((pad_s < 0)); then pad_s=0; fi
 
-    append "${B_CYAN}│${NC} Brightness: [${B_GREEN}%s${NC}${DIM}%s${NC}] ${B_WHITE}%3d%%${NC} (${CYAN}%3d${NC}/255) %*s${B_CYAN}│${NC}" \
-        "$bar_str" "$empty_str" "$pct" "$CURRENT_VAL" "$pad_s" ""
+    append "${B_CYAN}│${NC} Brightness: [${B_GREEN}%s${NC}${DIM}%s${NC}] ${B_WHITE}%3d%%${NC} (${CYAN}%3d${NC}/%d) %*s${B_CYAN}│${NC}" \
+        "$bar_str" "$empty_str" "$pct" "$CURRENT_VAL" "$MAX_VAL" "$pad_s" ""
 
     # Mode & Device ID row
     local mode_plain=" Mode: [Manual Mode]"
@@ -314,7 +349,7 @@ render_tui() {
         if [ "$l_act" = true ]; then l_stat="* "; fi
 
         local l_plain
-        printf -v l_plain "%s[%3d%%] %-13s [%3d]  %s" "$l_mark" "$lpct" "$lname" "$lval" "$l_stat"
+        printf -v l_plain "%s[%3d%%] %-13s [%4d] %s" "$l_mark" "$lpct" "$lname" "$lval" "$l_stat"
 
         local l_styled
         if [ "$l_sel" = true ]; then
@@ -340,7 +375,7 @@ render_tui() {
         if [ "$r_act" = true ]; then r_stat="* "; fi
 
         local r_plain
-        printf -v r_plain "%s[%3d%%] %-13s [%3d]  %s" "$r_mark" "$rpct" "$rname" "$rval" "$r_stat"
+        printf -v r_plain "%s[%3d%%] %-13s [%4d] %s" "$r_mark" "$rpct" "$rname" "$rval" "$r_stat"
 
         local r_styled
         if [ "$r_sel" = true ]; then
@@ -365,7 +400,7 @@ render_tui() {
     # Keybindings Footer Rows
     append "${B_CYAN}├─────────────────────────────────────────────────────────────────┤${NC}"
     local k1=" ↑/↓, j/k: Nav    Enter/Space: Apply Preset    Tab: Switch Col   "
-    local k2=" ←/→, h/l: Step ±5   [/]: ±20   a: Auto   c: Custom   q: Quit    "
+    local k2=" ←/→, h/l: Step ±2%  [/]: ±8%   a: Auto   c: Custom   q: Quit    "
     append "${B_CYAN}│${NC}${DIM}%s${NC}${B_CYAN}│${NC}" "$k1"
     append "${B_CYAN}│${NC}${DIM}%s${NC}${B_CYAN}│${NC}" "$k2"
     append "${B_CYAN}╰─────────────────────────────────────────────────────────────────╯${NC}"
@@ -436,7 +471,7 @@ read_key() {
 # --- Main Controller Loop ---
 
 main() {
-    # Subcommands (CLI & Tmux integrations)
+    # Subcommands (CLI & tmux integrations): plain stdout, no terminal tricks
     case "${1:-}" in
     "popup")
         if [ -n "${TMUX:-}" ]; then
@@ -446,12 +481,14 @@ main() {
         fi
         ;;
     "status" | "-s")
-        local cur mode
-        cur=$(adb shell settings get system screen_brightness 2>/dev/null | tr -d '\r')
-        mode=$(adb shell settings get system screen_brightness_mode 2>/dev/null | tr -d '\r')
-        if [[ "$cur" =~ ^[0-9]+$ ]]; then
-            local pct=$((cur * 100 / 255))
-            if [ "$mode" = "1" ]; then
+        # Used by status bars: never fail, never hang
+        require_device 2>/dev/null || {
+            echo "☀ --"
+            exit 0
+        }
+        if read_state; then
+            local pct=$((CURRENT_VAL * 100 / MAX_VAL))
+            if [ "$AUTO_MODE" -eq 1 ]; then
                 echo "☀ ${pct}% (Auto)"
             else
                 echo "☀ ${pct}%"
@@ -461,53 +498,56 @@ main() {
         fi
         exit 0
         ;;
-    "up" | "+")
-        local step="${2:-15}"
-        local cur
-        cur=$(adb shell settings get system screen_brightness 2>/dev/null | tr -d '\r')
-        [[ ! "$cur" =~ ^[0-9]+$ ]] && cur=128
-        local target=$((cur + step))
-        ((target > 255)) && target=255
-        adb shell settings put system screen_brightness_mode 0 2>/dev/null
-        adb shell settings put system screen_brightness "$target" 2>/dev/null
-        echo "Brightness: $target ($((target * 100 / 255))%)"
-        exit 0
-        ;;
-    "down" | "-")
-        local step="${2:-15}"
-        local cur
-        cur=$(adb shell settings get system screen_brightness 2>/dev/null | tr -d '\r')
-        [[ ! "$cur" =~ ^[0-9]+$ ]] && cur=128
-        local target=$((cur - step))
+    "up" | "+" | "down" | "-")
+        require_device || exit 1
+        read_state || {
+            echo "Could not read brightness from the device." >&2
+            exit 1
+        }
+        local step="${2:-$((MAX_VAL * 6 / 100))}"
+        [[ $step =~ ^[0-9]+$ ]] || {
+            echo "Step must be a number." >&2
+            exit 1
+        }
+        local target
+        case "$1" in
+        "up" | "+") target=$((CURRENT_VAL + step)) ;;
+        *) target=$((CURRENT_VAL - step)) ;;
+        esac
+        ((target > MAX_VAL)) && target=$MAX_VAL
         ((target < 1)) && target=1
-        adb shell settings put system screen_brightness_mode 0 2>/dev/null
-        adb shell settings put system screen_brightness "$target" 2>/dev/null
-        echo "Brightness: $target ($((target * 100 / 255))%)"
+        set_brightness "$target" || {
+            echo "adb command failed." >&2
+            exit 1
+        }
+        echo "Brightness: $target ($((target * 100 / MAX_VAL))%)"
         exit 0
         ;;
     "set")
-        local target="${2:-128}"
-        if [[ "$target" =~ ^[0-9]+$ ]] && ((target >= 1 && target <= 255)); then
-            adb shell settings put system screen_brightness_mode 0 2>/dev/null
-            adb shell settings put system screen_brightness "$target" 2>/dev/null
-            echo "Brightness: $target ($((target * 100 / 255))%)"
+        require_device || exit 1
+        read_state || true # only needed for MAX_VAL
+        local target="${2:-$((MAX_VAL / 2))}"
+        if [[ "$target" =~ ^[0-9]+$ ]] && ((target >= 1 && target <= MAX_VAL)); then
+            set_brightness "$target" || {
+                echo "adb command failed." >&2
+                exit 1
+            }
+            echo "Brightness: $target ($((target * 100 / MAX_VAL))%)"
         else
-            echo "Usage: adb_brightness set <1-255>"
+            echo "Usage: adb_brightness set <1-${MAX_VAL}>" >&2
             exit 1
         fi
         exit 0
         ;;
     "toggle" | "auto")
-        local mode
-        mode=$(adb shell settings get system screen_brightness_mode 2>/dev/null | tr -d '\r')
-        if [ "$mode" = "1" ]; then
-            adb shell settings put system screen_brightness_mode 0 2>/dev/null
-            echo "Auto-brightness disabled (Manual Mode)"
+        require_device || exit 1
+        read_state || true
+        if [ "$AUTO_MODE" -eq 1 ]; then
+            adbx shell settings put system screen_brightness_mode 0 && echo "Auto-brightness disabled (Manual Mode)"
         else
-            adb shell settings put system screen_brightness_mode 1 2>/dev/null
-            echo "Auto-brightness enabled (Adaptive)"
+            adbx shell settings put system screen_brightness_mode 1 && echo "Auto-brightness enabled (Adaptive)"
         fi
-        exit 0
+        exit $?
         ;;
     "-h" | "--help" | "help")
         echo "Usage: adb_brightness [COMMAND]"
@@ -516,16 +556,26 @@ main() {
         echo "  (none)      Open full interactive TUI"
         echo "  popup       Open floating popup in tmux"
         echo "  status, -s  Print one-line brightness for status bar"
-        echo "  up, + [N]   Increase brightness by N (default: 15)"
-        echo "  down, - [N] Decrease brightness by N (default: 15)"
-        echo "  set <val>   Set brightness to specific value (1-255)"
+        echo "  up, + [N]   Increase brightness by N (default: ~6% of range)"
+        echo "  down, - [N] Decrease brightness by N (default: ~6% of range)"
+        echo "  set <val>   Set brightness to specific value (1-max, max auto-detected)"
         echo "  toggle      Toggle auto/adaptive brightness"
+        echo ""
+        echo "Env: ANDROID_SERIAL=<id> selects a device when several are connected."
         exit 0
         ;;
     esac
 
-    check_adb
+    require_device || exit 1
+    local rows cols
+    rows=$(tput lines 2>/dev/null || echo 25)
+    cols=$(tput cols 2>/dev/null || echo 67)
+    if ((rows < 25 || cols < 67)); then
+        echo "Terminal too small: need 67x25, have ${cols}x${rows}." >&2
+        exit 1
+    fi
     fetch_device_info
+    tui_setup
 
     # Clear once at startup
     clear
@@ -581,23 +631,23 @@ main() {
 
         # Step Slider: Left (Decrease)
         "LEFT" | [hH] | "-")
-            apply_brightness $((CURRENT_VAL - 5)) ""
+            apply_brightness $((CURRENT_VAL - STEP)) ""
             need_render=1
             ;;
 
         # Step Slider: Right (Increase)
         "RIGHT" | [lL] | "+")
-            apply_brightness $((CURRENT_VAL + 5)) ""
+            apply_brightness $((CURRENT_VAL + STEP)) ""
             need_render=1
             ;;
 
         # Coarse Step Slider: [ or ]
         "[")
-            apply_brightness $((CURRENT_VAL - 20)) ""
+            apply_brightness $((CURRENT_VAL - COARSE)) ""
             need_render=1
             ;;
         "]")
-            apply_brightness $((CURRENT_VAL + 20)) ""
+            apply_brightness $((CURRENT_VAL + COARSE)) ""
             need_render=1
             ;;
 
@@ -617,7 +667,7 @@ main() {
             ;;
         "9" | "$" | [xX])
             # 100% Maximum
-            apply_brightness 255 "Maximum"
+            apply_brightness "$MAX_VAL" "Maximum"
             need_render=1
             ;;
 

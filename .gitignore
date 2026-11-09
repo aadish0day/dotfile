@@ -29,6 +29,8 @@ scripts/.local/bin/fetch-iso
 scripts/.local/bin/filmcraft
 scripts/.local/bin/gridcraft
 scripts/.local/bin/phantomjs
+scripts/.local/bin/figcraft
+scripts/.local/bin/figcraft-cli
 scripts/.local/bin/photocraft
 scripts/.local/bin/wordcraft
 scripts/.local/bin/uscreen

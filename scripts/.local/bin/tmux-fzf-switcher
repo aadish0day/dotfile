@@ -1,8 +1,13 @@
 #!/usr/bin/env bash
 
+[[ -n ${TMUX:-} ]] || {
+    echo "Run this inside tmux." >&2
+    exit 1
+}
+
 # Get the list of tmux sessions excluding the current one
 attached_session=$(tmux display-message -p '#{session_name}')
-sessions=$(tmux list-sessions -F "#{session_name}" | grep -v "^$attached_session$")
+sessions=$(tmux list-sessions -F "#{session_name}" | grep -vxF -- "$attached_session")
 
 # Use fzf-tmux to select a session
 if [[ -n "$sessions" ]]; then

@@ -1,7 +1,14 @@
 #!/usr/bin/env bash
 
 BASE_DIR="$HOME/cybersec"
-PLUGIN_DIR="$HOME/dotfile/tmux/.config/tmux/plugins/tmux-logging/scripts"
+# Stowed location first, repo checkout as fallback
+PLUGIN_DIR="$HOME/.config/tmux/plugins/tmux-logging/scripts"
+[ -d "$PLUGIN_DIR" ] || PLUGIN_DIR="$HOME/dotfile/tmux/.config/tmux/plugins/tmux-logging/scripts"
+
+command -v fzf-tmux >/dev/null || {
+    echo "missing dependency: fzf-tmux" >&2
+    exit 1
+}
 
 # Function to get existing projects
 get_existing_projects() {
@@ -22,8 +29,8 @@ project_popup() {
     "Create new project")
         PROJECT_NAME=$(echo "" | fzf-tmux -p 50%,30% --prompt="Enter new project name: " --border --layout=reverse --print-query | head -1)
         if [ -n "$PROJECT_NAME" ]; then
-            # Sanitize project name for tmux session compatibility
-            PROJECT_NAME=$(echo "$PROJECT_NAME" | tr ' .' '_')
+            # Keep only [A-Za-z0-9_-]: no '/', ':' or '..' reaching mkdir or tmux targets
+            PROJECT_NAME=$(printf '%s' "$PROJECT_NAME" | tr -c 'A-Za-z0-9_-' '_')
             echo "Creating new project: $PROJECT_NAME"
         else
             echo "No project name entered. Exiting."

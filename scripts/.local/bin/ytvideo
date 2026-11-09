@@ -1,88 +1,49 @@
 #!/usr/bin/env bash
+# ytvideo — download video(s) as MP4 (<=1080p). Any yt-dlp option can be added;
+# defaults are placed first, so whatever you pass overrides them.
+# Usage: ytvideo [yt-dlp options] URL...
+#   e.g. ytvideo -f 'bv*+ba' --no-download-archive https://youtu.be/...
+set -uo pipefail
 
-set -e
-
-OPTS=()
-URLS=()
-HAS_OUTPUT=0
-HAS_PATH=0
-
-while (($# > 0)); do
-    case "$1" in
-    -o | --output)
-        HAS_OUTPUT=1
-        OPTS+=("$1")
-        if (($# > 1)); then
-            OPTS+=("$2")
-            shift
-        fi
-        ;;
-    -P | --paths)
-        HAS_PATH=1
-        OPTS+=("$1")
-        if (($# > 1)); then
-            OPTS+=("$2")
-            shift
-        fi
-        ;;
-    -*)
-        OPTS+=("$1")
-        case "$1" in
-        -f | --format | -S | --format-sort | -I | --playlist-items | --proxy | --download-archive | --match-filters | --sub-langs | --audio-format | -r | --limit-rate | --date | --datebefore | --dateafter | --cookies | --config-locations | --add-headers)
-            if (($# > 1)); then
-                OPTS+=("$2")
-                shift
-            fi
-            ;;
-        esac
-        ;;
-    *)
-        URLS+=("$1")
-        ;;
-    esac
-    shift
-done
-
-if ((${#URLS[@]} == 0)); then
-    echo "Usage: $0 [yt-dlp options] <URL1> [URL2 ... URLn]"
+if (($# == 0)); then
+    sed -n '2,5p' "$0"
     exit 1
 fi
-
-EXTRA_OPTS=()
-if ((HAS_OUTPUT == 0)); then
-    # Group playlists by title, otherwise put individual videos in NA/
-    EXTRA_OPTS+=(-o "%(playlist_title)s/%(title)s.%(ext)s")
-fi
-
-for url in "${URLS[@]}"; do
-    yt-dlp \
-        "${OPTS[@]}" \
-        "${EXTRA_OPTS[@]}" \
-        -f "bestvideo[height<=1080][ext=mp4]+bestaudio[ext=m4a]/best[height<=1080]" \
-        --merge-output-format mp4 \
-        --embed-metadata \
-        --embed-thumbnail \
-        --convert-thumbnails jpg \
-        --concurrent-fragments 30 \
-        --retries infinite \
-        --continue \
-        --download-archive ~/.yt-dlp-archive.txt \
-        "$url"
+for dep in yt-dlp ffmpeg; do
+    command -v "$dep" >/dev/null || {
+        echo "missing dependency: $dep" >&2
+        exit 1
+    }
 done
 
-# Detect environment: Termux / Android vs Arch Linux / Desktop
-IS_ANDROID=0
-if [ -n "${TERMUX_VERSION:-}" ] || [ -d "/data/data/com.termux" ] || [ -d "$HOME/storage" ]; then
-    IS_ANDROID=1
+# Collect final file paths so Android can rescan them
+list=$(mktemp -t ytvideo.XXXXXX)
+trap 'rm -f -- "$list"' EXIT
+trap 'exit 130' INT TERM
+
+# %(playlist_title&{}/|)s -> "<playlist>/" for playlists, nothing for single videos
+yt-dlp \
+    -f 'bv*[height<=1080][ext=mp4]+ba[ext=m4a]/bv*[height<=1080]+ba/b[height<=1080]' \
+    --merge-output-format mp4 \
+    --embed-metadata --embed-thumbnail --convert-thumbnails jpg \
+    -N 8 --retries 10 --fragment-retries 10 --continue \
+    --download-archive ~/.yt-dlp-archive.txt \
+    -o '%(playlist_title&{}/|)s%(title)s.%(ext)s' \
+    --print-to-file 'after_move:filepath' "$list" \
+    "$@"
+rc=$?
+
+# Termux / Android: make new files show up in the gallery
+if [[ -n ${TERMUX_VERSION:-} || -d /data/data/com.termux ]]; then
+    while IFS= read -r f; do
+        [[ -f $f ]] || continue
+        f=$(realpath -- "$f")
+        if command -v termux-media-scan >/dev/null 2>&1; then
+            termux-media-scan "$f" >/dev/null 2>&1
+        else
+            am broadcast -a android.intent.action.MEDIA_SCANNER_SCAN_FILE -d "file://$f" >/dev/null 2>&1
+        fi
+    done <"$list"
 fi
 
-# Post-download processing:
-if ((IS_ANDROID == 1)); then
-    # Trigger Android media scanner on recently created videos in current directory
-    find . -maxdepth 2 -type f \( -name "*.mp4" -o -name "*.mkv" -o -name "*.webm" \) -mmin -10 2>/dev/null | while read -r f; do
-        am broadcast -a android.intent.action.MEDIA_SCANNER_SCAN_FILE -d "file://$(realpath "$f")" >/dev/null 2>&1 || true
-        if command -v termux-media-scan >/dev/null 2>&1; then
-            termux-media-scan "$f" >/dev/null 2>&1 || true
-        fi
-    done
-fi
+exit "$rc"
