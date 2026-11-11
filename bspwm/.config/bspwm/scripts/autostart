@@ -17,14 +17,20 @@ picom --config ~/.config/picom/picom.conf &
 # Start clipmenud for clipboard management
 clipmenud &
 
-# Restore wallpaper from nitrogen
-nitrogen --restore &
+# Restore wallpaper
+if command -v nitrogen >/dev/null 2>&1; then
+    nitrogen --restore &
+elif [ -f "$HOME/.fehbg" ]; then
+    "$HOME/.fehbg" &
+fi
 
 # Lock screen settings
-xss-lock --transfer-sleep-lock -- ~/.config/i3/scripts/lockscreen &
+xss-lock --transfer-sleep-lock -- ~/.config/bspwm/scripts/lockscreen &
 
 # Set screen saver and DPMS settings
-xset s 480 dpms 600 86400 86400 &
+if command -v xset >/dev/null 2>&1; then
+    xset s 480 dpms 600 86400 86400 &
+fi
 
 # Start Bluetooth manager
 blueman-applet &

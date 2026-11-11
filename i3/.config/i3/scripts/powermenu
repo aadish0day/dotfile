@@ -132,8 +132,8 @@ selection=$(printf '%s\n' "${!menu[@]}" | sort | "${launcher_exe}" "${launcher_o
 # Confirm action if needed
 confirm_action() {
     if [[ "$launcher_exe" == "rofi" ]]; then
-        confirmed=$(echo -e "Yes\nNo" | rofi -dmenu -i -lines 2 -p "${selection}?" "${rofi_colors[@]}" "${ROFI_OPTIONS[@]}")
-        [[ "$confirmed" == "Yes" ]] && confirmed=0
+        response=$(echo -e "Yes\nNo" | rofi -dmenu -i -lines 2 -p "${selection}?" "${rofi_colors[@]}" "${ROFI_OPTIONS[@]}")
+        [[ "$response" == "Yes" ]] && confirmed=0 || confirmed=1
     elif [[ "$launcher_exe" == "zenity" ]]; then
         zenity --question --text "Are you sure you want to ${selection,,}?"
         confirmed=$?

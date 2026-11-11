@@ -51,8 +51,11 @@ super + shift + p
 super + shift + g 
     ~/.config/bspwm/scripts/gpu-profile.sh
 
-super + {w, c, n}
-    {thorium-browser, clipmenu, thunar}
+super + {w, n}
+    {thorium-browser, thunar}
+
+super + v
+    clipmenu
 
 F6 
     flameshot gui
@@ -117,7 +120,7 @@ alt + b
 alt + p 
     playerctl play-pause
 
-super + v 
+super + shift + v
     vmware
 
 # state/flags

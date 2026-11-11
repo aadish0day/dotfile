@@ -82,8 +82,9 @@ selection=$(printf '%s\n' "${!menu[@]}" | sort | "${launcher_exe}" "${launcher_o
 # Confirm action if needed
 confirm_action() {
     confirmed=$(echo -e "Yes\nNo" | rofi -dmenu -i -lines 2 -p "${selection}?" "${rofi_colors[@]}" "${ROFI_OPTIONS[@]}")
-    [[ "$confirmed" == "Yes" ]] && confirmed=0
-    [[ "$confirmed" -eq 0 ]] && eval "${menu[${selection}]}"
+    if [[ "$confirmed" == "Yes" ]]; then
+        eval "${menu[${selection}]}"
+    fi
 }
 
 # Execute or confirm the selected action
