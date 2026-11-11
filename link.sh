@@ -53,7 +53,12 @@ for dir in */; do
     # Skip standard non-stowed directories
     if [[ "$dir" != "kde" && "$dir" != "output" ]]; then
         echo "Stowing $dir..."
-        stow "$dir"
+        if ! stow -R "$dir" 2>/dev/null; then
+            echo "Adopting and linking existing files for $dir..."
+            stow --adopt "$dir"
+            # Keep repo's version if conflict was adopted
+            git restore "$dir" 2>/dev/null || true
+        fi
     fi
 done
 

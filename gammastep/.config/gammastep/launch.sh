@@ -7,4 +7,4 @@ killall -q gammastep
 while pgrep -x gammastep >/dev/null; do sleep 1; done
 
 # Start Gammastep with your config
-gammastep -c ~/.config/gammastep/config.ini &
+gammastep -c ~/.config/gammastep/config.ini </dev/null &>/dev/null &
